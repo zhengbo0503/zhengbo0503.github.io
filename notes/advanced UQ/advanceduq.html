@@ -1,0 +1,3298 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <meta name="author" content="Zhengbo Zhou" />
+  <title>Advanced Uncertainty Quantification Notes</title>
+  <style>
+    html {
+      line-height: normal;
+      font-family: Georgia, serif;
+      font-size: 16px;
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 64em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 1em;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, 'Lucida Console', Consolas, monospace;
+      font-size: 85%;
+      margin: 0;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      background-color: #1a1a1a;
+      border: none;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+  </style>
+  <script
+  src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js"
+  type="text/javascript"></script>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">Advanced Uncertainty Quantification Notes</h1>
+<p class="author">Zhengbo Zhou &emsp; <a href="../../index.html">go back</a></p>
+</header>
+<nav id="TOC" role="doc-toc">
+<ul>
+<li><a href="#representation-of-second-order-random-fields"
+id="toc-representation-of-second-order-random-fields"><span
+class="toc-section-number">1</span> Representation of Second Order
+Random Fields</a>
+<ul>
+<li><a href="#essential-revision" id="toc-essential-revision"><span
+class="toc-section-number">1.1</span> Essential Revision</a></li>
+<li><a href="#motivating-example" id="toc-motivating-example"><span
+class="toc-section-number">1.2</span> Motivating Example</a></li>
+<li><a href="#random-variables" id="toc-random-variables"><span
+class="toc-section-number">1.3</span> Random Variables</a></li>
+<li><a href="#random-fields" id="toc-random-fields"><span
+class="toc-section-number">1.4</span> Random Fields</a></li>
+<li><a href="#second-order-random-fields"
+id="toc-second-order-random-fields"><span
+class="toc-section-number">1.5</span> Second-Order Random
+Fields</a></li>
+<li><a href="#gaussian-random-fields"
+id="toc-gaussian-random-fields"><span
+class="toc-section-number">1.6</span> Gaussian Random Fields</a></li>
+<li><a href="#intergal-operators-and-covariance-functions"
+id="toc-intergal-operators-and-covariance-functions"><span
+class="toc-section-number">1.7</span> Intergal Operators and Covariance
+Functions</a></li>
+<li><a href="#karhuren-loève-expansion"
+id="toc-karhuren-loève-expansion"><span
+class="toc-section-number">1.8</span> Karhuren-Loève expansion</a></li>
+<li><a href="#truncated-kl-expansion"
+id="toc-truncated-kl-expansion"><span
+class="toc-section-number">1.9</span> Truncated KL expansion</a></li>
+</ul></li>
+<li><a href="#numerical-methods-for-generating-rfs"
+id="toc-numerical-methods-for-generating-rfs"><span
+class="toc-section-number">2</span> Numerical Methods for Generating
+RFs</a>
+<ul>
+<li><a href="#generating-realisations-of-gaussian-rfs"
+id="toc-generating-realisations-of-gaussian-rfs"><span
+class="toc-section-number">2.1</span> Generating Realisations of
+Gaussian RFs</a></li>
+<li><a href="#cholesky-factorization"
+id="toc-cholesky-factorization"><span
+class="toc-section-number">2.2</span> Cholesky Factorization</a></li>
+<li><a href="#eigenvalue-decomposition"
+id="toc-eigenvalue-decomposition"><span
+class="toc-section-number">2.3</span> Eigenvalue Decomposition</a></li>
+<li><a href="#truncated-eigenvalue-decomposition"
+id="toc-truncated-eigenvalue-decomposition"><span
+class="toc-section-number">2.4</span> Truncated Eigenvalue
+Decomposition</a></li>
+<li><a href="#toeplitz-and-circular-matrix"
+id="toc-toeplitz-and-circular-matrix"><span
+class="toc-section-number">2.5</span> Toeplitz and Circular
+Matrix</a></li>
+<li><a href="#discrete-fourier-transform"
+id="toc-discrete-fourier-transform"><span
+class="toc-section-number">2.6</span> Discrete Fourier
+Transform</a></li>
+<li><a href="#complex-valued-random-variables"
+id="toc-complex-valued-random-variables"><span
+class="toc-section-number">2.7</span> Complex-Valued Random
+Variables</a></li>
+<li><a href="#circulant-covariance-matrix"
+id="toc-circulant-covariance-matrix"><span
+class="toc-section-number">2.8</span> Circulant Covariance
+Matrix</a></li>
+<li><a href="#circulant-embedding-method"
+id="toc-circulant-embedding-method"><span
+class="toc-section-number">2.9</span> Circulant Embedding
+Method</a></li>
+<li><a href="#approximate-circulant-embedding"
+id="toc-approximate-circulant-embedding"><span
+class="toc-section-number">2.10</span> Approximate Circulant
+Embedding</a></li>
+</ul></li>
+<li><a href="#sampling-methods-for-forward-uq-in-odes"
+id="toc-sampling-methods-for-forward-uq-in-odes"><span
+class="toc-section-number">3</span> Sampling Methods for Forward UQ in
+ODEs</a>
+<ul>
+<li><a href="#revision-monte-carlo-estimate-of-mean"
+id="toc-revision-monte-carlo-estimate-of-mean"><span
+class="toc-section-number">3.1</span> (Revision) Monte Carlo Estimate of
+Mean</a></li>
+<li><a href="#ivps-explicit-euler-method"
+id="toc-ivps-explicit-euler-method"><span
+class="toc-section-number">3.2</span> IVPs &amp; Explicit Euler
+Method</a></li>
+<li><a href="#ivp-uncertain-initial-condition"
+id="toc-ivp-uncertain-initial-condition"><span
+class="toc-section-number">3.3</span> IVP &amp; Uncertain Initial
+Condition</a></li>
+<li><a href="#standard-monte-carlo-cost-accuracy"
+id="toc-standard-monte-carlo-cost-accuracy"><span
+class="toc-section-number">3.4</span> Standard Monte Carlo: Cost &amp;
+Accuracy</a></li>
+<li><a href="#multilevel-monte-carlo-key-idea"
+id="toc-multilevel-monte-carlo-key-idea"><span
+class="toc-section-number">3.5</span> Multilevel Monte Carlo : Key
+idea</a></li>
+<li><a href="#mlmc-estimator-definition-properties"
+id="toc-mlmc-estimator-definition-properties"><span
+class="toc-section-number">3.6</span> MLMC Estimator : Definition &amp;
+Properties</a></li>
+<li><a href="#mlmc-mean-square-error"
+id="toc-mlmc-mean-square-error"><span
+class="toc-section-number">3.7</span> MLMC : Mean Square Error</a></li>
+<li><a href="#variance-of-correction-terms"
+id="toc-variance-of-correction-terms"><span
+class="toc-section-number">3.8</span> Variance of Correction
+Terms</a></li>
+<li><a href="#mlmc-accuracy-and-cost"
+id="toc-mlmc-accuracy-and-cost"><span
+class="toc-section-number">3.9</span> MLMC : Accuracy and Cost</a></li>
+</ul></li>
+</ul>
+</nav>
+<p><span><span class="smallcaps"><strong></strong></span></span></p>
+<p><span><strong></strong></span> <span><em></em></span></p>
+<h1 data-number="1"
+id="representation-of-second-order-random-fields"><span
+class="header-section-number">1</span> Representation of Second Order
+Random Fields</h1>
+<h2 data-number="1.1" id="essential-revision"><span
+class="header-section-number">1.1</span> Essential Revision</h2>
+<div class="definition">
+<p><strong>Definition 1</strong> (Probability space). A probability
+space contains 3 components <span class="math display">\[(\varOmega,
+\mathcal F, \mathbf{P}).\]</span></p>
+<ul>
+<li><p><span class="math inline">\(\varOmega\)</span>: a sample space (a
+set)</p></li>
+<li><p><span class="math inline">\(\mathcal F\)</span>: a <span
+class="math inline">\(\sigma\)</span>-algebra (a collection of subsets
+of <span class="math inline">\(\varOmega\)</span>)</p></li>
+<li><p><span class="math inline">\(\mathbf{P}\)</span>: a (probability)
+measure</p></li>
+</ul>
+</div>
+<div class="definition">
+<p><strong>Definition 2</strong> (Real-valued random variable). A random
+variable <span class="math inline">\(X\)</span> is a function which
+defines on the probability space. <span
+class="math display">\[X:\varOmega\to \mathbf{R}.\]</span></p>
+</div>
+<div class="example">
+<p><strong><em>Example</em> 3</strong>. Some real-valued random variable
+examples: <span class="math display">\[X\sim N(0,1)\ \text{(Normal)},
+\quad X\sim U(-1,1)\ \text{(Uniform)}.\]</span></p>
+</div>
+<div class="definition">
+<p><strong>Definition 4</strong> (<span
+class="math inline">\(\mathbf{R}^N\)</span>-valued random varible). A
+<span class="math inline">\(\mathbf{R}^N\)</span>-valued random varible
+<span class="math inline">\(\boldsymbol{X}\)</span> is a function <span
+class="math display">\[\boldsymbol{X} :\varOmega\to \mathbf{R}^N \text{
+where } \boldsymbol{X} = (X_1,\dots,X_N)^\top.\]</span></p>
+</div>
+<div class="example">
+<p><strong><em>Example</em> 5</strong>. <span
+class="math display">\[\boldsymbol{X} \sim N(\boldsymbol{\mu},
+C)\  \text{(multivariate Normal)}\]</span></p>
+</div>
+<div class="definition">
+<p><strong>Definition 6</strong> (Stochastic Process). Let <span
+class="math inline">\((\varOmega, \mathcal F,\mathbf{P})\)</span> be a
+<strong>probability space</strong> and let <span
+class="math inline">\(\mathbf{T}\subset \mathbf{R}\)</span>. A
+real-valued <em>stochastic process</em> <span
+class="math inline">\(f(t,\omega)\)</span> can be viewed as</p>
+<ul>
+<li><p>A real-valued <strong>function</strong> <span
+class="math inline">\(f:\mathbf{T}\times \varOmega\to
+\mathbf{R}\)</span>.</p></li>
+<li><p>A collection of real-valued <strong>random variables</strong> for
+each <span class="math inline">\(t\in \mathbf{T}\)</span> <span
+class="math display">\[\{f(t,\cdot),t\in \mathbf{T}\}.\]</span></p></li>
+<li><p>A collection of <strong>realisations</strong> <span
+class="math display">\[\{f(\cdot,\omega),\omega\in
+\varOmega\}.\]</span></p></li>
+</ul>
+<p><span class="math inline">\((\star)\)</span> We will write <span
+class="math inline">\(f(t,\omega)\)</span> to stress that a stochastic
+process is a <em>function</em>.</p>
+</div>
+<h2 data-number="1.2" id="motivating-example"><span
+class="header-section-number">1.2</span> Motivating Example</h2>
+<div class="example">
+<p><strong><em>Example</em> 7</strong> (Deterministic ODE). Let <span
+class="math inline">\(D=(0,1)\)</span> and consider the following
+boundary value problem (BVP):</p>
+<p>Find <span class="math inline">\(u:\overline D\to \mathbf{R}\)</span>
+such that <span
+class="math display">\[-\frac{\mathrm{d}}{\mathrm{d}x}\left({\color{red}
+a (x)}\frac{\mathrm{d}u(x)}{\mathrm{d}x}\right) = 1,\quad x\in
+D,\]</span> together with <span
+class="math display">\[u(0)=\alpha,\quad  u(1)=\beta.\]</span> This is a
+simple model of heat diffusion in a wire where</p>
+<ul>
+<li><p><span class="math inline">\(x\)</span> denotes <strong>spatial
+position</strong>.</p></li>
+<li><p><span class="math inline">\(u(x)\)</span> represents the
+temperature.</p></li>
+<li><p><span class="math inline">\({\color{red} a (x)}\)</span> is the
+thermal conductivity (or diffusion coefficient).</p></li>
+</ul>
+<p>If <span class="math inline">\({\color{red} a =1}\)</span>, and <span
+class="math inline">\(\alpha=\beta=0\)</span>, then <span
+class="math inline">\(u(x)= x(1-x)/2\)</span> (analytic solution is
+available).</p>
+</div>
+<h3 data-number="1.2.1" id="random-diffusion-coefficient"><span
+class="header-section-number">1.2.1</span> Random diffusion
+coefficient</h3>
+<p>Suppose <span class="math inline">\(a\)</span> is not a simple
+function of <span class="math inline">\(x\)</span>, but a <em>stochastic
+process</em> (also known as a <em>random field</em>).</p>
+<p>Let <span class="math inline">\((\varOmega, \mathcal
+F,\mathbf{R})\)</span> be a probability space, and let <span
+class="math inline">\(\boldsymbol{\xi}_1,\xi_2,\dots,\xi_{50}:\varOmega\to
+\mathbf{R}\)</span> be <strong>independent</strong>. Now define <span
+class="math display">\[\label{1.1}
+        \begin{aligned}
+            a(x,\omega)=1+\sum_{i=1}^{50} {4\over i^2\pi^2}\cos(i\pi
+x)\xi_i(\omega),\quad x\in D,\quad \omega\in \varOmega.
+        \end{aligned}\]</span> In particular, suppose <span
+class="math inline">\(\xi_1,\xi_2,\dots,\xi_{50}\sim U(-1,1)\)</span>.
+We could then generate <span class="math inline">\(20\)</span>
+realisations of <span class="math inline">\(a(\cdot,\omega_j)\)</span>
+shown in figure <a href="#fig:1" data-reference-type="ref"
+data-reference="fig:1">1</a> .</p>
+<figure>
+<embed src="figs/1.pdf" id="fig:1" style="width:50.0%" />
+<figcaption aria-hidden="true"><strong>Twenty realisations</strong>
+<span class="math inline">\(a(\cdot,\omega_j)\)</span> of the diffusion
+coefficient for <span
+class="math inline">\(j=1,2,\dots,20\)</span>.</figcaption>
+</figure>
+<h3 data-number="1.2.2" id="stochastic-ode-model"><span
+class="header-section-number">1.2.2</span> Stochastic ODE Model</h3>
+<p>Let <span class="math inline">\((\varOmega,\mathcal
+F,\mathbf{P})\)</span> be a probability space and let <span
+class="math inline">\(D=(0,1)\)</span> (<strong>the spatial
+domain</strong>).</p>
+<p>Find <span class="math inline">\(u:\overline{D}\times \varOmega\to
+\mathbf{R}\)</span> such that <span><span
+class="math inline">\(\mathbf{P}\)</span>-a.s</span>, <span
+class="math display">\[-{\mathrm{d}\over
+\mathrm{d}x}\left(a(x,{\color{red} \omega }){\mathrm{d}u(x,{\color{red}
+\omega })\over \mathrm{d}x}\right)=1,\quad x\in D,\]</span> and <span
+class="math display">\[u(0,{\color{red} \omega })=\alpha,\quad
+u(1,{\color{red} \omega })=\beta.\]</span></p>
+<div class="question">
+<p><strong>Question 1</strong>. </p>
+<ul>
+<li><p>Does a solution <span class="math inline">\(u(x,\omega)\)</span>
+exist? Is it unique?</p></li>
+<li><p>What kind of random input <span
+class="math inline">\(a(x,\omega)\)</span> is allowed?</p></li>
+<li><p>If a solution <span class="math inline">\(u(x,\omega)\)</span>
+exist, what are its properties?</p></li>
+<li><p>What <em>function space</em> does <span
+class="math inline">\(u(x,\omega)\)</span> belong to?</p></li>
+</ul>
+</div>
+<h3 data-number="1.2.3" id="forward-uq"><span
+class="header-section-number">1.2.3</span> Forward UQ</h3>
+<p>Given an input random field <span
+class="math inline">\(a(x,\omega)\)</span>, estimate statistical
+quantity of interest associated with <span
+class="math inline">\(u(x,\omega)\)</span>.</p>
+<p>We can use <em>Monte Carlo</em> with FD approximation, to estimate
+the <strong>mean</strong> <span
+class="math display">\[\mathop{\mathrm{\mathbf{E}}}[u(x,\omega)]\approx
+{1\over M}\sum_{j=1}^M u(x,\omega_j)\approx {1\over M}\sum_{j=1}^M
+u_h^j(x)=: \mu_{M,h}.\]</span> And similarly the variance <span
+class="math display">\[\mathbf{Var}[u(x,\omega)]\approx {1\over
+M-1}\sum_{j=1}^M(u_h^j(x)-\mu_{M,h})^2.\]</span></p>
+<div class="question">
+<p><strong>Question 2</strong>. How can we <strong>generate
+realisations</strong> of the random input <span
+class="math inline">\(a(x,\omega)\)</span>. (Discussed in section 2)</p>
+</div>
+<h2 data-number="1.3" id="random-variables"><span
+class="header-section-number">1.3</span> Random Variables</h2>
+<p>In UQ1, we met <span class="math inline">\(\mathbf{R}\)</span>-valued
+and <span class="math inline">\(\mathbf{R}^N\)</span>-valued random
+variables, <span class="math display">\[X:\varOmega\to \mathbf{R},\quad
+\boldsymbol{X}:\varOmega\to \mathbf{R}^N,\]</span> we will make this
+concept <strong>more general</strong>.</p>
+<div class="definition">
+<p><strong>Definition 8</strong> (Measure Space). Let <span
+class="math inline">\(\Psi\)</span> be a set with a <span
+class="math inline">\(\sigma\)</span>-algebra <span
+class="math inline">\(\mathcal G\)</span>. We call <span
+class="math inline">\((\Psi,\mathcal G)\)</span> a <em>measurable
+space</em> and each <span class="math inline">\(G\in \mathcal G\)</span>
+is a <em>measurable set</em>.</p>
+<p>Given a <em>measure</em> <span class="math inline">\(\pi\)</span> on
+<span class="math inline">\((\Psi, \mathcal G)\)</span>, we call <span
+class="math inline">\((\Psi, \mathcal G, \pi)\)</span> a <em>measure
+space</em>.</p>
+</div>
+<div class="example">
+<p><strong><em>Example</em> 9</strong>. A probability space <span
+class="math inline">\((\varOmega,\mathcal F,\mathbf{P})\)</span> is a
+measure space, with <span
+class="math display">\[\mathbf{P}(\varOmega)=1.\]</span></p>
+</div>
+<div class="definition">
+<p><strong>Definition 10</strong> (Borel sigma-algebra). The <em>Borel
+sigma-algebra</em> <span class="math inline">\(\mathcal B(D)\)</span> is
+defined to be the <strong>smallest</strong> sigma-algebra containing all
+<strong>open subsets</strong> of <span
+class="math inline">\(D\)</span>.</p>
+</div>
+<div class="example">
+<p><strong><em>Example</em> 11</strong>. Let <span
+class="math inline">\(\Psi=D\)</span>, where <span
+class="math inline">\(D\subset \mathbf{R}\)</span>. <span
+class="math inline">\((D,\mathcal B(D))\)</span> is a measurable
+space.</p>
+<p>For each <span class="math inline">\((a,b)\in \mathcal B(D)\)</span>,
+we can assign a ‘size’, using <em>Lebesgue measure</em>, <span
+class="math display">\[{Leb}(a,b)\coloneqq |b-a|.\]</span> and <span
+class="math inline">\((D,\mathcal B(D),{Leb})\)</span> is a <em>measure
+space</em>.</p>
+<p>The measure of a Borel-set can be represented as an
+<strong>integral</strong> <span
+class="math display">\[{Leb}(a,b)=\int_a^b
+1\mathrm{d}{Leb}(x)=\int_a^b1\mathrm{d}x.\]</span></p>
+</div>
+<div class="definition">
+<p><strong>Definition 12</strong> (Random Variable). Let <span
+class="math inline">\((\varOmega, \mathcal F,\mathbf{P})\)</span> be a
+probability space and let <span class="math inline">\((\Psi,\mathcal
+G)\)</span> be a measurable space. <span
+class="math inline">\(X:\varOmega\to \Psi\)</span> is a <span
+class="math inline">\(\Psi\)</span>-valued random variable, if it is
+<em><span class="math inline">\(\mathcal F\)</span>-measurable</em>.
+That is, <span class="math display">\[\label{}
+        \begin{aligned}
+            \forall G\in \mathcal G \quad X^{-1}(G)=\{\omega\in
+\varOmega|X(\omega)\in G\}\in \mathcal F.
+        \end{aligned}\]</span></p>
+</div>
+<div class="definition">
+<p><strong>Definition 13</strong> (Probability distribution). The
+<strong>probability distribution</strong> of <span
+class="math inline">\(X\)</span> is the <em>measure</em> <span
+class="math inline">\(\mathbf{P}_X\)</span> on <span
+class="math inline">\((\Psi,\mathcal G)\)</span> defined by <span
+class="math display">\[\mathbf{P}_X(G)\coloneqq
+\mathbf{P}(X^{-1}(G)),\quad \forall G\in \mathcal G,\]</span> and <span
+class="math inline">\((\Psi,\mathcal G,\mathbf{P}_X)\)</span> is also a
+<strong>probability space</strong>.</p>
+</div>
+<h3 data-number="1.3.1" id="continuous-random-variables"><span
+class="header-section-number">1.3.1</span> Continuous Random
+Variables</h3>
+<p>We will only be dealing with random variables where <span
+class="math inline">\(\Psi\)</span> is an <em>infinite set</em> like
+<span class="math inline">\(\mathbf{R}\)</span>, or a set of functions
+on a spatial domain <span class="math inline">\(D\)</span>.</p>
+<p><strong>Measurability</strong> is an important concept that allows us
+to define integration.</p>
+<p>For continuous random variables <span
+class="math inline">\(X:\varOmega\to \Psi\)</span>, <span
+class="math display">\[\label{}
+    \begin{aligned}
+        \mathbf{P}(\{\omega\in \varOmega| X(\omega)\in
+G\})=\mathbf{P}_X(G)=\int_G 1\mathrm{d}\mathbf{P}_X(x).
+    \end{aligned}\]</span> And the expectation: <span
+class="math display">\[\label{}
+    \begin{aligned}
+        \mathop{\mathrm{\mathbf{E}}}[X]\coloneqq \int_\varOmega
+X(\omega)\mathrm{d}\mathbf{P}(\omega)=\int_\Psi x\
+\mathrm{d}\mathbf{P}_X(x).
+    \end{aligned}\]</span></p>
+<h3 data-number="1.3.2"
+id="real-valued-random-variable-psimathbfr"><span
+class="header-section-number">1.3.2</span> Real-valued Random Variable
+(<span class="math inline">\(\Psi=\mathbf{R}\)</span>)</h3>
+<p>If we know the <em>probability density function</em> <span
+class="math inline">\(\rho(x)\)</span> associated with <span
+class="math inline">\(\mathbf{P}_X\)</span>, we can re-write the
+integrals w.r.t. <span class="math inline">\(\mathbf{P}_X\)</span> as
+standard integrals w.r.t. <strong>Lebesgue measure</strong>.</p>
+<p>Probability from equation <a href="#1.3" data-reference-type="eqref"
+data-reference="1.3">[1.3]</a>: <span class="math display">\[\label{}
+    \begin{aligned}
+        \mathbf{P}(\{\omega\in \varOmega|
+a&lt;X(\omega)&lt;b\})=\mathbf{P}_X(a,b)=\int_a^b 1{\color{red}
+\mathrm{d} \mathbf{P}_X(x)}=\int_a^b{\color{red} \rho (x)\mathrm{d}x}.
+    \end{aligned}\]</span></p>
+<p>Expectation from equation <a href="#1.4" data-reference-type="eqref"
+data-reference="1.4">[1.4]</a> <span class="math display">\[\label{1.6}
+    \begin{aligned}
+        \mathop{\mathrm{\mathbf{E}}}[X]\coloneqq \int_\varOmega
+X(\omega)\mathrm{d}\mathbf{P}(\omega)=\int_\mathbf{R}x\ {\color{red}
+\mathrm{d} \mathbf{P}_X(x)}=\int_\mathbf{R}x{\color{red} \rho
+(x)\mathrm{d}x}.
+    \end{aligned}\]</span></p>
+<h2 data-number="1.4" id="random-fields"><span
+class="header-section-number">1.4</span> Random Fields</h2>
+<div class="definition">
+<p><strong>Definition 14</strong> (Random Field). Let <span
+class="math inline">\((\varOmega,\mathcal F,\mathbf{P})\)</span> be a
+probability space and let <span class="math inline">\(D\subset
+\mathbf{R}^d\)</span>. A real-valued <em>random field</em> <span
+class="math inline">\(u:D\times \varOmega\to \mathbf{R}\)</span> is a
+real-valued random variable for each <span
+class="math inline">\(\boldsymbol{x}\in D\)</span>.</p>
+<p>If <span class="math inline">\(d=1\)</span> and <span
+class="math inline">\(D\in \mathbf{R}\)</span>, then we call a random
+field (RF) a <em>stochastic process</em>.</p>
+</div>
+<p>Three interpretations:</p>
+<ul>
+<li><p>A real-valued <strong>function</strong> <span
+class="math inline">\(u:D\times \varOmega\to
+\mathbf{R}\)</span>.</p></li>
+<li><p>A collection of real-valued <strong>random variables</strong> for
+each <span class="math inline">\(\boldsymbol{x} \in D\)</span> <span
+class="math display">\[\{u(\boldsymbol{x},\cdot),\ \boldsymbol{x}\in
+D\}.\]</span></p></li>
+<li><p>A collection of <strong>realisations</strong> <span
+class="math inline">\(\{u(\cdot,\omega),\omega\in
+\varOmega\}\)</span>.</p></li>
+</ul>
+<div id="fig:2" class="example">
+<p><strong><em>Example</em> 15</strong> (<span
+class="math inline">\(d=1\)</span>). <span id="example:1.15"
+label="example:1.15"></span> Let <span
+class="math inline">\(D=[0,2\pi]\)</span> and consider <span
+class="math display">\[a(x,\omega)=\cos(x)\xi_1(\omega)+\sin(x)\xi_2(\omega),\quad
+x\in D,\quad \xi_1,\xi_2\sim N(0,1)\ {iid}.\]</span></p>
+<figure>
+<embed src="figs/2.pdf" id="fig:2" style="width:50.0%" />
+<figcaption aria-hidden="true">Twenty <em>realisations</em> <span
+class="math inline">\(a(x,\omega_j)\)</span>, <span
+class="math inline">\(j=1,2,\dots,20\)</span> are plotted
+above.</figcaption>
+</figure>
+</div>
+<div class="question">
+<p><strong>Question 3</strong>. What kind of functions are the
+realisations?</p>
+</div>
+<h3 data-number="1.4.1" id="square-integrable-functions"><span
+class="header-section-number">1.4.1</span> Square-integrable
+functions</h3>
+<p>Realisations of the RF in this example are <strong>continuous
+functions</strong> of <span class="math inline">\(x\in D\)</span>. They
+are also <strong>differentiable</strong>. <em>This is not true in
+general! (Brownian motion).</em></p>
+<p>We will work with RFs with realisations which are at least
+<em>square-integrable</em>.</p>
+<div class="definition">
+<p><strong>Definition 16</strong> (<span
+class="math inline">\(L^2(D)\)</span> space). Let <span
+class="math inline">\(D\subset \mathbf{R}^d\)</span>. <span
+class="math inline">\(L^2(D)\)</span> is the set of Borel-measurable
+functions <span class="math inline">\(u:D\to \mathbf{R}\)</span> such
+that <span class="math display">\[\label{1.7}
+        \begin{aligned}
+            \|u\|_{L^2(D)}\coloneqq
+\left(\int_D|u(\boldsymbol{x})|^2\mathrm{d}\boldsymbol{x} \right)^{1/2}
+&lt;\infty.
+        \end{aligned}\]</span> This is a <em>Hilbert Space</em>, which
+is equipped with an <em>inner-product</em> <span
+class="math display">\[\label{1.8}
+    \begin{aligned}
+        \langle{u,v}\rangle\coloneqq
+\int_Du(\boldsymbol{x})v(\boldsymbol{x})\mathrm{d}\boldsymbol{x},
+    \end{aligned}\]</span> where <span
+class="math inline">\(\|u\|_{L^2(D)}=\sqrt{\langle{u,u}\rangle}\)</span>.</p>
+</div>
+<div class="example">
+<p><strong><em>Example</em> 17</strong> (Example <a href="#example:1.15"
+data-reference-type="ref"
+data-reference="example:1.15">[example:1.15]</a> revisit). Let <span
+class="math inline">\(D=[0,2\pi]\)</span> and consider <span
+class="math display">\[a(x,\omega)=\cos(x)\xi_1(\omega)+\sin(x)\xi_2(\omega),\quad
+x\in D,\quad \xi_1,\xi_2\sim N(0,1)\ {iid}.\]</span> For each <span
+class="math inline">\(x\in D\)</span>, <span
+class="math inline">\(a(x,\cdot)\)</span> is a <strong>random
+variable</strong>. For any <span class="math inline">\(x\in D\)</span>,
+<span class="math display">\[\label{1.9}
+        \begin{aligned}
+            \mathop{\mathrm{\mathbf{E}}}[a(x,\cdot)]=\cos(x)\mathop{\mathrm{\mathbf{E}}}[\xi_1]+\sin(x)\mathop{\mathrm{\mathbf{E}}}[\xi_2]=0+0=0,
+        \end{aligned}\]</span> so it <span
+class="math inline">\(a(x,\omega)\)</span> clearly <strong>mean
+zero</strong>.</p>
+</div>
+<h3 data-number="1.4.2" id="finite-second-moment"><span
+class="header-section-number">1.4.2</span> Finite Second Moment</h3>
+<div class="definition">
+<p><strong>Definition 18</strong> (<span
+class="math inline">\(L^2(\varOmega)\)</span> space). Let <span
+class="math inline">\((\varOmega,\mathcal F,\mathbf{P})\)</span> be a
+probability space. <span class="math inline">\(L^2(\varOmega)\)</span>
+is the set of <span class="math inline">\(\mathcal F\)</span>-measurable
+functions <span class="math inline">\(X:\varOmega\to \mathbf{R}\)</span>
+(i.e., real-valued random variables) such that <span
+class="math display">\[\label{1.10}
+        \begin{aligned}
+            \|X\|_{L^2(\varOmega)}\coloneqq
+\mathop{\mathrm{\mathbf{E}}}[X^2]^{1/2} &lt; \infty.
+        \end{aligned}\]</span> This is also a <em>Hilbert Space</em>,
+which is equipped with the <em>inner-product</em> <span
+class="math display">\[\langle{X,Y}\rangle\coloneqq
+\mathop{\mathrm{\mathbf{E}}}[XY].\]</span></p>
+</div>
+<p>Recall that <span class="math display">\[\label{1.12}
+    \begin{aligned}
+        \mathop{\mathrm{\mathbf{E}}}[X^2]\coloneqq \int_\varOmega
+X(\omega)^2\mathrm{d}\mathbf{P}(\omega)=\int_\mathbf{R}x^2
+\mathrm{d}\mathbf{P}_X(x) = \int_\mathbf{R}x^2 \rho(x)\mathrm{d}x.
+    \end{aligned}\]</span></p>
+<p>Random variables in <span
+class="math inline">\(L^2(\varOmega)\)</span> have <em>finite second
+moment</em>.</p>
+<h2 data-number="1.5" id="second-order-random-fields"><span
+class="header-section-number">1.5</span> Second-Order Random Fields</h2>
+<div class="definition">
+<p><strong>Definition 19</strong> (Second-Order RF). Let <span
+class="math inline">\((\varOmega,\mathcal F,\mathbf{P})\)</span> be a
+probability space and let <span class="math inline">\(D\subset
+\mathbf{R}^d\)</span>. A real-valued RF <span
+class="math inline">\(a(\boldsymbol{x},\omega)\)</span> is <em>second
+order</em> if <span class="math inline">\(a(\boldsymbol{x},\cdot)\in
+L^2(\varOmega)\quad \forall \boldsymbol{x}\in D\)</span>.</p>
+</div>
+<p>Such RFs have well-defined <strong>mean</strong> and
+<strong>covariance</strong> functions.</p>
+<p>The <em>mean</em> function <span class="math inline">\(\mu:D\to
+\mathbf{R}\)</span> is defined by <span
+class="math display">\[\label{1.13}
+    \begin{aligned}
+        \mu(\boldsymbol{x})\coloneqq
+\mathop{\mathrm{\mathbf{E}}}[a(\boldsymbol{x},\omega)]=\int_\varOmega
+a(\boldsymbol{x},\omega)\mathrm{d}\mathbf{P}(\omega).
+    \end{aligned}\]</span></p>
+<p>The <em>covariance</em> function <span
+class="math inline">\(C:D\times D \to \mathbf{R}\)</span> is defined by
+<span class="math display">\[\label{1.14}
+    \begin{aligned}
+        C(\boldsymbol{x},\boldsymbol{y})\coloneqq
+\mathop{\mathrm{Cov}}(a(\boldsymbol{x},\omega),a(\boldsymbol{y},\omega)),\quad
+\boldsymbol{x},\boldsymbol{y}\in D.
+    \end{aligned}\]</span></p>
+<p>Using the definition of covariance <span
+class="math display">\[\label{1.15}
+    \begin{aligned}
+        C(\boldsymbol{x},\boldsymbol{y})=\mathop{\mathrm{\mathbf{E}}}[(a(\boldsymbol{x},\omega)-\mu(\boldsymbol{x}))(a(\boldsymbol{y},\omega)-\mu(\boldsymbol{y}))].
+    \end{aligned}\]</span></p>
+<p>Given the covariance function <span
+class="math inline">\(C(\boldsymbol{x},\boldsymbol{y})\)</span>, the
+<em>variance</em> of a RF is <span class="math display">\[\label{1.16}
+    \begin{aligned}
+        \mathbf{Var}[a(\boldsymbol{x},\omega)]\coloneqq
+C(\boldsymbol{x},\boldsymbol{x})=\mathop{\mathrm{\mathbf{E}}}[(a(\boldsymbol{x},\omega)-\mu(\boldsymbol{x}))^2].
+    \end{aligned}\]</span></p>
+<h3 data-number="1.5.1" id="valid-covariance-functions"><span
+class="header-section-number">1.5.1</span> Valid Covariance
+functions</h3>
+<p><span> I mportant:</span> Not all functions <span
+class="math inline">\(C(\boldsymbol{x},\boldsymbol{y})\)</span> are
+valid covariance functions.</p>
+<div class="tcolorbox">
+<div id="thm:1.20" class="theorem">
+<p><strong>Theorem 20</strong> (Covariance Functions). <em>Let <span
+class="math inline">\(D\in \mathbf{R}^d\)</span> and let <span
+class="math inline">\(a(\boldsymbol{x},\omega)\)</span> be a
+second-order RF. The covariance function <span
+class="math inline">\(C:D\times D\to \mathbf{R}\)</span> is
+<em>symmetric</em>,i.e., <span
+class="math display">\[C(\boldsymbol{x},\boldsymbol{y})=C(\boldsymbol{y},\boldsymbol{x})\quad
+\boldsymbol{x},\boldsymbol{y}\in D\]</span> and <em>non-negative
+definite</em>. That is, for any <span class="math inline">\(N\in
+\mathbf{N}\)</span> and any constants <span
+class="math inline">\(\alpha_1,\dots,\alpha_N\in \mathbf{R}\)</span>,
+and any points <span
+class="math inline">\(\boldsymbol{x}_1,\dots,\boldsymbol{x}_N\in
+D\)</span>, <span
+class="math display">\[\sum_{i=1}^N\sum_{j=1}^N\alpha_iC(\boldsymbol{x}_i,\boldsymbol{x}_j)\alpha_j\geq
+0.\]</span></em></p>
+</div>
+</div>
+<div class="example">
+<p><strong><em>Example</em> 21</strong> (Covariance Functions). Often,
+<span class="math inline">\(C(\boldsymbol{x},\boldsymbol{y})\)</span> is
+a function of the <em>distance</em> between a pair of points <span
+class="math inline">\(\boldsymbol{x},\boldsymbol{y}\in D\)</span>.</p>
+<p>Some examples for one-dimensional domains <span
+class="math inline">\(D\subset \mathbf{R}\)</span>:</p>
+<ul>
+<li><p>The <em>exponential</em> covariance function is <span
+class="math display">\[C(x,y)=\sigma^2 \exp\left({-|x-y|\over
+\ell}\right)\]</span> Here, <span
+class="math inline">\(C(x,x)=\sigma^2\)</span> is the (constant)
+variance and <span class="math inline">\(\ell\)</span> is the
+<strong>correlation length</strong>.</p></li>
+<li><p>The <em>Gaussian</em> covariance function (<span
+class="math inline">\(d=1\)</span>) is <span
+class="math display">\[C(x,y)=\sigma^2 \exp\left(-|x-y|^2 \over
+\ell\right).\]</span></p></li>
+</ul>
+</div>
+<h3 data-number="1.5.2" id="smoothness"><span
+class="header-section-number">1.5.2</span> Smoothness</h3>
+<p>The smoothness of the <strong>realisations</strong> of a RF depends
+on the smoothness of the <strong>covariance function</strong>.</p>
+<figure>
+<img src="figs/3.PNG" id="fig:3" style="width:75.0%"
+alt="A realisation of mean zero RF with (Left) the exponential covariance function and (Right) the Gaussian covariance function with \sigma=1,\ \ell=0.1." />
+<figcaption aria-hidden="true">A <strong>realisation</strong> of mean
+zero RF with (Left) the <em>exponential</em> covariance function and
+(Right) the <em>Gaussian</em> covariance function with <span
+class="math inline">\(\sigma=1,\ \ell=0.1\)</span>.</figcaption>
+</figure>
+<h2 data-number="1.6" id="gaussian-random-fields"><span
+class="header-section-number">1.6</span> Gaussian Random Fields</h2>
+<p>To specify a RF, it is not enough to specify the domain <span
+class="math inline">\(D\)</span>, the mean function <span
+class="math inline">\(\mu(\boldsymbol{x})\)</span> and covariance
+function <span
+class="math inline">\(C(\boldsymbol{x},\boldsymbol{y})\)</span>. We also
+have to specify the <em>probability distribution</em>.</p>
+<div id="def:1.22" class="definition">
+<p><strong>Definition 22</strong> (Gaussian RF). Let <span
+class="math inline">\((\varOmega,\mathcal F,\mathbf{P})\)</span> be a
+probability space and let <span class="math inline">\(D\subset
+\mathbf{R}^d\)</span>. A real-vallued RF <span
+class="math inline">\(a(\boldsymbol{x},\omega)\)</span> with mean <span
+class="math inline">\(\mu(\boldsymbol{x})\)</span> and covariance <span
+class="math inline">\(C(\boldsymbol{x},\boldsymbol{y})\)</span> is
+<em>Gaussian</em> if <span class="math inline">\(\forall
+\boldsymbol{x}_1,\dots, \boldsymbol{x}_N\in D\)</span> (for any <span
+class="math inline">\(N\in \mathbf{N}\)</span>), <span
+class="math display">\[\boldsymbol{a}(\omega)=[a(\boldsymbol{x}_1,\omega),\dots,a(\boldsymbol{x}_N,\omega)]^\top\sim
+N(\boldsymbol{\mu},C_N)\]</span> (i.e., <strong>multivariate
+Normal</strong>) with <em>mean vector</em> <span
+class="math display">\[\boldsymbol{\mu }\in \mathbf{R}^N, \quad
+[\boldsymbol{\mu}]_i=\mu(\boldsymbol{x}_i),\quad i=1,\dots,N,\]</span>
+and <em>covariance matrix</em> <span class="math display">\[C_N\in
+\mathbf{R}^{N\times N}, \quad
+[C_N]_{i,j}=C(\boldsymbol{x}_i,\boldsymbol{x}_j),\quad
+i,j=1,\dots,N.\]</span></p>
+</div>
+<div class="example">
+<p><strong><em>Example</em> 23</strong> (Brownian motion). Some Gaussian
+RFs have special name.</p>
+<p>Let <span class="math inline">\(\mathbf{T}\subset
+\mathbf{R}^+\)</span>. <em>Brownian Motion</em> <span
+class="math inline">\(W:\mathbf{T}\times \varOmega\to
+\mathbf{R}\)</span> is a Gaussian stochastic process <span
+class="math inline">\(W(t,\omega)\)</span> with continuous realisations
+with <span class="math display">\[\mu(t)=0,\quad
+C(s,t)=\min\{s,t\}.\]</span></p>
+</div>
+<div class="example">
+<p><strong><em>Example</em> 24</strong> (Brownian Bridge). The
+<em>Brownian Bridge</em> is a version of Brownian motion on a bounded
+domain that also satisfies <strong>boundary conditions</strong>.</p>
+<p>Let <span class="math inline">\(\mathbf{T}=[0,1]\)</span>. The
+<strong>Brownian Bridge</strong> <span
+class="math inline">\(B:\mathbf{T}\times \varOmega\to
+\mathbf{R}\)</span> is a Gaussian stochastic process <span
+class="math inline">\(B(t,\omega)\)</span> satisfying <span
+class="math display">\[B(0,\omega)=0,\quad B(1,\omega)=0\]</span> almost
+surely, with <span class="math display">\[\mu(t)=0,\quad
+C(s,t)=\min\{s,t\}-st.\]</span></p>
+</div>
+<h2 data-number="1.7"
+id="intergal-operators-and-covariance-functions"><span
+class="header-section-number">1.7</span> Intergal Operators and
+Covariance Functions</h2>
+<h3 data-number="1.7.1"
+id="square-integrable-functions-on-dtimes-d"><span
+class="header-section-number">1.7.1</span> Square-integrable functions
+on <span class="math inline">\(D\times D\)</span></h3>
+<p>We previously defined the space <span
+class="math inline">\(L^2(D)\)</span> of <em>square-integrable</em>
+functions <span class="math inline">\(u:D\to \mathbf{R}\)</span>.</p>
+<div class="definition">
+<p><strong>Definition 25</strong> (<span
+class="math inline">\(L^2(D\times D)\)</span> space). Let <span
+class="math inline">\(D\in \mathbf{R}^d\)</span>. A function <span
+class="math inline">\(G:D\times D\to \mathbf{R}\)</span> belongs to
+<span class="math inline">\(L^2(D\times D)\)</span> if <span
+class="math display">\[\label{1.17}
+         \begin{aligned}
+              \|G\|_{L^2(D\times D)}\coloneqq \left(\int_D\int_D
+G(\boldsymbol{x},\boldsymbol{y})^2\mathrm{d}\boldsymbol{x}\mathrm{d}\boldsymbol{y}\right)^{1/2}&lt;\infty.
+         \end{aligned}\]</span></p>
+</div>
+<div id="def:1.26" class="definition">
+<p><strong>Definition 26</strong> (Integral Operator with Kernel <span
+class="math inline">\(G\)</span>). Let <span
+class="math inline">\(D\subset \mathbf{R}^d\)</span>. Given a ‘kernel’
+<span class="math inline">\(G\in L^2(D\times D)\)</span>, the
+<em>integral operator</em> <span class="math inline">\(\mathcal
+L:L^2(D)\to L^2(D)\)</span> associated with <span
+class="math inline">\(G\)</span> is defined by <span
+class="math display">\[\label{1.18}
+         \begin{aligned}
+              \mathcal Lf(\boldsymbol{x})\coloneqq \int_D
+G(\boldsymbol{x},\boldsymbol{y})f(\boldsymbol{y})\mathrm{d}\boldsymbol{y},\quad
+f\in L^2(D).
+         \end{aligned}\]</span> Such operators are: <em>bounded,
+linear</em> and <em>compact</em> on <span
+class="math inline">\(L^2(D)\)</span>.</p>
+</div>
+<p>Let <span class="math inline">\(H=L^2(D)\)</span>.</p>
+<div class="definition">
+<p><strong>Definition 27</strong> (Linear operator). We say <span
+class="math inline">\(\mathcal L:H\to H\)</span> is <em>linear</em> on
+<span class="math inline">\(H\)</span> if</p>
+<ul>
+<li><p><span class="math inline">\(\mathcal L(f+g)=\mathcal
+L(f)+\mathcal L(g),\quad \forall f,g\in H\)</span></p></li>
+<li><p><span class="math inline">\(\mathcal L(\alpha f)=\alpha \mathcal
+L(f),\quad \forall \alpha\in \mathbf{R}\)</span> and <span
+class="math inline">\(\forall f\in H\)</span>.</p></li>
+</ul>
+</div>
+<div class="definition">
+<p><strong>Definition 28</strong> (Bounded operator). We say <span
+class="math inline">\(\mathcal L:H\to H\)</span> is <em>bounded</em> on
+<span class="math inline">\(H\)</span> if there exist a constant <span
+class="math inline">\(K&gt;0\)</span> such that <span
+class="math display">\[\|\mathcal L f\|_H\leq K\|f\|_H,\quad \forall
+f\in H.\]</span></p>
+</div>
+<div class="tcolorbox">
+<div class="theorem">
+<p><strong>Theorem 29</strong> (Symmetric operator). <em>If the kernel
+<span class="math inline">\(G\)</span> is <span> s ymmetric</span> <span
+class="math display">\[G(\boldsymbol{x},\boldsymbol{y})=G(\boldsymbol{y},\boldsymbol{x}),\quad
+\boldsymbol{x},\boldsymbol{y}\in D,\]</span> then the operator <span
+class="math inline">\(\mathcal L\)</span> in definition <a
+href="#def:1.26" data-reference-type="ref"
+data-reference="def:1.26">26</a> is also <span> s ymmetric</span>, i.e.,
+<span class="math display">\[\langle{\mathcal
+Lf,g}\rangle=\langle{f,\mathcal Lg}\rangle,\quad \forall f,g\in
+L^2(D),\]</span> where <span
+class="math inline">\(\langle{\cdot,\cdot}\rangle\)</span> is the
+inner-product on <span class="math inline">\(L^2(D)\)</span>.</em></p>
+</div>
+</div>
+<div class="recall">
+<p><strong>Recall 1</strong>. Covariance functions <span
+class="math inline">\(C(\boldsymbol{x},\boldsymbol{y})\)</span> are
+always <span> s ymmetric</span>. Given a covariance function <span
+class="math inline">\(C(\boldsymbol{x},\boldsymbol{y})\)</span> that
+belongs to <span class="math inline">\(L^2(D\times D)\)</span>, we can
+use definition <a href="#def:1.26" data-reference-type="ref"
+data-reference="def:1.26">26</a> to construct an <em>integral
+operator</em> <span class="math display">\[\mathcal C:L^2(D)\to
+L^2(D)\]</span> through the relation <span
+class="math display">\[\mathcal Cf(\boldsymbol{x})\coloneqq \int_D
+C(\boldsymbol{x},\boldsymbol{y})f(\boldsymbol{y})\mathrm{d}\boldsymbol{y},
+\quad f\in L^2(D),\]</span> this is <em>linear, bounded, compact</em>
+and <span> <em>symmetric</em></span>.</p>
+</div>
+<h3 data-number="1.7.2" id="eigenvalues-and-eigenfunctions"><span
+class="header-section-number">1.7.2</span> Eigenvalues <span
+class="math inline">\(\And\)</span> Eigenfunctions</h3>
+<p>There are infinitely many <em>eigenvalues</em> <span
+class="math inline">\(\lambda\)</span> and <em>eigenfunctions</em> <span
+class="math inline">\(\phi(\neq 0)\)</span> satisfying <span
+class="math display">\[\mathcal C\phi(\boldsymbol{x})=\lambda
+\phi(\boldsymbol{x}).\]</span> Using the definition of <span
+class="math inline">\(\mathcal C\)</span>, we have <span
+class="math display">\[\int_D
+C(\boldsymbol{x},\boldsymbol{y})\phi(\boldsymbol{y})\mathrm{d}\boldsymbol{y}=\lambda
+\phi(\boldsymbol{x}).\]</span></p>
+<div id="ex:1.30" class="example">
+<p><strong><em>Example</em> 30</strong> (Brownian Bridge). Let <span
+class="math inline">\(\mathbf{T}=[0,1]\)</span>. Recall that the
+<em>Brownian Bridge</em> <span class="math inline">\(B:\mathbf{T}\times
+\varOmega\to \mathbf{R}\)</span> is Gaussian stochastic process with
+covariance function <span
+class="math display">\[C(s,t)=\min\{s,t\}-st.\]</span> The associated
+integral operator is defined via <span class="math display">\[\mathcal
+Cf(t)\coloneqq \int_0^1 C(s,t)f(s)\mathrm{d}s= \int _0^1
+(\min\{s,t\}-st)f(s)\mathrm{d}s,\quad f\in L^2(\mathbf{T}).\]</span></p>
+<p>The associated eigenvalues and eigenfunctions satisfies <span
+class="math inline">\(\mathcal C\phi(t)=\lambda\phi(t)\)</span>, or
+<span class="math display">\[\label{1.19}
+             \begin{aligned}
+                  \int_0^1(\min\{s,t\}-st)\phi(s)=\lambda\phi(t).
+             \end{aligned}\]</span> Notice that <span
+class="math display">\[\label{1.20}
+     \begin{aligned}
+        \mathcal Cf(t)= \int _0^1
+(\min\{s,t\}-st)f(s)\mathrm{d}s&amp;=\int_0^t(s-st)f(s)\mathrm{d}s +
+\int_t^1(t-st)f(s)\mathrm{d}s\\
+        &amp;=(1-t)\int_0^tsf(s)\mathrm{d}s+t\int_t^1
+(1-s)f(s)\mathrm{d}s.
+     \end{aligned}\]</span> Thus the eigenfunction <span
+class="math inline">\(\phi\)</span> and eigenvalues <span
+class="math inline">\(\lambda\)</span> can be determined by solving
+<span class="math display">\[(1-t)\int_0^ts\phi(s)\mathrm{d}s+t\int_t^1
+(1-s)\phi(s)\mathrm{d}s=\lambda \phi(t)\]</span> Notice that <span
+class="math inline">\(\phi(0)=0,\phi(1)=0\)</span>. Differentiate w.r.t.
+<span class="math inline">\(t\)</span>, we have <span
+class="math display">\[\label{1.21}
+     \begin{aligned}
+          t\phi(t)-t^2\phi(t)-\int_0^ts\phi(s)\mathrm{d}s +
+\int_t^1(1-s)&amp;\phi(s)\mathrm{d}s-t(1-t)\phi(t)=\lambda
+\phi&#39;(t)\\
+          -\int_0^t s\phi(s)\mathrm{d}s + \int_t^1
+(1&amp;-s)\phi(s)\mathrm{d}s=\lambda \phi&#39;(t)\\
+          -t\phi(t)+(-(1-t)&amp;\phi(t))=\lambda\phi&#39;&#39;(t)\\
+          \lambda \phi&#39;&#39;(t)+\phi(t)=0&amp;\\
+          \phi(t)+{1\over \lambda}\phi(t)=0 &amp;\Leftrightarrow
+\underbrace{\phi&#39;&#39;(t)+\nu \phi(t)=0}_{\text{Second Order ODE
+with $\nu={1/\lambda}$}}
+     \end{aligned}\]</span> We then have the general solution: <span
+class="math display">\[\phi(t)=A\cos(\omega t)+B\sin(\omega t),\quad
+\phi(0)=\phi(1)=0.\]</span> This system will gives <span
+class="math display">\[\phi_i(t)=B_i\sin(i\pi t),\quad \lambda_i={1\over
+\omega^2}={1\over i^2\pi^2}, \quad i\in \mathbf{Z}^+.\]</span> We could
+normalize this function by acquiring <span
+class="math inline">\(\|\phi_i\|_{L^2(0,1)}=1\)</span>, and we have
+<span class="math inline">\(B_i=\sqrt{2}\)</span>.</p>
+</div>
+<div class="tcolorbox">
+<div class="theorem">
+<p><strong>Theorem 31</strong> (Hilbert-Schmidt Spectral Theorem).
+<em>Let <span class="math inline">\(H=L^2(D)\)</span>, and <span
+class="math inline">\(\mathcal L:H\to H\)</span> be a bounded linear
+operator that is symmetric and compact. Denote the eigenvalue of <span
+class="math inline">\(\mathcal L\)</span> by <span
+class="math inline">\(\lambda_i\)</span>, ordered such that <span
+class="math inline">\(|\lambda_i|\leq |\lambda_{i+1}|\)</span>, and
+denoted the corresponding eigenfunctions be <span
+class="math inline">\(\phi_i\in L^2(D)\)</span>. Then</em></p>
+<ul>
+<li><p><em>The eigenvalues <span
+class="math inline">\(\lambda_i\)</span> are real and <span
+class="math inline">\(\lambda_i\to 0\)</span> as <span
+class="math inline">\(i\to \infty\)</span>.</em></p></li>
+<li><p><em>The eigenfunctions <span
+class="math inline">\(\phi_j\)</span> can be chosen to form an
+<em>orthonormal</em> basis for the range of <span
+class="math inline">\(\mathcal L\)</span>(<span
+class="math inline">\(L^2(D)\)</span>).</em></p></li>
+<li><p><em>For any <span class="math inline">\(u\in L^2(D)\)</span>,
+<span class="math display">\[\mathcal Lu =\sum_{i=1}^\infty \lambda_i
+\langle{u,\phi_i}\rangle_{L^2(D)}\phi_i.\]</span></em></p></li>
+</ul>
+</div>
+</div>
+<h2 data-number="1.8" id="karhuren-loève-expansion"><span
+class="header-section-number">1.8</span> Karhuren-Loève expansion</h2>
+<div class="definition">
+<p><strong>Definition 32</strong> (<span
+class="math inline">\(L^2(\varOmega,L^2(D))\)</span> space). Let <span
+class="math inline">\((\varOmega,\mathcal F,\mathbf{P})\)</span> be a
+probability space, and let <span class="math inline">\(D\in
+\mathbf{R}^d\)</span>. <span
+class="math inline">\(L^2(\varOmega,L^2(D))\)</span> is the space of
+<span class="math inline">\(L^2(D)\)</span>-valued random variables
+<span class="math inline">\(a:\varOmega\to L^2(D)\)</span> satisfying
+<span class="math display">\[\|a\|_{L^2(\varOmega,L^2(D))}\coloneqq
+\mathop{\mathrm{\mathbf{E}}}[\|a(\boldsymbol{x},\omega)\|_{L^2(D)}^2]^{1/2}\leq
+\infty.\]</span></p>
+</div>
+<p>We can interpret such functions as RF: If <span
+class="math inline">\(a(\boldsymbol{x},\omega)\in
+L^2(\varOmega,L^2(D))\)</span>.</p>
+<ul>
+<li><p>For each <span class="math inline">\(\omega\)</span>, we have a
+realisation <span class="math inline">\(a(\cdot,\omega)\in
+L^2(D)\)</span>.</p></li>
+<li><p>For each <span class="math inline">\(\boldsymbol{x}\)</span>, we
+have a random variable <span
+class="math inline">\(a(\boldsymbol{x},\cdot)\in
+L^2(\varOmega)\)</span>.</p></li>
+</ul>
+<h3 data-number="1.8.1" id="series-expansion"><span
+class="header-section-number">1.8.1</span> Series Expansion</h3>
+<p>Suppose <span class="math inline">\(a(\boldsymbol{x},\omega)\in
+L^2(\varOmega,L^2(D))\)</span>. If we know a <em>basis</em> <span
+class="math inline">\(\{\phi_i(\boldsymbol{x}),i=1,2,\dots,\}\)</span>
+for <span class="math inline">\(L^2(D)\)</span>, then any
+<em>realisation</em> of <span
+class="math inline">\(a(\boldsymbol{x},\omega)\)</span> can be
+represented as a linear combination of those functions <span
+class="math inline">\(a(\boldsymbol{x},\omega)=\sum_{i=1}^\infty
+a_i(\omega)\phi_i(\boldsymbol{x})\)</span>, where the coefficients are
+random variables. The KL expansion uses the eigenfunctions <span
+class="math inline">\(\phi_i\)</span> of the integral operator
+associated with the covariance function as the chosen basis.</p>
+<div class="tcolorbox">
+<div class="theorem">
+<p><strong>Theorem 33</strong> (Karhuren-Loève expansion). <em>Suppose
+<span class="math inline">\(a(\boldsymbol{x},\omega)\in
+L^2(\varOmega,L^2(D))\)</span>. Then <span
+class="math display">\[\label{eq:KLE}
+        \begin{aligned}
+            a(\boldsymbol{x},\omega)=\underbrace{\mu(\boldsymbol{x})}_{\text{Not
+random}}+\sum_{i=1}^\infty
+\sqrt{\lambda_i}\underbrace{\xi_i(\omega)}_{\text{Random
+variables}}\phi_i(\boldsymbol{x}).
+        \end{aligned}\]</span></em></p>
+<ul>
+<li><p><em><span class="math inline">\(\mu(\boldsymbol{x})\)</span> is
+the mean function.</em></p></li>
+<li><p><em><span
+class="math inline">\(\{\lambda_i,\phi_i(\boldsymbol{x})\}\)</span> are
+the eigenvalues and normalized eigenfunctions of the integal operator
+<span class="math inline">\(\mathcal C\)</span> associated with the
+covariance function where <span class="math inline">\(\lambda_1\geq
+\lambda_2\geq \cdots\geq 0\)</span>.</em></p></li>
+<li><p><em>The random variables are <span
+class="math display">\[\xi(\omega)\coloneqq {1\over
+\sqrt{\lambda_i}}\langle{a(\boldsymbol{x},\omega)-\mu(\boldsymbol{x}),\phi_i(\boldsymbol{x})}\rangle,\]</span>
+and they have mean zero, variance one, and are
+<em>uncorrelated</em>.</em></p></li>
+<li><p><em>The series converges in the <span
+class="math inline">\(L^2(\varOmega,L^2(D))\)</span>
+sense.</em></p></li>
+</ul>
+</div>
+</div>
+<div class="remark">
+<p><strong>Remark 34</strong>. The distribution of the random variables
+<span class="math inline">\(\xi_i\)</span> appearing in KL expansion
+depends on the distribution of the RF <span
+class="math inline">\(a(\boldsymbol{x},\omega)\)</span>.</p>
+<ul>
+<li><p>If <span class="math inline">\(a(\boldsymbol{x},\omega)\)</span>
+is a <em>Gaussian RF</em>, then the <span
+class="math inline">\(\xi_i\)</span> are also Gaussian.</p></li>
+<li><p>Uncorrelated Gaussian random variables are independent.</p></li>
+</ul>
+</div>
+<h3 data-number="1.8.2" id="convergence"><span
+class="header-section-number">1.8.2</span> Convergence</h3>
+<p>Note that the function in <span class="math inline">\(L^2(D)\)</span>
+does not need to be continuous. When we write <span
+class="math inline">\(a(\boldsymbol{x},\omega)=\mu(\boldsymbol{x})+\sum_{i=1}^\infty
+\sqrt{\lambda_i}\xi_i(\omega)\phi_i(\boldsymbol{x})\)</span>, this does
+not mean that the series converges to <span
+class="math inline">\(a(\boldsymbol{x} ,\omega)\)</span> for all <span
+class="math inline">\(\boldsymbol{x}\in D\)</span>. But we could have
+converges in ‘the <span
+class="math inline">\(L^2(\varOmega,L^2(D))\)</span> sense’, which means
+that if we define <span
+class="math display">\[a_J(\boldsymbol{x},\omega)\coloneqq
+\mu(\boldsymbol{x})+\sum_{i=1}^J\sqrt{\lambda_i}\xi_i(\omega)\phi_i(\boldsymbol{x}),\]</span>
+then <span
+class="math display">\[\|a(\boldsymbol{x},\omega)-a_J(\boldsymbol{x},\omega)\|_{L^2(\varOmega,L^2(D))}\to
+0 \quad \text{as}\quad J\to \infty.\]</span></p>
+<h2 data-number="1.9" id="truncated-kl-expansion"><span
+class="header-section-number">1.9</span> Truncated KL expansion</h2>
+<p>What we defined previously <span
+class="math display">\[a_J(\boldsymbol{x},\omega)\coloneqq
+\mu(\boldsymbol{x})+\sum_{i=1}^J\sqrt{\lambda_i}\xi_i(\omega)\phi_i(\boldsymbol{x}),\]</span>
+is the <em>truncated expansion</em> which is often used as an
+approximation to do numerical approximations.</p>
+<div id="fig:4" class="example">
+<p><strong><em>Example</em> 35</strong> (Browinan Bridge). Let <span
+class="math inline">\(\mathbf{T}=[0,1]\)</span>, recall that the Browian
+Bridge <span class="math inline">\(B:\mathbf{T}\times \varOmega\to
+\mathbf{R}\)</span> is a Gaussian RF (stochastic process) with <span
+class="math inline">\(\mu(t)=0,\ C(s,t)=\min\{s,t\}-st\)</span>. The
+eigenvalues and <em>normalised</em> eigenfunctions of the integral
+operator are <span class="math display">\[\lambda_i={1\over
+i^2\pi^2},\quad \phi_i(t)=\sqrt{2}\sin(i\pi t),\quad
+i=1,2,\dots.\]</span> Using the definition of KL expansion: <span
+class="math display">\[B(t,\omega)=\sum_{i=1}^\infty {\sqrt{2}\over
+i\pi}\xi_i(\omega)\sin(i\pi t),\quad \xi_i\sim N(0,1) iid.\]</span> we
+could define the truncated KL expansion for <span
+class="math inline">\(B(t,\omega)\)</span>, <span
+class="math display">\[B_J(t,\omega)=\sum_{i=1}^J {\sqrt{2}\over
+i\pi}\xi_i(\omega)\sin(i\pi t),\quad \xi_i\sim N(0,1) iid.\]</span> From
+figure <a href="#fig:4" data-reference-type="ref"
+data-reference="fig:4">35</a>, we could see the series is
+converging.</p>
+<figure>
+<img src="figs/4.PNG" id="fig:4" style="width:85.0%"
+alt="One realisation B_{J}\left(t, \omega^{*}\right) of the truncated KL expansion of the standard Brownian bridge B(t, \omega) defined in Example 30 for J=5,50,100,500 (left to right, top to bottom)." />
+<figcaption aria-hidden="true">One realisation <span
+class="math inline">\(B_{J}\left(t, \omega^{*}\right)\)</span> of the
+truncated KL expansion of the standard Brownian bridge <span
+class="math inline">\(B(t, \omega)\)</span> defined in Example <a
+href="#ex:1.30" data-reference-type="ref"
+data-reference="ex:1.30">30</a> for <span
+class="math inline">\(J=5,50,100,500\)</span> (left to right, top to
+bottom).</figcaption>
+</figure>
+</div>
+<h3 data-number="1.9.1" id="error-in-truncated-kl-expansion"><span
+class="header-section-number">1.9.1</span> Error in Truncated KL
+expansion</h3>
+<div class="tcolorbox">
+<div class="theorem">
+<p><strong>Theorem 36</strong>. <em>If <span
+class="math inline">\(a(\boldsymbol{x},\omega)\in
+L^2(\varOmega,L^2(D))\)</span>, and <span
+class="math inline">\(a_J(\boldsymbol{x},\omega)\)</span> is the
+truncated approximation to <span
+class="math inline">\(a(\boldsymbol{x},\omega)\)</span>. Then <span
+class="math display">\[\mathop{\mathrm{\mathbf{E}}}[\|a(\boldsymbol{x},\omega)-a_J(\boldsymbol{x},\omega)\|^2_{L^2(D)}]=\sum_{i=J+1}^\infty
+\lambda_i\]</span></em></p>
+</div>
+<div class="theorem">
+<p><strong>Theorem 37</strong> (Mercer’s Theorem). <em>Let <span
+class="math inline">\(a(\boldsymbol{x},\omega)\in
+L^2(\varOmega,L^2(D))\)</span> be a second-order RF with KL expansion:
+<span
+class="math display">\[a(\boldsymbol{x},\omega)=\mu(\boldsymbol{x})+\sum_{i=1}^\infty
+\sqrt{\lambda_i}\xi_i(\omega)\phi_i(\boldsymbol{x}).\]</span> If <span
+class="math inline">\(D\subset \mathbf{R}^d\)</span> is bounded and
+closed and if <span
+class="math inline">\(C(\boldsymbol{x},\boldsymbol{y})\)</span> is
+continuous, then</em></p>
+<ul>
+<li><p><em>The eigenfunctions <span
+class="math inline">\(\phi_i(\boldsymbol{x})\)</span> are
+continuous.</em></p></li>
+<li><p><em>The covariance function can be expressed as <span
+class="math display">\[C(\boldsymbol{x},\boldsymbol{y})=\sum_{i=1}^\infty
+\lambda_i\phi_i(\boldsymbol{x})\phi_j(\boldsymbol{y})\]</span> where the
+series converges <em>uniformly</em>. That is : <span
+class="math display">\[\|C-\widehat C\|_\infty =
+\sup_{\boldsymbol{x},\boldsymbol{y} \in
+D}|C(\boldsymbol{x},\boldsymbol{y})-\widehat
+C(\boldsymbol{x},\boldsymbol{y})|\to 0,\quad \text{as }\  J\to
+\infty,\]</span> where <span class="math inline">\(\widehat
+C(\boldsymbol{x},\boldsymbol{y})\)</span> is the truncated convariance
+function approximation.</em></p></li>
+</ul>
+</div>
+</div>
+<h3 data-number="1.9.2" id="error-in-variance"><span
+class="header-section-number">1.9.2</span> Error in Variance</h3>
+<p>It can be shown that <span class="math inline">\(\widehat
+C(\boldsymbol{x},\boldsymbol{y})\)</span> is covariance function of the
+truncated RF <span
+class="math display">\[a_J(\boldsymbol{x},\omega)=\mu(\boldsymbol{x})+\sum_{i=1}^J
+\sqrt{\lambda_i}\xi_i(\omega)\phi_i(\boldsymbol{x}).\]</span> Using this
+and the Mercer’s theorem, gives for any <span
+class="math inline">\(\boldsymbol{x}\in D\)</span>, <span
+class="math display">\[\label{1.23}
+    \begin{aligned}
+        \mathbf{Var}[a(\boldsymbol{x},\omega)]=C(\boldsymbol{x},\boldsymbol{x})=\sum_{i=1}^\infty
+\lambda_i\phi_i(\boldsymbol{x})^2\\
+        \mathbf{Var}[a_J(\boldsymbol{x},\omega)]=\widehat
+C(\boldsymbol{x},\boldsymbol{x})=\sum_{i=1}^J \lambda_i
+\phi_i(\boldsymbol{x})^2
+    \end{aligned}\]</span> Hence <span
+class="math display">\[\mathbf{Var}[a(\boldsymbol{x},\omega)]-\mathbf{Var}[a_J(\boldsymbol{x},\omega)]=\sum_{i=J+1}^\infty
+\lambda_i \phi_i(\boldsymbol{x})^2 \geq 0 \to
+\mathbf{Var}[a(\boldsymbol{x},\omega)]\geq
+\mathbf{Var}[a_J(\boldsymbol{x},\omega)].\]</span> We always
+<em>underestimate</em> the variance.</p>
+<h3 data-number="1.9.3" id="a-practical-error-estimator"><span
+class="header-section-number">1.9.3</span> A Practical Error
+Estimator</h3>
+<p>We could define <span class="math display">\[\label{1.24}
+    \begin{aligned}
+        E_J\coloneqq {\int_D
+\mathbf{Var}[a(\boldsymbol{x},\omega)-a_J(\boldsymbol{x},\omega)]\mathrm{d}\boldsymbol{x}\over
+\int _D \mathbf{Var}[a(\boldsymbol{x},\omega)]\mathrm{d}\boldsymbol{x} }
+    \end{aligned}\]</span> If the RF has constant variance <span
+class="math inline">\(\mathbf{Var}[a(\boldsymbol{x},\omega)]=\sigma^2\)</span>,
+then we have <span class="math display">\[E_J\coloneqq {\sigma^2 |D| -
+\sum_{i=1}^J\lambda_i\over \sigma^2 |D|,}\]</span> which is computable.
+If we know the eigenvalues, we can find <span
+class="math inline">\(J\)</span> such that <span
+class="math inline">\(E_J\leq \texttt{tol}\)</span>.</p>
+<h1 data-number="2" id="numerical-methods-for-generating-rfs"><span
+class="header-section-number">2</span> Numerical Methods for Generating
+RFs</h1>
+<div class="recall">
+<p><strong>Recall 2</strong>. The KL expansion of a random field <span
+class="math inline">\(a:D\times \varOmega\to \mathbf{R}\)</span> is
+<span
+class="math display">\[a(\boldsymbol{x},\omega)=\mu(\boldsymbol{x})+\sum_{i=1}^\infty
+\sqrt{\lambda_i}\xi_i(\omega)\phi_i(\boldsymbol{x})\]</span> this is a
+function of <span class="math inline">\(\boldsymbol{x}\in
+D\)</span>.</p>
+</div>
+<p><span><strong>Key Point.</strong></span> When solving ODEs/PDEs with
+RFs inputs numerically, we often only need access to samples at a finite
+set of grid points <span
+class="math inline">\(x_1,x_2,\dots,x_N\)</span>. (see example <a
+href="#ex:2.1" data-reference-type="ref"
+data-reference="ex:2.1">38</a>)</p>
+<div id="ex:2.1" class="example">
+<p><strong><em>Example</em> 38</strong>. <span></span> Let <span
+class="math inline">\(D=(0,1)\)</span>, find <span
+class="math inline">\(u:\overline D\to \mathbf{R}\)</span> such that
+<span class="math display">\[-{\mathrm{d}\over \mathrm{d}x}(a(x)
+{\mathrm{d}u(x)\over \mathrm{d}x} )=1\quad x\in D.\]</span> with <span
+class="math inline">\(u(0)=u(1)=0\)</span>. We could approximate the
+solution using a <em>finite difference method</em>.</p>
+<ul>
+<li><p>Divide the interval <span class="math inline">\([0, 1]\)</span>
+into <span class="math inline">\(N\)</span> subintervals (or elements)
+of width <span class="math inline">\(h = 1/N\)</span> and label the
+vertices of these elements as <span class="math inline">\(x_0,
+x_1,...,x_N\)</span>. Then we have <span
+class="math display">\[-\frac{d}{d x}(a\left(x_{i}\right) \frac{d
+u\left(x_{i}\right)}{d x})=1, \quad i=1, \ldots, N-1
+                \label{eq:2.1}\]</span> with <span
+class="math inline">\(u(x_0)=u(x_N)=0\)</span>.</p></li>
+<li><p>Using a centered finite difference scheme: <span
+class="math display">\[{\mathrm{d}u\over \mathrm{d}x}(x_i)\approx {u(x_i
++ {h\over 2})-u(x_i-{h\over 2})\over
+h}={u(x_{i+{1/2}})-u(x_{i-{1/2}})\over h}\]</span> where <span
+class="math inline">\(x_{i+1 / 2}\)</span> is the midpoint of <span
+class="math inline">\(\left[x_{i}, x_{i+1}\right]\)</span> and similarly
+for <span class="math inline">\(x_{i-1 / 2}\)</span>. Approximating the
+derivatives in <a href="#eq:2.1" data-reference-type="eqref"
+data-reference="eq:2.1">[eq:2.1]</a> in this way and replacing <span
+class="math inline">\(u\left(x_{i}\right)\)</span> by <span
+class="math inline">\(U_{i}\)</span>, where <span
+class="math inline">\(U_{i}\)</span> denotes the resulting approximation
+to <span class="math inline">\(u\left(x_{i}\right)\)</span> gives a
+linear system of <span class="math inline">\(N-1\)</span> equations
+<span class="math display">\[-\left(\frac{a\left(x_{i-1 /
+2}\right)}{h^{2}}\right) U_{i-1}+\left(\frac{a\left(x_{i-1 /
+2}\right)+a\left(x_{i+1 / 2}\right)}{h^{2}}\right)
+U_{i}-\left(\frac{a\left(x_{i+1 / 2}\right)}{h^{2}}\right)
+U_{i+1}=1\]</span> for <span class="math inline">\(i=1, \ldots,
+N-1\)</span>, together with <span class="math inline">\(U_{0}=0\)</span>
+and <span class="math inline">\(U_{N}=0\)</span>. If we consider a
+stochastic model where <span class="math inline">\(a(x, \omega)\)</span>
+is a stochastic process, then to perform a Monte Carlo simulation, we
+will need to generate samples of the random vector <span
+class="math display">\[\mathbf{a}(\omega)=\left[a\left(x_{1 / 2},
+\omega\right), a\left(x_{3 / 2}, \omega\right), \ldots,, a\left(x_{N-(1
+/ 2)}, \omega\right)\right]^\top\]</span> corresponding to <span
+class="math inline">\(a(x, \omega)\)</span> evaluated at the mid-points
+of the elements in the grid.</p></li>
+</ul>
+</div>
+<h2 data-number="2.1" id="generating-realisations-of-gaussian-rfs"><span
+class="header-section-number">2.1</span> Generating Realisations of
+Gaussian RFs</h2>
+<p>Let <span class="math inline">\(D\subset \mathbf{R}^d\)</span> be a
+domain (<span class="math inline">\(d=1,2\)</span>), and let <span
+class="math inline">\(z(\boldsymbol{x},\omega)\)</span> be an associated
+second-order RF with mean function <span
+class="math inline">\(\mu(\boldsymbol{x})\)</span> and covariance
+function <span
+class="math inline">\(C(\boldsymbol{x},\boldsymbol{y})\)</span>.</p>
+<h3 data-number="2.1.1" id="random-fields-to-random-vectors"><span
+class="header-section-number">2.1.1</span> Random fields to random
+vectors</h3>
+<p>Let <span class="math inline">\(N\in \mathbf{N}\)</span>, for any
+<span
+class="math inline">\(\boldsymbol{x}_1,\boldsymbol{x}_2,\dots,\boldsymbol{x}_N\in
+D\)</span>, we can define <span
+class="math display">\[\boldsymbol{Z}(\omega)\coloneqq
+[z(\boldsymbol{x}_1,\omega),z(\boldsymbol{x}_2,\omega),\dots,z(\boldsymbol{x}_N,\omega)]^\top\]</span>
+This is an <span class="math inline">\(\mathbf{R}^N\)</span>-valued
+random variable <span class="math inline">\(\boldsymbol{Z}:\varOmega\to
+\mathbf{R}^N\)</span>.</p>
+<ul>
+<li><p>It has <em>mean vector</em> <span
+class="math display">\[\boldsymbol{\mu}\coloneqq
+\mathop{\mathrm{\mathbf{E}}}[\boldsymbol{Z}],\text{ where }
+[\mu]_i=\mu(\boldsymbol{x}_i),\quad i=1,2,\dots,N.\]</span></p></li>
+<li><p>It has <em>Covariance matrix</em> <span
+class="math display">\[C_N\coloneqq
+\mathop{\mathrm{\mathbf{E}}}[(\boldsymbol{Z}-\boldsymbol{\mu})(\boldsymbol{Z}-\boldsymbol{\mu
+})^\top]\in \mathbf{R}^{N\times N},\]</span> where entries are <span
+class="math inline">\([C_N]_{ij}=C(\boldsymbol{x}_i,\boldsymbol{x}_j)\)</span>,
+<span class="math inline">\(i,j=1,\dots,N\)</span>.</p></li>
+</ul>
+<p>By theorem <a href="#thm:1.20" data-reference-type="ref"
+data-reference="thm:1.20">20</a>, the <span
+class="math inline">\(N\times N\)</span> covariance matrix <span
+class="math inline">\(C_N\)</span> of <span
+class="math inline">\(\boldsymbol{Z}\)</span> is also symmetric and
+non-negative definite (or positive semidefinite) matrix, that is <span
+class="math inline">\(\boldsymbol{v}^\top C_N \boldsymbol{v} \geq
+0\)</span>, for all <span class="math inline">\(\boldsymbol{v}\in
+\mathbf{R}^N\)</span>. From definition <a href="#def:1.22"
+data-reference-type="ref" data-reference="def:1.22">22</a>, we knwo that
+if <span class="math inline">\(z(\boldsymbol{x},\omega)\)</span> is a
+Gaussian RF, then for any <span
+class="math inline">\(\boldsymbol{x}_1,\dots,\boldsymbol{x}_N\)</span>,
+<span class="math inline">\(\boldsymbol{Z}\sim
+N(\boldsymbol{\mu},C_N)\)</span>. That is, <span
+class="math inline">\(\boldsymbol{Z}\)</span> is always a
+<em>multivariate normal</em> random variable. Hence, if we need to
+generate realisations of a Gaussian RF at a set of grid points, then we
+only need to generate samples of random vectors <span
+class="math inline">\(\boldsymbol{Z}\)</span> with distribution <span
+class="math inline">\(\boldsymbol{Z}\sim N(\boldsymbol{\mu},
+C_N)\)</span>.</p>
+<p>Standard approach is to use a <em>matrix fractorisation</em> of <span
+class="math inline">\(C_N\)</span>. Suppose we can find an <span
+class="math inline">\(N\times N\)</span> matrix <span
+class="math inline">\(V\)</span> such that <span
+class="math display">\[C_N = V V^\top.\]</span> We can create a sample
+of <span class="math inline">\(\boldsymbol{Z}\sim N(\boldsymbol{\mu},
+C_N)\)</span> as follows:</p>
+<div class="tcolorbox">
+<div id="thm:2.15" class="theorem">
+<p><strong>Theorem 39</strong> (Matrix Factorization Method).
+<em></em></p>
+<ul>
+<li><p><em>Generate a sample <span class="math inline">\(\boldsymbol{\xi
+}\sim N(\boldsymbol{0},I_N)\)</span>, where <span
+class="math inline">\(\boldsymbol{\xi}=[\xi_1,\xi_2,\dots,\xi_N]^\top,\
+\xi_i\sim N(0,1) \ iid.\)</span></em></p></li>
+<li><p><em>Factorize <span
+class="math inline">\(C_N=VV^\top\)</span>.</em></p></li>
+<li><p><em>Form <span
+class="math inline">\(\boldsymbol{Z}=\boldsymbol{\mu}+V\boldsymbol{\xi}\)</span>,
+and then <span class="math inline">\(\boldsymbol{Z} \sim
+N(\boldsymbol{\mu}, C_N)\)</span>.</em></p></li>
+</ul>
+</div>
+</div>
+<h2 data-number="2.2" id="cholesky-factorization"><span
+class="header-section-number">2.2</span> Cholesky Factorization</h2>
+<div class="tcolorbox">
+<div class="theorem">
+<p><strong>Theorem 40</strong> (Cholesky factorisation). <em>If <span
+class="math inline">\(C_N\)</span> is an <span
+class="math inline">\(N\times N\)</span> symmetric and positive definite
+matrix, i.e., <span class="math display">\[\boldsymbol{v}^\top
+C_N\boldsymbol{v} &gt;0\quad \forall \boldsymbol{v}\in
+\mathbf{R}^N\setminus\{\boldsymbol{0}\},\]</span> then there exist an
+<span class="math inline">\(N\times N\)</span> lower triangular <span
+class="math inline">\(L\)</span> such that <span
+class="math display">\[C_N = LL^\top.\]</span></em></p>
+</div>
+</div>
+<p>Potential disadvantages for Cholesky method</p>
+<ul>
+<li><p>If <span class="math inline">\(C_N\)</span> is not strictly
+positive definite, or has small eigenvalues very close to zero, then the
+method can fail.</p></li>
+<li><p>Since covariance matrices are usually dense, it can be very
+expensive:</p>
+<ul>
+<li><p>Cost of Cholesky factorisation: <span
+class="math inline">\(O(N^3)\)</span>,</p></li>
+<li><p>Cost of Multiplication with <span
+class="math inline">\(L\)</span>: <span
+class="math inline">\(O(N^2)\)</span>.</p></li>
+</ul>
+<p>If we need <span class="math inline">\(M\)</span> samples, then the
+cost is <span class="math display">\[O(N^3)+M\cdot O(N^2)\quad
+{\text{where $N$ is the number of grid points}}\]</span></p></li>
+</ul>
+<h2 data-number="2.3" id="eigenvalue-decomposition"><span
+class="header-section-number">2.3</span> Eigenvalue Decomposition</h2>
+<p>If <span class="math inline">\(C_N\)</span> is real valued, symmetric
+and non-negative definite. We can factorise it as <span
+class="math display">\[C_N = U\Lambda U^\top\]</span> where</p>
+<ul>
+<li><p><span class="math inline">\(\Lambda\)</span> is the <span
+class="math inline">\(N\times N\)</span> diagonal matrix of eigenvalues,
+ordered such that <span class="math display">\[\lambda_1\geq \lambda_2
+\geq \cdots \geq \lambda_N \geq 0.\]</span></p></li>
+<li><p><span class="math inline">\(U\)</span> is a matrix whose columns
+are eigenvectors <span
+class="math display">\[U=[\boldsymbol{u}_1,\boldsymbol{u}_2,\dots,\boldsymbol{u}_N]\in
+\mathbf{R}^{N\times N},\]</span> and we assume these are normalised such
+that <span class="math display">\[u_i^\top u_j =
+        \begin{cases}
+            1 &amp; {\text{if }}i=j \\
+            0 &amp; \text{if } i\neq j
+        \end{cases}
+        \quad \Rightarrow U^\top U = I_N.\]</span></p></li>
+</ul>
+<p>We could then manipulate the factorisation as <span
+class="math display">\[C_N = U\Lambda U^\top= U \Lambda^{1/ 2}
+\Lambda^{1/2} U^\top= {U\Lambda^{1/ 2}}(U\Lambda^{1/ 2})^\top\]</span>
+Here <span class="math inline">\(\Lambda^{1/2}\)</span> is the <span
+class="math inline">\(N\times N\)</span> diagonal matrix with diagonal
+entries, <span
+class="math display">\[\sqrt{\lambda_1},\sqrt{\lambda_2},\dots,\sqrt{\lambda_N}.\]</span>
+This is well-defined since <span class="math inline">\(C_N\)</span> is
+non-negative definite. We can now use matrix factorisation method with
+<span class="math inline">\(V= U\Lambda^{1/2}\)</span>, and this gives
+<span class="math inline">\(\boldsymbol{Z} = \boldsymbol{\mu }+ U
+\Lambda ^{1/2}\boldsymbol{\xi }\)</span> where <span
+class="math inline">\(\boldsymbol{\xi }\sim
+N(\boldsymbol{0},I_N)\)</span>.</p>
+<h2 data-number="2.4" id="truncated-eigenvalue-decomposition"><span
+class="header-section-number">2.4</span> Truncated Eigenvalue
+Decomposition</h2>
+<p>Note that <span class="math display">\[\boldsymbol{Z} =
+\boldsymbol{\mu  }+ U \Lambda^{1/2}\boldsymbol{\xi }= \boldsymbol{\mu }+
+\sum_{i=1}^N \sqrt{\lambda_i}\boldsymbol{u}_i\xi_i.\]</span></p>
+<div class="recall">
+<p><strong>Recall 3</strong>. <span class="math inline">\(N\)</span> is
+the number of grid points, and if we compare the cost with Cholesky
+method</p>
+<ul>
+<li><p>The cost of computing <span class="math inline">\(U\)</span> and
+<span class="math inline">\(\Lambda\)</span> is similar to Cholesky,
+<span class="math inline">\(O(N^3)\)</span>.</p></li>
+<li><p>The cost of a multiplication with <span class="math inline">\(V =
+U\Lambda^{1/2}\)</span> is also <span
+class="math inline">\(O(N^2)\)</span>.</p></li>
+</ul>
+</div>
+<p>However, We could make savings if we truncated the sum after <span
+class="math inline">\(n&lt; N\)</span> terms.</p>
+<p><span><strong>Important.</strong></span> We assume that <span
+class="math inline">\(\lambda_1\leq \dots \leq \lambda_N\)</span>. Let
+<span class="math inline">\(n\in \mathbf{Z}\)</span> with <span
+class="math inline">\(n&lt;N\)</span> and define <span
+class="math display">\[\boldsymbol{\widehat Z} = \boldsymbol{\mu }+
+\sum_{i=1}^n\sqrt{\lambda_i}\boldsymbol{u}_i \xi_i,\quad \xi \sim
+N(0,1),\ iid.\]</span> We can also write <span
+class="math display">\[\boldsymbol{\widehat Z} = \boldsymbol{\mu }+
+U_n\Lambda_n^{1/2}\xi_n,\]</span> where <span
+class="math inline">\(U_n=[\boldsymbol{u}_1,\dots,\boldsymbol{u}_n]\)</span>,
+<span class="math inline">\(\Lambda_n =
+\mathop{\mathrm{diag}}(\lambda_1,\dots,\lambda_n)\)</span>, and <span
+class="math inline">\(\boldsymbol{\xi}_n =
+[\xi_1,\dots,\xi_n]^\top\)</span>.</p>
+<p><span><strong><em>Key Question.</em></strong></span> How good <span
+class="math inline">\(\boldsymbol{\widehat Z}\)</span> as an
+<em>approximation</em> to <span class="math inline">\(Z\)</span>?</p>
+<p>The random vector <span class="math inline">\(\boldsymbol{\widehat
+Z}\)</span> is Gaussian but the covariance matrix is not <span
+class="math inline">\(C_N\)</span>. And it can be shown that <span
+class="math display">\[\boldsymbol{\widehat Z} \sim
+N(\boldsymbol{\mu},\widehat C_n),\quad \text{where } \widehat C_n =
+U_n\Lambda_nU_n^\top\]</span> and we have the equality: <span
+class="math display">\[\frac{\|C_{N}-\widehat{C}_{n}\|_{2}}{\left\|C_{N}\right\|_{2}}=\frac{\lambda_{n+1}}{\lambda_{1}}\]</span>
+And also by considering the mean-square sense: <span
+class="math display">\[\mathop{\mathrm{\mathbf{E}}}[\|\boldsymbol{Z}-\widehat{\boldsymbol{Z}}\|_2^2]=\sum_{i=n+1}^N\lambda_i.\]</span></p>
+<h2 data-number="2.5" id="toeplitz-and-circular-matrix"><span
+class="header-section-number">2.5</span> Toeplitz and Circular
+Matrix</h2>
+<div class="definition">
+<p><strong>Definition 41</strong>. A <em>second order</em> RF is called
+<em>stationary</em> if the mean <span
+class="math inline">\(\mu(\boldsymbol{x})\)</span> is a constant and the
+covariance function <span
+class="math display">\[C(\boldsymbol{x},\boldsymbol{y})=c(\boldsymbol{x}
+- \boldsymbol{y}),\quad \boldsymbol{x},\boldsymbol{y} \in D\]</span> for
+some function <span class="math inline">\(c:D\to \mathbf{R}\)</span>
+called the stationary covariance.</p>
+</div>
+<div class="example">
+<p><strong><em>Example</em> 42</strong>. A mean zero RF with exponential
+covariance function <span
+class="math display">\[C(\boldsymbol{x},\boldsymbol{y}) = \sigma^2
+\exp\left(-{\|\boldsymbol{x} - \boldsymbol{y}\|_2\over
+\ell}\right),\quad \boldsymbol{x},\boldsymbol{y} \in D\subset
+\mathbf{R}^2\]</span> is stationary since <span
+class="math inline">\(C(\boldsymbol{x},\boldsymbol{y}) =
+c(\boldsymbol{x} - \boldsymbol{y})\)</span> where <span
+class="math display">\[c(\boldsymbol{x}) =
+\sigma^2\exp\left(-{\|\boldsymbol{x}\|_2\over \ell}\right)\]</span></p>
+</div>
+<div id="def:2.6" class="definition">
+<p><strong>Definition 43</strong> (Toeplitz matrix). An <span
+class="math inline">\(N\times N\)</span> real-valued matrix <span
+class="math inline">\(C\)</span> is toeplitz if the <span
+class="math inline">\((i,j)\)</span>th entry <span
+class="math display">\[[C]_{i,j}=c_{i-j}\]</span> for some real numbers
+<span class="math inline">\(c_{1-N},\dots,c_{N-1}\)</span> In order
+words, the toeplitz matrix is constant along the diagonal and off
+diagonals: <span class="math display">\[C= \begin{pmatrix}
+            c_{0} &amp; c_{-1} &amp; \cdots &amp; c_{2-N} &amp; c_{1-N}
+\\
+            c_{1} &amp; c_{0} &amp; c_{-1} &amp; \cdots &amp; c_{2-N} \\
+            \vdots &amp; \ddots &amp; \ddots &amp; \ddots &amp; \vdots
+\\
+            c_{N-2} &amp; \ddots &amp; c_{1} &amp; c_{0} &amp; c_{-1} \\
+            c_{N-1} &amp; c_{N-2} &amp; \cdots &amp; c_{1} &amp; c_{0}
+            \end{pmatrix}\]</span> We only need to store the first
+column and row to reconstruct the whole toeplitz matrix.</p>
+</div>
+<div class="note">
+<p><strong>NOTE 1</strong>. A <em>symmetric</em> toeplitz matrix is
+fully defined by its first column. <span
+class="math display">\[\boldsymbol{c}_1 =
+[c_0,c_1,\dots,c_{N-1}]^\top\in \mathbf{R}^N.\]</span></p>
+</div>
+<div class="example">
+<p><strong><em>Example</em> 44</strong>. Let <span
+class="math inline">\(D=[0,1]\)</span>, and let <span
+class="math inline">\(z(x,\omega)\)</span> be a mean-zero Gaussian RF
+with stationary covariance <span class="math display">\[c(x) =
+e^{-|x|/\ell}.\]</span> Divide <span class="math inline">\(D\)</span>
+into <span class="math inline">\(100\)</span> uniform intervals and
+choose the grid points <span class="math display">\[x_i = {i-1\over
+100},\quad i = 1,2,\dots,101.\]</span> The plot of covariance matrix is
+shown in figure <a href="#fig:5" data-reference-type="ref"
+data-reference="fig:5">5</a>.</p>
+</div>
+<figure>
+<img src="figs/5.PNG" id="fig:5" style="width:75.0%"
+alt="MATLAB imagesc plots of the covariance matrix C_{N} associated with a mean zero Gaussian process with exponential covariance function with \ell=1 (left) and \ell=1 / 10 (right), sampled at N=101 equally spaced points in D=[0,1]." />
+<figcaption aria-hidden="true">MATLAB imagesc plots of the covariance
+matrix <span class="math inline">\(C_{N}\)</span> associated with a mean
+zero Gaussian process with exponential covariance function with <span
+class="math inline">\(\ell=1\)</span> (left) and <span
+class="math inline">\(\ell=1 / 10\)</span> (right), sampled at <span
+class="math inline">\(N=101\)</span> equally spaced points in <span
+class="math inline">\(D=[0,1]\)</span>.</figcaption>
+</figure>
+<div class="definition">
+<p><strong>Definition 45</strong> (Circulant matrix). An <span
+class="math inline">\(N\times N\)</span> real-valued Topelitz matrix
+<span class="math inline">\(C\)</span> is circulant if each column is a
+circular (clockwise) shift of the preceding (previous) column. <span
+class="math display">\[C=\begin{pmatrix}
+            c_{0} &amp; c_{N-1} &amp; \cdots &amp; c_{2} &amp; c_{1} \\
+            c_{1} &amp; c_{0} &amp; c_{N-1} &amp; \cdots &amp; c_{2} \\
+            \vdots &amp; \ddots &amp; \ddots &amp; \ddots &amp; \vdots
+\\
+            c_{N-2} &amp; \ddots &amp; c_{1} &amp; c_{0} &amp; c_{N-1}
+\\
+            c_{N-1} &amp; c_{N-2} &amp; \cdots &amp; c_{1} &amp; c_{0}
+            \end{pmatrix}\]</span></p>
+</div>
+<div class="example">
+<p><strong><em>Example</em> 46</strong>. Example of Circulant matrix:
+<span class="math display">\[C =
+        \begin{pmatrix}
+            1 &amp; 4 &amp; 3 &amp; 2\\
+            2 &amp; 1 &amp; 4 &amp; 3\\
+            3 &amp; 2 &amp; 1 &amp; 4\\
+            4 &amp; 3 &amp; 2 &amp; 1
+        \end{pmatrix}\]</span> is circulant.</p>
+</div>
+<div class="definition">
+<p><strong>Definition 47</strong> (Hermitian vector). A vector <span
+class="math inline">\(\boldsymbol{v} = [v_0,v_1,\dots, v_{N-1}]^\top\in
+\mathbf{C}^N\)</span> is said to be Hermitian if <span
+class="math display">\[v_0 \in \mathbf{R},\quad \text{and } v_j =
+\overline{v_{N-j}},\quad j = 1,2,\dots,N-1.\]</span></p>
+</div>
+<div id="rm:2.11" class="remark">
+<p><strong>Remark 48</strong>. Again, circulant matrix is uniquely
+determined by the first column <span
+class="math display">\[\boldsymbol{c}_1 =
+[c_0,c_1,\dots,c_{N-1}]^\top\in \mathbf{R}^N.\]</span> If the matrix is
+also symmetric, the first column has a special structure. <span
+class="math display">\[c_i = c_j\ \text{ if }\ i+j=N, \text{ for }
+i,j=1,2,\dots,N-1.\]</span> i.e., the first column is real Hermitian
+vector.</p>
+</div>
+<div class="tcolorbox">
+<div id="thm:2.12" class="theorem">
+<p><strong>Theorem 49</strong> (Topelitz Covariance Matrix). <em>Let
+<span class="math inline">\(D=[a,b]\)</span>. If</em></p>
+<ul>
+<li><p><em><span class="math inline">\(z(x,\omega)\)</span> be a
+stationary stochastic process on <span class="math inline">\(D\)</span>
+with <em>stationary</em> covariance function <span
+class="math inline">\(c(x)\)</span>.</em></p></li>
+<li><p><em>Suppose we evaluate <span
+class="math inline">\(z(x,\omega)\)</span> at <span
+class="math inline">\(N\)</span> <em>uniformly spaced</em> points <span
+class="math inline">\(x_1,\dots,x_N\)</span>.</em></p></li>
+</ul>
+<p><em>Then the associated covariance matrix <span
+class="math inline">\(C_N\)</span> is always Toeplitz.</em></p>
+</div>
+</div>
+<div class="proof">
+<p><em>Proof.</em> (Note the points are labelled <span
+class="math inline">\(x_{1}, \ldots, x_{N}\)</span> here). Since the
+points are uniformly spaced on <span class="math inline">\([a,
+b]\)</span>, we have <span class="math inline">\(x_{i}=a+(i-1) h, i=1,2,
+\ldots, N\)</span>, where <span class="math inline">\(h=(b-a)
+/(N-1)\)</span>. (If there are <span class="math inline">\(N\)</span>
+points, there are <span class="math inline">\(N-1\)</span> intervals).
+Then <span class="math inline">\(x_{i}-x_{j}=(i-j) h\)</span>. The <span
+class="math inline">\((i, j) t h\)</span> entry of the covariance matrix
+is <span class="math display">\[\left[C_{N}\right]_{i,
+j}=\underbrace{C\left(x_{i},
+x_{j}\right)=c\left(x_{i}-x_{j}\right)}_{\text{Stationary covariance
+function}}=c((i-j) h)\]</span> where <span
+class="math inline">\(c(x)\)</span> is the stationary covariance
+function. Hence <span class="math inline">\(\left[C_{N}\right]_{i,
+j}\)</span> is constant for all pairs of point <span
+class="math inline">\(x_{i}, x_{j}\)</span> for which <span
+class="math inline">\((i-j)\)</span> is constant. This means that <span
+class="math inline">\(C_{N}\)</span> is Toeplitz (by definition <a
+href="#def:2.6" data-reference-type="ref"
+data-reference="def:2.6">43</a>), since all entries along a fixed
+diagonal have the same value of <span
+class="math inline">\(i-j\)</span>. ◻</p>
+</div>
+<h2 data-number="2.6" id="discrete-fourier-transform"><span
+class="header-section-number">2.6</span> Discrete Fourier Transform</h2>
+<div class="definition">
+<p><strong>Definition 50</strong> (Discrete Fourier Transform (DFT)).
+The DFT of a vector <span class="math inline">\(\boldsymbol{v}\in
+\mathbf{C}^N\)</span> is the vector <span
+class="math inline">\(\widehat{\boldsymbol{v}}\in \mathbf{C}^N\)</span>
+with entries <span class="math display">\[\widehat{v}_k\coloneqq
+\sum_{j=1}^N v_j\omega^{(k-1)(j-1)},\quad k=1,2,\dots,N.\]</span> where
+<span class="math inline">\(\omega\coloneqq e^{-2\pi i/N}\)</span>.
+(This is the <span class="math inline">\(N\)</span>th unity, and
+distinguish <span class="math inline">\(\omega\)</span> with the iid.
+random normal distribution samples)</p>
+<p>Equivalently, we could write the definition as <span
+class="math display">\[\widehat{\boldsymbol{v}}\coloneqq \sqrt{N} W
+\boldsymbol{v} \in \mathbf{C}^N,\]</span> where <span
+class="math inline">\(W\in \mathbf{C}^{N\times N}\)</span> is the
+<em>Fourier matrix</em> has entries <span class="math display">\[_{k,j}
+= {1\over \sqrt{N}}\omega^{(k-1)(j-1)},\quad k,j =
+1,\dots,N.\]</span></p>
+</div>
+<div class="note">
+<p><strong>NOTE 2</strong>. </p>
+<ul>
+<li><p>The MATLAB command <code>fft(v)</code> will perform a DFT on the
+vector <span class="math inline">\(\boldsymbol{v}\)</span>.</p></li>
+<li><p>This important algorithm will reduce the cost of <span
+class="math inline">\((\mathbf{C}^{N\times N} \times \mathbf{C}^N)=
+O(N^2)\)</span> to <span class="math inline">\(O(N\log
+N)\)</span>.</p></li>
+</ul>
+</div>
+<div class="definition">
+<p><strong>Definition 51</strong> (Inverse Discrete Fourier Transform
+(IDFT)). The IDFT of <span
+class="math inline">\(\widehat{\boldsymbol{v}}\in C^N\)</span> is the
+vector <span class="math display">\[\boldsymbol{v}\coloneqq {1\over
+{\sqrt{N}}}W^*\widehat{\boldsymbol{v}}\in \mathbf{C}^N\]</span> where
+<span class="math inline">\(W^*\)</span> is the <em>Hermitian
+transpose</em> of <span class="math inline">\(W\)</span>. That is, <span
+class="math inline">\(W^*\)</span> satisfies <span
+class="math display">\[[W^*]_{k,j}=\overline{W_{j,k}},\quad k,j =
+1,2,\dots,N.\]</span></p>
+</div>
+<div class="note">
+<p><strong>NOTE 3</strong>. </p>
+<ul>
+<li><p>The MATLAB command <code>ifft(v)</code> will perform a IDFT on
+the vector <span class="math inline">\(\boldsymbol{v}\)</span>.</p></li>
+<li><p>This important algorithm will reduce the cost of <span
+class="math inline">\((\mathbf{C}^{N\times N} \times \mathbf{C}^N)=
+O(N^2)\)</span> to <span class="math inline">\(O(N\log
+N)\)</span>.</p></li>
+<li><p>The DFT and IDFT of a <em>Hermitian vector</em> is always
+<em>real-valued</em>.</p></li>
+</ul>
+</div>
+<h3 data-number="2.6.1" id="factorization-of-circulant-matrix"><span
+class="header-section-number">2.6.1</span> Factorization of Circulant
+matrix</h3>
+<div class="tcolorbox">
+<div id="thm:2.2" class="theorem">
+<p><strong>Theorem 52</strong>. <em>Let <span class="math inline">\(C\in
+\mathbf{R}^{N\times N}\)</span> be a circulant matrix with first column
+<span class="math inline">\(\boldsymbol{c}_1\)</span>, then <span
+class="math display">\[C=W\Lambda W^*\]</span></em></p>
+<ul>
+<li><p><em><span class="math inline">\(W\in \mathbf{C}^{N\times
+N}\)</span> is the <span class="math inline">\(N\times N\)</span>
+Fourier matrix.</em></p></li>
+<li><p><em><span class="math inline">\(\Lambda\)</span> is the <span
+class="math inline">\(N\times N\)</span> diagonal matrix of eigenvalues
+with diagonal entries <span class="math display">\[\boldsymbol{d} =
+\sqrt{N} W^*\boldsymbol{c}_1.\]</span></em></p></li>
+</ul>
+</div>
+</div>
+<ul>
+<li><p>We can compute the eigenvalues using the IDFT of <span
+class="math inline">\(\boldsymbol{c}_1\)</span> in MATLAB
+<code>d=N*ifft(c1)</code>.</p></li>
+<li><p>If <span class="math inline">\(C\)</span> is symmetric, and
+circulant, by remark <a href="#rm:2.11" data-reference-type="ref"
+data-reference="rm:2.11">48</a>, then <span
+class="math inline">\(\boldsymbol{c}_1\)</span> is a Hermitian vector,
+hence <span class="math inline">\(\boldsymbol{d}\in
+\mathbf{R}^N\)</span>, i.e., the eigenvalues are all real.</p></li>
+<li><p>If <span class="math inline">\(C\)</span> is a valid covariance
+matrix as well as circulant, i.e., the matrix is <em>symmetric,
+non-negative definite (positive semi-definite), and circulant</em>, then
+by theorem <a href="#thm:2.2" data-reference-type="ref"
+data-reference="thm:2.2">52</a> we have <span
+class="math display">\[\label{2.29}
+        C = W\Lambda W^*= W \Lambda^{1/2}\Lambda^{1/2}W^*=
+(W\Lambda^{1/2})(W\Lambda^{1/2})^*\]</span></p></li>
+</ul>
+<p><span><strong><em>Problem.</em></strong></span> Suppose <span
+class="math inline">\(C_N\)</span> is <span
+class="math inline">\(N\times N\)</span> covariance matrix that is also
+circulant, then theorem <a href="#thm:2.2" data-reference-type="ref"
+data-reference="thm:2.2">52</a> and equation <a href="#2.29"
+data-reference-type="eqref" data-reference="2.29">[2.29]</a> give <span
+class="math display">\[C_N = VV^*,\quad \text{where } V\coloneqq W
+\Lambda^{1/2}.\]</span> If we form <span
+class="math inline">\(\boldsymbol{Z} = \boldsymbol{\mu }+
+W\Lambda^{1/2}\boldsymbol{\xi}\)</span>, where <span
+class="math inline">\(\boldsymbol{\xi }\sim
+N(\boldsymbol{0},I_N)\)</span>, what’s the distribution of <span
+class="math inline">\(\boldsymbol{Z}\)</span>? <span
+class="math display">\[\label{2.31}
+    \begin{aligned}
+        \mathop{\mathrm{\mathbf{E}}}[\boldsymbol{Z}] &amp;=
+\boldsymbol{\mu},\\
+        \mathop{\mathrm{Cov}}[\boldsymbol{Z}] &amp;=
+\mathop{\mathrm{Cov}}[(\boldsymbol{Z} - \boldsymbol{\mu})(\boldsymbol{Z}
+- \boldsymbol{\mu })^\top]\\
+        &amp;=\mathop{\mathrm{Cov}}[W\Lambda^{1/2}\boldsymbol{\xi
+}\boldsymbol{\xi}^\top\Lambda^{1/2}W^\top]\\
+        &amp;=W\Lambda^{1/2}\mathop{\mathrm{Cov}}[\boldsymbol{\xi
+}\boldsymbol{\xi}^\top] \Lambda^{1/2}W^\top\\
+        &amp;=W\Lambda^{1/2}I_N\Lambda^{1/2}W^\top= W\Lambda W^\top\neq
+W\Lambda W^*.
+    \end{aligned}\]</span></p>
+<h2 data-number="2.7" id="complex-valued-random-variables"><span
+class="header-section-number">2.7</span> Complex-Valued Random
+Variables</h2>
+<p>Given 2 <span class="math inline">\(\mathbf{R}^N\)</span>-valued
+random variables <span
+class="math display">\[\boldsymbol{X}_1,\boldsymbol{X}_2 : \varOmega\to
+\mathbf{R}^N.\]</span> We can always create a <span
+class="math inline">\(\mathbf{C}^N\)</span>-valued random variable via
+<span class="math display">\[\boldsymbol{X} = \boldsymbol{X}_1 +
+i\boldsymbol{X}_2\]</span> where <span
+class="math inline">\(\boldsymbol{X}_1 = \Re(\boldsymbol{X})\)</span>,
+<span class="math inline">\(\boldsymbol{X}_2 =
+\Im(\boldsymbol{X})\)</span>.</p>
+<div class="definition">
+<p><strong>Definition 53</strong> (Complex R.V.s). If <span
+class="math inline">\(\boldsymbol{X} = [X_1,X_2,\dots,X_N]^\top\)</span>
+is a <span class="math inline">\(\mathbf{C}^N\)</span>-valued r.v.,
+then</p>
+<ul>
+<li><p>The <em>mean vector</em> <span
+class="math inline">\(\boldsymbol{\mu }\in \mathbf{C}^N\)</span> where
+<span class="math display">\[_j =
+\mathop{\mathrm{\mathbf{E}}}[X_j],\quad j = 1,2,\dots,
+N.\]</span></p></li>
+<li><p>The <em>covariance matrix</em> <span
+class="math inline">\(C_{\boldsymbol{X}}\in \mathbf{C}^{N\times
+N}\)</span> where <span class="math display">\[C_{\boldsymbol{X}} =
+\mathop{\mathrm{\mathbf{E}}}[(\boldsymbol{X} -
+\boldsymbol{\mu})(\boldsymbol{X} - \boldsymbol{\mu})^*]\in
+\mathbf{C}^{N\times N}\]</span> where <span
+class="math inline">\(*\)</span> denotes the Hermitian transpose. That
+is, <span class="math display">\[_{k,j} = \mathop{\mathrm{Cov}}(X_k,X_j)
+= \mathop{\mathrm{\mathbf{E}}}[(X_k -
+\mathop{\mathrm{\mathbf{E}}}[X_k])\overline{(X_j -
+\mathop{\mathrm{\mathbf{E}}}[X_j])}].\]</span></p></li>
+</ul>
+</div>
+<div class="example">
+<p><strong><em>Example</em> 54</strong>. Let <span
+class="math inline">\(\boldsymbol{X}_1\)</span>, <span
+class="math inline">\(\boldsymbol{X}_2\)</span> be <span
+class="math inline">\(\mathbf{R}^N\)</span> random variables with
+<em>mean zero</em>. Define <span class="math inline">\(\boldsymbol{X} =
+\boldsymbol{X}_1 + i \boldsymbol{X}_2\)</span>. Then <span
+class="math display">\[\label{2.37}
+        \begin{aligned}
+            \mathop{\mathrm{\mathbf{E}}}[\boldsymbol{X}] &amp;=
+\mathop{\mathrm{\mathbf{E}}}[\boldsymbol{X}_1] + i
+\mathop{\mathrm{\mathbf{E}}}[\boldsymbol{X}_2] = \boldsymbol{0}\\
+            C_{\boldsymbol{X}} &amp; =
+\mathop{\mathrm{\mathbf{E}}}[(\boldsymbol{X} -
+\mathop{\mathrm{\mathbf{E}}}[\boldsymbol{X}])(\boldsymbol{X} -
+\mathop{\mathrm{\mathbf{E}}}[\boldsymbol{X}])^*] =
+\mathop{\mathrm{\mathbf{E}}}[\boldsymbol{X}\boldsymbol{X}^*]
+        \end{aligned}\]</span></p>
+</div>
+<div class="tcolorbox">
+<div class="theorem">
+<p><strong>Theorem 55</strong> (Uncorrelated <span
+class="math inline">\(\to\)</span> Real-valued). <em>Suppose we have a
+complex valued random variable <span
+class="math inline">\(\boldsymbol{X}\)</span>. If <span
+class="math inline">\(\Re(\boldsymbol{X})\)</span> and <span
+class="math inline">\(\Im(\boldsymbol{X})\)</span> are uncorrelated and
+mean zero, then the corresponding covariance <span
+class="math inline">\(C_{\boldsymbol{X}}\)</span> is <span
+class="math inline">\(\mathbf{R}\)</span>-valued.</em></p>
+</div>
+</div>
+<div class="proof">
+<p><em>Proof.</em> For complex valued random variable <span
+class="math inline">\(\boldsymbol{X} = \boldsymbol{X}_1 + i
+\boldsymbol{X}_2\)</span>, the covariance matrix is <span
+class="math display">\[\begin{aligned}
+C_{\boldsymbol{X}}
+&amp;=\mathop{\mathrm{\mathbf{E}}}\left[\left(\boldsymbol{X}_{1}+i
+\boldsymbol{X}_{2}\right)\left(\boldsymbol{X}_{1}+i
+\boldsymbol{X}_{2}\right)^{*}\right]=\mathop{\mathrm{\mathbf{E}}}\left[\left(\boldsymbol{X}_{1}+i
+\boldsymbol{X}_{2}\right)\left(\boldsymbol{X}_{1}-i
+\boldsymbol{X}_{2}\right)^{\top}\right] \\
+&amp;=\mathop{\mathrm{\mathbf{E}}}\left[\boldsymbol{X}_{1}
+\boldsymbol{X}_{1}^{\top}+\boldsymbol{X}_{2}
+\boldsymbol{X}_{2}^{\top}\right]+i
+\mathop{\mathrm{\mathbf{E}}}\left[-\boldsymbol{X}_{1}
+\boldsymbol{X}_{2}^{\top}+\boldsymbol{X}_{2}
+\boldsymbol{X}_{1}^{\top}\right]
+\end{aligned}\]</span></p>
+<p>Since <span class="math inline">\(\boldsymbol{X}_{1}\)</span> and
+<span class="math inline">\(\boldsymbol{X}_{2}\)</span> are assumed to
+be uncorrelated, <span
+class="math inline">\(\mathop{\mathrm{Cov}}(\boldsymbol{X}_{1},
+\boldsymbol{X}_{2})=\mathop{\mathrm{\mathbf{E}}}\left[\boldsymbol{X}_{1}
+\boldsymbol{X}_{2}^\top\right]=\boldsymbol{0}=\)</span> <span
+class="math inline">\(\mathop{\mathrm{\mathbf{E}}}\left[\boldsymbol{X}_{2}
+\boldsymbol{X}_{1}^\top\right]\)</span>. The second term is zero and we
+have <span
+class="math display">\[C_{\boldsymbol{X}}=\mathop{\mathrm{\mathbf{E}}}\left[\boldsymbol{X}_{1}
+\boldsymbol{X}_{1}^\top+\boldsymbol{X}_{2}
+\boldsymbol{X}_{2}^\top\right] =
+\mathop{\mathrm{\mathbf{E}}}[\boldsymbol{X}_1 \boldsymbol{X}_1^\top] +
+\mathop{\mathrm{\mathbf{E}}}[\boldsymbol{X}_2 \boldsymbol{X}_2^\top] =
+\mathop{\mathrm{Cov}}(\boldsymbol{X}_1) +
+\mathop{\mathrm{Cov}}(\boldsymbol{X}_2),\]</span> which is the sum of
+the covariance matrices of <span
+class="math inline">\(\boldsymbol{X}_{1}\)</span> and <span
+class="math inline">\(\boldsymbol{X}_{2}\)</span> and, in particular, is
+real-valued. ◻</p>
+</div>
+<div class="tcolorbox">
+<div id="lemma:2.19" class="lemma">
+<p><strong>Lemma 56</strong> (Real-valued <span
+class="math inline">\(\to\)</span> Uncorrelated). <em>Let <span
+class="math inline">\(\boldsymbol{X} = \boldsymbol{X}_1 +
+i\boldsymbol{X}_2\)</span> where <span
+class="math inline">\(\boldsymbol{X}_1\)</span> and <span
+class="math inline">\(\boldsymbol{X}_2\)</span> are <span
+class="math inline">\(\mathbf{R}^N\)</span>-valued random variables with
+mean zero.</em></p>
+<ul>
+<li><p><em>If <span
+class="math inline">\(\mathop{\mathrm{\mathbf{E}}}[\boldsymbol{X}
+\boldsymbol{X}^*]\)</span> and <span
+class="math inline">\(\mathop{\mathrm{\mathbf{E}}}[\boldsymbol{X}
+\boldsymbol{X}^\top]\)</span> are real-valued, then <span
+class="math inline">\(\boldsymbol{X}_1\)</span> and <span
+class="math inline">\(\boldsymbol{X}_2\)</span> are
+uncorrelated.</em></p></li>
+<li><p><em>If in addition, <span
+class="math inline">\(\mathop{\mathrm{\mathbf{E}}}[\boldsymbol{X}
+\boldsymbol{X}^\top]=\boldsymbol{0}\)</span>, then the covariance
+matrices of <span class="math inline">\(\boldsymbol{X}_1\)</span>, and
+<span class="math inline">\(\boldsymbol{X}_2\)</span> satisfy <span
+class="math display">\[C_{\boldsymbol{X}_1} = C_{\boldsymbol{X}_2} =
+{\mathop{\mathrm{\mathbf{E}}}[\boldsymbol{X} \boldsymbol{X}^*]\over
+2}  = {C_{\boldsymbol{X}}\over 2}.\]</span></em></p></li>
+</ul>
+</div>
+</div>
+<div class="proof">
+<p><em>Proof.</em> Let <span class="math inline">\(\boldsymbol{X} =
+\boldsymbol{X}_ 1 + i \boldsymbol{X}_ 2\)</span>, and we have <span
+class="math inline">\(\overline{\boldsymbol{X}} = \boldsymbol{X}_1 - i
+\boldsymbol{X}_2\)</span>. Hence we could rewrite <span
+class="math display">\[\boldsymbol{X}_1 = {\boldsymbol{X} +
+\overline{\boldsymbol{X}}\over 2},\quad \boldsymbol{X}_2 =
+{\boldsymbol{X} - \overline{\boldsymbol{X}}\over 2i}\]</span> then we
+could evaluate <span class="math display">\[\label{2.40}
+        \begin{aligned}
+            \mathop{\mathrm{Cov}}(\boldsymbol{X}_1,\boldsymbol{X}_2)
+&amp;= \mathop{\mathrm{\mathbf{E}}}[\boldsymbol{X}_1
+\boldsymbol{X}_2^\top]\\
+            &amp;={1\over
+4i}\mathop{\mathrm{\mathbf{E}}}[(\boldsymbol{X} +
+\overline{\boldsymbol{X}})(\boldsymbol{X} -
+\overline{\boldsymbol{X}})^\top]\\
+            &amp; = {1\over
+4i}\mathop{\mathrm{\mathbf{E}}}[\boldsymbol{X}\boldsymbol{X}^\top-
+\boldsymbol{X} \boldsymbol{X}^*+ \overline{\boldsymbol{X}}\boldsymbol{X}
+^\top- \overline{\boldsymbol{X}}\boldsymbol{X}^*]\\
+            &amp; = {1\over
+4i}(\mathop{\mathrm{\mathbf{E}}}[\boldsymbol{X}\boldsymbol{X}^\top]
+-\mathop{\mathrm{\mathbf{E}}}[ \boldsymbol{X} \boldsymbol{X}^*] +
+\mathop{\mathrm{\mathbf{E}}}[\overline{\boldsymbol{X}}\boldsymbol{X}
+^\top] -
+\mathop{\mathrm{\mathbf{E}}}[\overline{\boldsymbol{X}}\boldsymbol{X}^*])
+        \end{aligned}\]</span> By assumptions that <span
+class="math inline">\(\mathop{\mathrm{\mathbf{E}}}[\boldsymbol{X}\boldsymbol{X}^*]\)</span>
+and <span
+class="math inline">\(\mathop{\mathrm{\mathbf{E}}}[\boldsymbol{X}\boldsymbol{X}^\top]\)</span>
+are real valued, then we could have <span
+class="math display">\[\label{2.41}
+        \begin{aligned}
+            \mathop{\mathrm{\mathbf{E}}}[\boldsymbol{X}\boldsymbol{X}^*]
+&amp;=
+\overline{\mathop{\mathrm{\mathbf{E}}}[\boldsymbol{X}\boldsymbol{X}^*]}
+=
+\mathop{\mathrm{\mathbf{E}}}[\overline{\boldsymbol{X}}\boldsymbol{X}^\top],\\
+            \mathop{\mathrm{\mathbf{E}}}[\boldsymbol{X}\boldsymbol{X}^\top]
+&amp;=
+\overline{\mathop{\mathrm{\mathbf{E}}}[\boldsymbol{X}\boldsymbol{X}^\top]}
+=
+\mathop{\mathrm{\mathbf{E}}}[\overline{\boldsymbol{X}}\boldsymbol{X}^*].
+        \end{aligned}\]</span> then we have the cancellation, and we
+have <span
+class="math inline">\(\mathop{\mathrm{Cov}}(\boldsymbol{X}_1,\boldsymbol{X}_2)=\boldsymbol{0}\)</span>
+as required.</p>
+<p><span class="math display">\[\label{2.42}
+        \begin{aligned}
+            C_{\boldsymbol{X}_1} =
+\mathop{\mathrm{\mathbf{E}}}[\boldsymbol{X}_1\boldsymbol{X}_1^\top]
+&amp; = {1\over 4}\mathop{\mathrm{\mathbf{E}}}[(\boldsymbol{X} +
+\overline{\boldsymbol{X}})(\boldsymbol{X} +
+\overline{\boldsymbol{X}})^\top]\\
+            &amp; = {1\over 4}
+\mathop{\mathrm{\mathbf{E}}}[\boldsymbol{X}\boldsymbol{X} ^\top+
+\boldsymbol{X} \boldsymbol{X} ^*+
+\overline{\boldsymbol{X}}\boldsymbol{X}^\top+
+\overline{\boldsymbol{X}}\boldsymbol{X}^*]\\
+            &amp; = {1\over
+2}\mathop{\mathrm{\mathbf{E}}}[\boldsymbol{X}\boldsymbol{X} ^*] =
+{C_{\boldsymbol{X}}\over 2}. \quad \substack{\text{By
+$\mathop{\mathrm{\mathbf{E}}}[\boldsymbol{X}\boldsymbol{X}^\top]
+=\mathop{\mathrm{\mathbf{E}}}[\overline{\boldsymbol{X}}\boldsymbol{X}^*]=
+0$}\\ \text{and equation~\eqref{2.41}}}
+        \end{aligned}\]</span> ◻</p>
+</div>
+<div id="def:2.20" class="definition">
+<p><strong>Definition 57</strong> (Complex Gaussian Distribution). An
+<span class="math inline">\(\mathbf{C}^N\)</span> random variable <span
+class="math inline">\(\boldsymbol{X} = \boldsymbol{X}_1 + i
+\boldsymbol{X}_2\)</span> (<span
+class="math inline">\(\boldsymbol{X}_1\)</span> and <span
+class="math inline">\(\boldsymbol{X}_2\)</span> are real valued random
+variables) follows the complex Gaussian distribution <span
+class="math display">\[\boldsymbol{X} \sim
+CN(\boldsymbol{0},C_{\boldsymbol{X}})\]</span> with real-valued
+covariance matrix <span class="math inline">\(C_{\boldsymbol{X}} \in
+\mathbf{R}^{N\times N}\)</span> if</p>
+<ul>
+<li><p><span class="math inline">\(\boldsymbol{X}_1\)</span> and <span
+class="math inline">\(\boldsymbol{X}_2\)</span> are independent</p></li>
+<li><p><span class="math inline">\(\boldsymbol{X}_1,\boldsymbol{X}_2
+\sim N\left(\boldsymbol{0},{C_{\boldsymbol{X}}\over
+2}\right)\)</span>.</p></li>
+</ul>
+</div>
+<div class="example">
+<p><strong><em>Example</em> 58</strong>. Let <span
+class="math inline">\(\boldsymbol{X}_1,\boldsymbol{X}_2 \sim
+N(\boldsymbol{0},I_N)\)</span> be independent and form <span
+class="math inline">\(\boldsymbol{\xi }= \boldsymbol{X}_1 + i
+\boldsymbol{X}_2\)</span>, then we have <span
+class="math display">\[\boldsymbol{\xi }\sim
+CN(\boldsymbol{0},2I_N).\]</span></p>
+</div>
+<h2 data-number="2.8" id="circulant-covariance-matrix"><span
+class="header-section-number">2.8</span> Circulant Covariance
+Matrix</h2>
+<p>Suppose <span class="math inline">\(C_N\)</span> is an <span
+class="math inline">\(N\times N\)</span> real-valued covariance matrix
+that is</p>
+<ul>
+<li><p>a valid covariance matrix</p></li>
+<li><p>circulant</p></li>
+</ul>
+<div class="recall">
+<p><strong>Recall 4</strong> (Usual factorisation method (based on
+theorem <a href="#thm:2.15" data-reference-type="ref"
+data-reference="thm:2.15">39</a>)). </p>
+<ul>
+<li><p>Generate a sample of <span class="math inline">\(\boldsymbol{\xi
+}\sim N(\boldsymbol{0},I_N)\)</span>.</p></li>
+<li><p>Compute <span class="math inline">\(\Lambda\)</span> (the
+eigenvalues of <span class="math inline">\(C_N\)</span>).</p></li>
+<li><p>Form <span class="math inline">\(\boldsymbol{Z} =
+W\Lambda^{1/2}\boldsymbol{\xi}\)</span>.</p></li>
+</ul>
+</div>
+<p>We will introduce a new method for generating independent samples
+from <span class="math inline">\(N(\boldsymbol{0},C_N)\)</span>.
+However, from equation <a href="#2.31" data-reference-type="eqref"
+data-reference="2.31">[2.31]</a>, we recognize that the method we
+introduced in theorem <a href="#thm:2.15" data-reference-type="ref"
+data-reference="thm:2.15">39</a> will not gives the desired distribution
+<span class="math inline">\(N(\boldsymbol{0},C_N)\)</span>. In
+particular, the resulting <span
+class="math inline">\(\boldsymbol{Z}\)</span> is complex-valued.</p>
+<h3 data-number="2.8.1" id="modified-factorisation-method"><span
+class="header-section-number">2.8.1</span> Modified Factorisation
+Method</h3>
+<div class="tcolorbox">
+<div id="col:2.22" class="corollary">
+<p><strong>Corollary 59</strong>. <em>For circulant symmetric and
+non-negative definite matrix <span class="math inline">\(C_N\)</span>,
+we could modify the theorem <a href="#thm:2.15"
+data-reference-type="ref" data-reference="thm:2.15">39</a></em></p>
+<ol>
+<li><p><em>Generate a sample of <span
+class="math inline">\(\boldsymbol{\xi }\sim
+CN(\boldsymbol{0},2I_N)\)</span>.</em></p></li>
+<li><p><em>Compute <span class="math inline">\(\Lambda\)</span> (the
+eigenvalues of <span class="math inline">\(C_N\)</span>).</em></p></li>
+<li><p><em>Form <span class="math inline">\(\boldsymbol{Z} =
+W\Lambda^{1/2}\boldsymbol{\xi}\)</span>.</em></p></li>
+</ol>
+<p><em>Then <span class="math inline">\(\boldsymbol{Z}\sim
+CN(\boldsymbol{0},2C_N)\)</span>.</em></p>
+</div>
+</div>
+<p>Since <span class="math inline">\(C_N\)</span> is circulant, hence
+step (2) can be done using IDFT on <span
+class="math inline">\(\boldsymbol{c}_1\)</span>, and step (3) can be
+done using DFT. Hence the resulting cost will be <span
+class="math inline">\(O(N\log N)\)</span>.</p>
+<div class="tcolorbox">
+<div id="thm:2.23" class="theorem">
+<p><strong>Theorem 60</strong>. <em>Using the method in corollary <a
+href="#col:2.22" data-reference-type="ref"
+data-reference="col:2.22">59</a>, we have <span
+class="math display">\[\Re(\boldsymbol{Z}),\Im(\boldsymbol{Z}) \sim
+N(\boldsymbol{0},C_N) \ \text{ and independent.}\]</span></em></p>
+</div>
+</div>
+<div class="proof">
+<p><em>Proof.</em> It is easy to see that <span
+class="math inline">\(\boldsymbol{Z}\)</span> is a linear transformation
+of a multivariate Gaussian random variable <span
+class="math inline">\(\boldsymbol{\xi}\)</span>, hence <span
+class="math inline">\(\boldsymbol{Z}\)</span> is a multivariate Gaussian
+random variable. <span
+class="math display">\[\mathop{\mathrm{\mathbf{E}}}[\boldsymbol{Z}] =
+W\Lambda^{1/2}\mathop{\mathrm{\mathbf{E}}}[\boldsymbol{\xi}] =
+\boldsymbol{0}.\]</span> Hence if we define <span
+class="math inline">\(\boldsymbol{Z} = \Re(\boldsymbol{Z}) + i
+\Im(\boldsymbol{Z}) = \boldsymbol{Z}_1 + i \boldsymbol{Z}_2\)</span>,
+then <span class="math inline">\(\boldsymbol{Z}_1\)</span> and <span
+class="math inline">\(\boldsymbol{Z}_2\)</span> both mean <span
+class="math inline">\(\boldsymbol{0}\)</span>. <span
+class="math display">\[\label{2.46}
+        \begin{aligned}
+            \mathop{\mathrm{\mathbf{E}}}[\boldsymbol{Z}\boldsymbol{Z}^*]
+&amp;= \mathop{\mathrm{\mathbf{E}}}[W\Lambda^{1/2}\boldsymbol{\xi
+}\boldsymbol{\xi}^*\Lambda^{1/2}W^*]\\
+            &amp; =
+W\Lambda^{1/2}\mathop{\mathrm{\mathbf{E}}}[\boldsymbol{\xi
+}\boldsymbol{\xi}^*]\Lambda^{1/2}W^*\\
+            &amp; = 2W\Lambda W^*= 2C_N\in \mathbf{R}^N
+        \end{aligned}\]</span> Since <span
+class="math inline">\(\boldsymbol{\xi }\sim
+CN(\boldsymbol{0},2I_N)\)</span>, hence by definition <a
+href="#def:2.20" data-reference-type="ref"
+data-reference="def:2.20">57</a> if we write <span
+class="math inline">\(\boldsymbol{\xi }= \boldsymbol{\xi}_1 + i
+\boldsymbol{\xi}_2\)</span>, then <span
+class="math inline">\(\boldsymbol{\xi}_1\)</span> and <span
+class="math inline">\(\boldsymbol{\xi}_2\)</span> are independent (<span
+class="math inline">\(\mathop{\mathrm{\mathbf{E}}}[\boldsymbol{\xi}_1\boldsymbol{\xi}_2^\top]
+=
+\mathop{\mathrm{\mathbf{E}}}[\boldsymbol{\xi}_2\boldsymbol{\xi}_1^\top]=\boldsymbol{0}\)</span>)
+and distributed as <span
+class="math inline">\(N(\boldsymbol{0},I_N)\)</span>. <span
+class="math display">\[\label{2.48}
+        \begin{aligned}
+            \mathop{\mathrm{\mathbf{E}}}[\boldsymbol{Z}\boldsymbol{Z}^\top]
+&amp; = \mathop{\mathrm{\mathbf{E}}}[W\Lambda^{1/2}\boldsymbol{\xi
+}\boldsymbol{\xi}^\top\Lambda^{1/2} W^\top]\\
+            &amp; =
+W\Lambda^{1/2}\mathop{\mathrm{\mathbf{E}}}[\boldsymbol{\xi
+}\boldsymbol{\xi}^\top]\Lambda^{1/2}W^\top\\
+            \mathop{\mathrm{\mathbf{E}}}[\boldsymbol{\xi}\boldsymbol{\xi}^\top]
+&amp; = \mathop{\mathrm{\mathbf{E}}}[(\boldsymbol{\xi}_1 + i
+\boldsymbol{\xi}_2)(\boldsymbol{\xi}_1 + i \boldsymbol{\xi}_2)^\top]\\
+            &amp; =
+\mathop{\mathrm{\mathbf{E}}}[\boldsymbol{\xi}_1\boldsymbol{\xi}_1^\top]
++ i
+\mathop{\mathrm{\mathbf{E}}}[\boldsymbol{\xi}_1\boldsymbol{\xi}_2^\top]
++ i
+\mathop{\mathrm{\mathbf{E}}}[\boldsymbol{\xi}_2\boldsymbol{\xi}_1^\top]
+- \mathop{\mathrm{\mathbf{E}}}[\boldsymbol{\xi}_2
+\boldsymbol{\xi}_2^\top] = \boldsymbol{0}\\
+            \mathop{\mathrm{\mathbf{E}}}[\boldsymbol{Z}\boldsymbol{Z}^\top]
+&amp; = \boldsymbol{0} \in \mathbf{R}^N.
+        \end{aligned}\]</span> By lemma <a href="#lemma:2.19"
+data-reference-type="ref" data-reference="lemma:2.19">56</a>, <span
+class="math inline">\(\boldsymbol{Z}_1\)</span> and <span
+class="math inline">\(\boldsymbol{Z}_2\)</span> are mean zero, <span
+class="math inline">\(\mathop{\mathrm{\mathbf{E}}}[\boldsymbol{Z}\boldsymbol{Z}^*],\mathop{\mathrm{\mathbf{E}}}[\boldsymbol{Z}\boldsymbol{Z}
+^\top]\in \mathbf{R}^N\)</span>, the we could conclude that <span
+class="math display">\[\boldsymbol{Z}_1,\boldsymbol{Z}_2 \sim
+N(\boldsymbol{0},C_N),\quad {\text{and independent}}.\]</span> ◻</p>
+</div>
+<h2 data-number="2.9" id="circulant-embedding-method"><span
+class="header-section-number">2.9</span> Circulant Embedding Method</h2>
+<div class="recall">
+<p><strong>Recall 5</strong>. </p>
+<ul>
+<li><p>We now have the method for generating a pair of samples from
+<span class="math inline">\(N(\boldsymbol{0},C_N)\)</span> with <span
+class="math inline">\(C_N\)</span> is <span> c irculant</span> (from
+corollary <a href="#col:2.22" data-reference-type="ref"
+data-reference="col:2.22">59</a> and theorem <a href="#thm:2.23"
+data-reference-type="ref" data-reference="thm:2.23">60</a>).</p></li>
+<li><p>Unfortunately, covariance matrices are <em>not</em> usually
+<span> c irculant</span>.</p></li>
+</ul>
+</div>
+<p>Let <span class="math inline">\(D\subset \mathbf{R}\)</span> and let
+<span class="math inline">\(z(x,\omega)\)</span> be a mean-zero Gaussian
+RF, if</p>
+<ul>
+<li><p>the sample points <span
+class="math inline">\(x_1,x_2,\dots,x_N\)</span> are uniformly
+spaced.</p></li>
+<li><p>the covariance function is stationary: <span
+class="math inline">\(C(x,y) = c(x-y)\)</span>.</p></li>
+</ul>
+<p>Then <span class="math inline">\(\boldsymbol{Z} =
+[z(x_1,\omega),\dots,z(x_N,\omega)]^\top\sim
+N(\boldsymbol{0},C_N)\)</span> where <span
+class="math inline">\(C_N\)</span> is always <span> T oeplitz</span>
+(theorem <a href="#thm:2.12" data-reference-type="ref"
+data-reference="thm:2.12">49</a>).</p>
+<h3 data-number="2.9.1" id="circulant-embedding"><span
+class="header-section-number">2.9.1</span> Circulant Embedding</h3>
+<p>Any <span> s ymmetric Toeplitz</span> matrix <span><span
+class="math inline">\(C_N\)</span></span> can be embedded inside a
+<em>larger</em> <span> s ymmetric circulant</span> matrix <span><span
+class="math inline">\(\widetilde C\)</span></span> of the form <span
+class="math display">\[{\color{red} \widetilde C} = \left(
+    \begin{array}{c|c}
+      {\color{blue} C _N} &amp; A^\top\\
+      \hline
+      A &amp; B
+    \end{array}
+    \right)\]</span></p>
+<div class="example">
+<p><strong><em>Example</em> 61</strong> (<span
+class="math inline">\(N=4\)</span>). For <span
+class="math display">\[C_N = \begin{pmatrix}
+        5 &amp; 2&amp; 3 &amp; 4 \\
+        2 &amp; 5&amp; 2 &amp; 3 \\
+        3 &amp; 2 &amp; 5 &amp; 2\\
+        4 &amp; 3 &amp; 2 &amp; 5
+    \end{pmatrix}\]</span> Clearly, this matrix is symmetric and
+Toeplitz. This can be embedded into a larger <span> s ymmetric circulant
+matrix</span>. <span class="math display">\[{\color{red} \tilde
+{C}}=\left(\begin{array}{llll|ll}
+    5 &amp; 2 &amp; 3 &amp; 4 &amp; 3 &amp; 2 \\
+    2 &amp; 5 &amp; 2 &amp; 3 &amp; 4 &amp; 3 \\
+    3 &amp; 2 &amp; 5 &amp; 2 &amp; 3 &amp; 4 \\
+    4 &amp; 3 &amp; 2 &amp; 5 &amp; 2 &amp; 3 \\
+    \hline 3 &amp; 4 &amp; 3 &amp; 2 &amp; 5 &amp; 2 \\
+    2 &amp; 3 &amp; 4 &amp; 3 &amp; 2 &amp; 5
+    \end{array}\right)\]</span> If we focus on the first column of
+<span><span class="math inline">\(\widetilde C\)</span></span>, <span
+class="math inline">\({ \widetilde{\boldsymbol{c}_1}} =
+[5,2,3,4,3,2]^\top\)</span> which is a Hermitian vector.</p>
+</div>
+<h3 data-number="2.9.2" id="minimal-circulant-extension"><span
+class="header-section-number">2.9.2</span> Minimal circulant
+extension</h3>
+<div class="definition">
+<p><strong>Definition 62</strong>. Let <span
+class="math inline">\(C_N\)</span> be an <span
+class="math inline">\(N\times N\)</span> symmetric Toeplitz matrix with
+first column <span class="math display">\[\boldsymbol{c}_1 =
+[c_0,c_1,\dots,c_{N-2},c_{N-1}]^\top.\]</span> The <em>minimal circulant
+extension</em> <span><span class="math inline">\(\widetilde
+C\)</span></span> is the symmetric and circulant matrix of size <span
+class="math inline">\(P\times P\)</span> where <span
+class="math inline">\(P = 2N - 2\)</span> with first column <span
+class="math display">\[{\widetilde{\boldsymbol{c}_1}}=
+[c_0,\underbrace{c_1,\dots,c_{N-2}}_{\substack{\text{take this part,}\\
+\text{flip the order}}},c_{N-1}| c_{N-2},\dots,c_1]^\top.\]</span></p>
+</div>
+<p>That is, <span class="math display">\[\label{eq:2.55}
+    {\color{red} \widetilde C} = \left(
+    \begin{array}{c|c}
+      {\color{blue} C _N} &amp; A^\top\\
+      \hline
+      A &amp; B
+    \end{array}
+    \right)\]</span> where <span class="math inline">\(A\in
+\mathbf{R}^{(N-2)\times N}\)</span>, and <span
+class="math inline">\(B\in \mathbf{R}^{(N-2)\times(N-2)}\)</span>.</p>
+<h3 data-number="2.9.3" id="recovering-samples"><span
+class="header-section-number">2.9.3</span> Recovering Samples</h3>
+<p>If the extension matrix is a <em>valid covariance matrix</em>, then
+we can generate samples from <span
+class="math display">\[\widetilde{\boldsymbol{Z}} \sim
+N(\boldsymbol{0},{\color{red} \widetilde C})\quad {\color{red}
+\widetilde C}\text{ from equation~\eqref{eq:2.55}}\]</span> using the
+DFT-method. Such samples have the structure <span
+class="math display">\[{\widetilde{\boldsymbol{Z}}} =
+    \left(
+    \begin{array}{c}
+        \boldsymbol{Z} \\
+        \hline
+        \boldsymbol{Y}
+    \end{array}
+    \right) \quad \boldsymbol{Z} \in \mathbf{R}^N,\ \boldsymbol{Y} \in
+\mathbf{R}^{N-2}\]</span> and it can be shown that <span
+class="math inline">\(\boldsymbol{Z} \sim N(\boldsymbol{0},{\color{blue}
+C _N})\)</span>.</p>
+<div class="proof">
+<p><em>Proof.</em> Write <span
+class="math inline">\(\widetilde{\boldsymbol{Z}}=[\boldsymbol{Z},
+\boldsymbol{Y}]^{\top}\)</span> where <span
+class="math inline">\(\boldsymbol{Z}\)</span> is the <span
+class="math inline">\(\mathbf{R}^{N}\)</span>-valued random variable of
+interest. If <span class="math inline">\(\widetilde{\boldsymbol{Z}} \sim
+N(\boldsymbol{0}, \widetilde{C})\)</span> then clearly <span
+class="math inline">\(\boldsymbol{Z}\)</span> has mean vector zero. The
+covariance matrix of <span class="math inline">\(\boldsymbol{Z}\)</span>
+is <span
+class="math inline">\(\mathop{\mathrm{\mathbf{E}}}\left[\boldsymbol{Z
+Z}^\top\right]\)</span> and the covariance matrix of <span
+class="math inline">\(\widetilde{\boldsymbol{Z}}\)</span> is <span
+class="math inline">\(\widetilde{C}=\mathop{\mathrm{\mathbf{E}}}\left[\widetilde{\boldsymbol{Z}}
+\widetilde{\boldsymbol{Z}}^\top\right]\)</span>. We have <span
+class="math display">\[{\color{red} \widetilde
+{C}}=\left(\begin{array}{cc}
+        \mathop{\mathrm{\mathbf{E}}}[\boldsymbol{Z} \boldsymbol{Z}^\top]
+&amp; \mathop{\mathrm{\mathbf{E}}}[\boldsymbol{Z} \boldsymbol{Y}^\top]
+\\
+        \mathop{\mathrm{\mathbf{E}}}[\boldsymbol{Y Z}^\top] &amp;
+\mathop{\mathrm{\mathbf{E}}}[\boldsymbol{Y} \boldsymbol{Y}^\top]
+        \end{array}\right)\underbrace{=}_{\text{equation~\eqref{eq:2.55}}}\left(\begin{array}{cc}
+        {\color{blue} C _N} &amp; B^\top\\
+        B &amp; D
+        \end{array}\right)\]</span> Hence the covariance matrix of <span
+class="math inline">\(\boldsymbol{Z}\)</span>, <span
+class="math inline">\(\mathop{\mathrm{\mathbf{E}}}[\boldsymbol{Z}
+\boldsymbol{Z} ^\top]\)</span>, is <span
+class="math inline">\(C_N\)</span>. Finally, <span
+class="math inline">\(\boldsymbol{Z}\)</span> is Gaussian because it is
+a linear transformation of the Gaussian random variable <span
+class="math inline">\(\widetilde{\boldsymbol{Z}}\)</span>. ◻</p>
+</div>
+<div class="tcolorbox">
+<div id="thm:cem" class="theorem">
+<p><strong>Theorem 63</strong> (Circulant Embedding Method). <em>To draw
+a pair of independent samples from <span
+class="math inline">\(N(\boldsymbol{0}, C_{N})\)</span> when <span
+class="math inline">\(C_{N}\)</span> is Toeplitz:</em></p>
+<ul>
+<li><p><em>Construct first column <span
+class="math inline">\(\boldsymbol{c}_{1}\)</span> of <span
+class="math inline">\({\color{blue} C _{N}}\)</span></em></p></li>
+<li><p><em>Create first column <span
+class="math inline">\(\widetilde{\boldsymbol{c}}_{1}\)</span> of the
+minimal circulant extension <span class="math inline">\({\color{red}
+\widetilde {C}}\)</span></em></p></li>
+<li><p><em>Obtain two independent samples from <span
+class="math inline">\(N(\boldsymbol{0}, {\color{red} \widetilde
+{C}})\)</span> (apply IDFT &amp; DFT from corollary <a href="#col:2.22"
+data-reference-type="ref" data-reference="col:2.22">59</a>, and using
+theorem <a href="#thm:2.23" data-reference-type="ref"
+data-reference="thm:2.23">60</a>)</em></p></li>
+<li><p><em>Extract two independent samples from <span
+class="math inline">\(N\left(\boldsymbol{0}, {\color{blue} C
+_{N}}\right)\)</span></em></p></li>
+</ul>
+</div>
+</div>
+<h2 data-number="2.10" id="approximate-circulant-embedding"><span
+class="header-section-number">2.10</span> Approximate Circulant
+Embedding</h2>
+<div class="recall">
+<p><strong>Recall 6</strong>. Any <span> s ymmetric Toeplitz</span>
+matrix <span><span class="math inline">\(C_N\)</span></span> can be
+embedded inside a <em>larger</em> <span> s ymmetric circulant</span>
+matrix <span><span class="math inline">\(\widetilde C\)</span></span> of
+the form <span class="math display">\[{\color{red} \widetilde C} =
+\left(
+    \begin{array}{c|c}
+      {\color{blue} C _N} &amp; A^\top\\
+      \hline
+      A &amp; B
+    \end{array}
+    \right)\]</span> If <span class="math inline">\({\color{red}
+\widetilde C}\)</span> is <em>non-negative definite</em>, we can
+generate samples from <span
+class="math inline">\(N(\boldsymbol{0},{\color{red} \widetilde
+C})\)</span> and easily recover samples from <span
+class="math inline">\(N(\boldsymbol{0},{\color{blue} C _N})\)</span>
+using theorem <a href="#thm:cem" data-reference-type="ref"
+data-reference="thm:cem">63</a>.</p>
+<p>However, the method is not working if we have a invalid (have
+negative eigenvalues) <span class="math inline">\({\color{red}
+\widetilde C}\)</span>.</p>
+</div>
+<h3 data-number="2.10.1" id="matrix-splitting"><span
+class="header-section-number">2.10.1</span> Matrix Splitting</h3>
+<p>If we have <span class="math display">\[{\color{red} \widetilde C} =
+W\Lambda W^*.\]</span> We can split <span
+class="math inline">\(\Lambda\)</span> into two order diagonal matrices,
+<span class="math display">\[\Lambda_+ - \Lambda_-\]</span> Let <span
+class="math inline">\(\boldsymbol{d}\)</span> be the vector containing
+the eigenvalues of <span class="math inline">\({\color{red} \widetilde
+C}\)</span> and define <span class="math display">\[_{i,i} =
+    \begin{cases}
+        d_i &amp; \text{ if } d_i\geq 0\\
+        0 &amp; \text{otherwise}
+    \end{cases},\qquad
+    [\Lambda_-]_{i,i} =
+    \begin{cases}
+        -d_i &amp; \text{ if } d_i&lt; 0\\
+        0 &amp; \text{otherwise}
+    \end{cases}\]</span></p>
+<h3 data-number="2.10.2" id="approximate-circulant-embedding-1"><span
+class="header-section-number">2.10.2</span> Approximate Circulant
+Embedding</h3>
+<p>We now have the <em>matrix splitting</em>: <span
+class="math display">\[\widetilde C = {\color{red} W \Lambda_+ W^*} -
+W\Lambda_-W^*\coloneqq {\color{red} \widetilde C_{pos}} - \widetilde
+C_{neg} \approx {\color{red} \widetilde C_{pos}},\]</span> if the
+negative eigenvalues are small.</p>
+<ul>
+<li><p>The matrix <span class="math inline">\({\color{red} \widetilde
+C_{pos}}\)</span> is circulant and <em>non-negative
+definite</em>.</p></li>
+<li><p>We can apply the method (corollary <a href="#col:2.22"
+data-reference-type="ref" data-reference="col:2.22">59</a>) with <span
+class="math inline">\({\color{red} \widetilde C_{pos}}\)</span> in place
+of <span class="math inline">\({\widetilde C}\)</span>: <span
+class="math display">\[{\widehat{\boldsymbol{Z}}}=W{\color{red} \Lambda
+_+^{1/2}}\boldsymbol{\xi},\quad {\text{where }} \boldsymbol{\xi }\sim
+CN(\boldsymbol{0},2I_P).\]</span> It can be shown that <span
+class="math display">\[\label{eq:2.62}
+        {\widehat{\boldsymbol{Z}}}\sim CN(\boldsymbol{0},{\color{red} 2
+\widetilde C_{pos}}),\qquad
+\Re(\widehat{\boldsymbol{Z}}),\Im(\widehat{\boldsymbol{Z}})\sim
+N(\boldsymbol{0},{\color{red} \widetilde C_{pos}})\]</span></p>
+<div class="proof">
+<p><em>Proof.</em> <span
+class="math inline">\(\Re({\widehat{\boldsymbol{Z}}})\)</span> and <span
+class="math inline">\(\Im({\widehat{\boldsymbol{Z}}})\)</span> are both
+linear transformation of Gaussian <span
+class="math inline">\(\Re(\boldsymbol{\xi})\)</span> and <span
+class="math inline">\(\Im(\boldsymbol{\xi})\)</span>. Hence <span
+class="math inline">\(\Re({\widehat{\boldsymbol{Z}}})\)</span> and <span
+class="math inline">\(\Im({\widehat{\boldsymbol{Z}}})\)</span> are
+Gaussian. <span class="math display">\[\label{2.63}
+            \begin{aligned}
+                \mathop{\mathrm{\mathbf{E}}}[{\widehat{\boldsymbol{Z}}}{\widehat{\boldsymbol{Z}}}^*]
+&amp; = \mathop{\mathrm{\mathbf{E}}}[W\Lambda_+^{1/2}\boldsymbol{\xi
+}\boldsymbol{\xi}^*\Lambda_+^{1/2}W^*]\\
+                &amp; = W\Lambda_+^{1/2}(2I_P)\Lambda_+^{1/2}W^*\\
+                &amp; = 2 W\Lambda_+ W^*= 2 {\color{red} \widetilde
+C_{pos}} \in \mathbf{R}^{P\times P} \\
+                \mathop{\mathrm{\mathbf{E}}}[{\widehat{\boldsymbol{Z}}}{\widehat{\boldsymbol{Z}}}]
+&amp;= \boldsymbol{0} \quad \text{By proof of theorem~\ref{thm:2.23}}
+            \end{aligned}\]</span> By lemma <a href="#lemma:2.19"
+data-reference-type="ref" data-reference="lemma:2.19">56</a>, <span
+class="math inline">\(\Re({\widehat{\boldsymbol{Z}}})\)</span> and <span
+class="math inline">\(\Im({\widehat{\boldsymbol{Z}}})\)</span> are
+independent and <span
+class="math display">\[\Re(\widehat{\boldsymbol{Z}}),\Im(\widehat{\boldsymbol{Z}})\sim
+N(\boldsymbol{0},{\color{red} \widetilde C_{pos}})\]</span> ◻</p>
+</div></li>
+</ul>
+<h3 data-number="2.10.3" id="recovering-approximate-samples"><span
+class="header-section-number">2.10.3</span> Recovering Approximate
+Samples</h3>
+<p>Let <span class="math inline">\(\boldsymbol{Z}_1\)</span> and <span
+class="math inline">\(\boldsymbol{Z}_2\)</span> denote the first <span
+class="math inline">\(N\)</span> components of these random vectors in
+equation <a href="#eq:2.62" data-reference-type="eqref"
+data-reference="eq:2.62">[eq:2.62]</a>. Then <span
+class="math display">\[\boldsymbol{Z}_1,\boldsymbol{Z}_2 \sim
+N(\boldsymbol{0},{\color{blue} \widehat C})\]</span> where <span
+class="math inline">\({\color{blue} \widehat C}\)</span> is the <span
+class="math inline">\(N\times N\)</span> leading block of <span
+class="math inline">\({\color{red} \widetilde C_{pos}}\)</span>. <span
+class="math display">\[{\color{red} \widetilde C_{pos}} =
+    \left(
+    \begin{array}{c|c}
+      {\color{blue} \widehat C} &amp; A^\top\\
+      \hline
+      A &amp; B
+    \end{array}
+    \right)\]</span> However, since <span
+class="math inline">\({\color{blue} \widehat C \neq C_N}\)</span>, we do
+note have samples from the target distribution <span
+class="math inline">\(N(\boldsymbol{0},{\color{blue} C
+_N})\)</span>.</p>
+<div class="tcolorbox">
+<div class="theorem">
+<p><strong>Theorem 64</strong>. <em>It can be shown that, <span
+class="math display">\[\|C_{N}-\widehat{C}\|_{2} \leq
+\rho\left(\Lambda_{-}\right)\]</span> where <span
+class="math inline">\(\rho(\cdot)\)</span> denotes the spectral
+radius.</em></p>
+</div>
+</div>
+<div class="proof">
+<p><em>Proof. (Not examinable).</em> <span
+class="math display">\[\label{2.66}
+        \begin{aligned}
+            &amp;\|\widetilde C - \widetilde C_{pos}\|_2= \|(\widetilde
+C_{pos} - \widetilde C_{neg}) - \widetilde C_{pos}\|_2 = \|-\widetilde
+C_{neg}\|_2 = \rho(\widetilde C_{neg}) = \rho(\Lambda_-) \\
+            &amp;\text{By
+\href{https://en.wikipedia.org/wiki/Min-max_theorem}{Cauchy interlacing
+theorem}} \quad \|C_N - \widehat C\|_2 \leq \|\widetilde C - \widetilde
+C_{pos}\|_2 = \rho(\Lambda_-)
+        \end{aligned}\]</span> ◻</p>
+</div>
+<h1 data-number="3" id="sampling-methods-for-forward-uq-in-odes"><span
+class="header-section-number">3</span> Sampling Methods for Forward UQ
+in ODEs</h1>
+<h2 data-number="3.1" id="revision-monte-carlo-estimate-of-mean"><span
+class="header-section-number">3.1</span> (Revision) Monte Carlo Estimate
+of Mean</h2>
+<p>Let <span class="math inline">\(X: \varOmega\to \mathbf{R}\)</span>
+be a real-valued random variable with <span
+class="math display">\[\mathop{\mathrm{\mathbf{E}}}[X] = \mu, \quad
+\mathbf{Var}[X] = \sigma^2 &lt;\infty.\]</span></p>
+<p>Let <span class="math inline">\(X_1,\dots,X_M\)</span> be independent
+samples of <span class="math inline">\(X\)</span>, i.e., <span
+class="math display">\[X_i = X(\omega_i),\quad i = 1,2,\dots,M.\]</span>
+The standard MC estimate for <span class="math inline">\(\mu\)</span> is
+<span class="math display">\[\mu_M\coloneqq {1\over M} \sum_{i=1}^M
+X_i.\]</span></p>
+<div class="recall">
+<p><strong>Recall 7</strong>. </p>
+<ul>
+<li><p><span class="math inline">\(\mu_M\)</span> is a <em>random
+variable</em>, and so is the error <span class="math inline">\(|\mu_M -
+\mu|\)</span>.</p></li>
+<li><p><span class="math inline">\(\mu_M\)</span> is an
+<em>unbiased</em> estimate for <span class="math inline">\(\mu\)</span>
+since <span class="math display">\[\mathop{\mathrm{\mathbf{E}}}[\mu_M] =
+{1\over M} (M\mu) = \mu.\]</span></p></li>
+</ul>
+</div>
+<h3 data-number="3.1.1" id="mean-square-error"><span
+class="header-section-number">3.1.1</span> Mean-Square Error</h3>
+<p><span class="math display">\[\mu \approx \mu_M\coloneqq {1\over M
+}\sum_{i=1}^M X_i.\]</span></p>
+<div class="definition">
+<p><strong>Definition 65</strong> (Mean-Square Error). The
+<em>mean-square error</em> of the estimator <span
+class="math inline">\(\mu_M\)</span> is <span
+class="math display">\[\mathop{\mathrm{MSE}}(\mu_M) =
+\mathop{\mathrm{\mathbf{E}}}[(\mu_M-\mu)^2] = \|\mu_M -
+\mu\|_{L^2(\varOmega)}^2\]</span></p>
+</div>
+<div class="proposition">
+<p><strong>Proposition 66</strong>. <em>Since <span
+class="math inline">\(\mu_M\)</span> is an unbiased estimator, <span
+class="math display">\[\mathop{\mathrm{MSE}}(\mu_M) =
+\mathop{\mathrm{\mathbf{E}}}[(\mu_M -
+\mathop{\mathrm{\mathbf{E}}}[\mu_M])^2] = \mathbf{Var}[\mu_M] = {1\over
+M^2}(M\sigma^2) = {\sigma^2 \over M}.\]</span> The <em>root mean-square
+error (RMSE)</em> is <span class="math display">\[\mathbf{RMSE}(\mu_M) =
+\sqrt{\mathop{\mathrm{MSE}}(\mu_M)} = \|\mu_M - \mu\|_{L^2(\varOmega)} =
+{\sigma\over \sqrt{M}}\]</span></em></p>
+</div>
+<div class="tcolorbox">
+<div class="theorem">
+<p><strong>Theorem 67</strong> (Chebyshev Inequality). <em>For any <span
+class="math inline">\(\epsilon&gt; 0\)</span>, we have <span
+class="math display">\[\mathbf{P}(|\mu_M - \mu|\geq M^{-1/2 +
+\epsilon})\leq \sigma^2 M^{-2\epsilon}.\]</span> As <span
+class="math inline">\(M\to \infty\)</span>, the probability of the error
+being larger than <span class="math inline">\(O(M^{-1/2 +
+\epsilon})\)</span> converges to zero.</em></p>
+</div>
+</div>
+<p>Informally, we often say that the MC error is <span
+class="math inline">\(O(M^{-1/2})\)</span>.</p>
+<h3 data-number="3.1.2" id="estimating-sigma2"><span
+class="header-section-number">3.1.2</span> Estimating <span
+class="math inline">\(\sigma^2\)</span></h3>
+<p>We can estimate <span class="math inline">\(\sigma^2\)</span> by
+<span class="math display">\[\sigma^2_M = {1 \over M - 1}\sum_{i=1}^M
+(X_i - \mu_M)^2.\]</span> This is also an <em>unbiased</em>
+estimator.</p>
+<h2 data-number="3.2" id="ivps-explicit-euler-method"><span
+class="header-section-number">3.2</span> IVPs &amp; Explicit Euler
+Method</h2>
+<p>We consider initial value problems (IVPs) of the form: <span
+class="math display">\[{\mathrm{d}\boldsymbol{u}(t) \over \mathrm{d}t} =
+\boldsymbol{f}(\boldsymbol{u}(t)),\quad 0&lt; t&lt; T,\]</span> with
+vector-valued solution <span class="math display">\[\boldsymbol{u}(t) =
+[u_1(t),\dots,u_d(t)]^\top\]</span> with inital condition <span
+class="math inline">\(\boldsymbol{u}(0) = \boldsymbol{u}_0\)</span>.</p>
+<div id="example:3.1" class="example">
+<p><strong><em>Example</em> 68</strong> (Population Model). We introduce
+the following <em>test problem</em> (<span
+class="math inline">\(d=2\)</span> case) <span
+class="math display">\[\frac{\mathrm{d}}{\mathrm{d}t}\left(\begin{array}{l}
+        u_{1}(t) \\
+        u_{2}(t)
+        \end{array}\right)=\left(\begin{array}{l}
+        u_{1}(t)\left(1-u_{2}(t)\right) \\
+        u_{2}(t)\left(u_{1}(t)-1\right)
+        \end{array}\right), \quad\left(\begin{array}{l}
+        u_{1}(0) \\
+        u_{2}(0)
+        \end{array}\right)=\left(\begin{array}{l}
+        u_{1,0} \\
+        u_{2,0}
+        \end{array}\right)\]</span></p>
+</div>
+<p>A typical solution to this problem shown in figure <a href="#fig:6"
+data-reference-type="ref" data-reference="fig:6">6</a>.</p>
+<figure>
+<img src="figs/6.PNG" id="fig:6" style="width:75.0%"
+alt="Explicit Euler approximation to the solution \boldsymbol{u}(t) = [u_1(t),u_2(t)]^\top to Example 68 computed with T = 10, N = 10^5 and initial condition \boldsymbol{u}_0=[0.5,2]^\top." />
+<figcaption aria-hidden="true">Explicit Euler approximation to the
+solution <span class="math inline">\(\boldsymbol{u}(t) =
+[u_1(t),u_2(t)]^\top\)</span> to Example <a href="#example:3.1"
+data-reference-type="ref" data-reference="example:3.1">68</a> computed
+with <span class="math inline">\(T = 10\)</span>, <span
+class="math inline">\(N = 10^5\)</span> and initial condition <span
+class="math inline">\(\boldsymbol{u}_0=[0.5,2]^\top\)</span>.</figcaption>
+</figure>
+<h3 data-number="3.2.1" id="explicit-euler-method"><span
+class="header-section-number">3.2.1</span> Explicit Euler Method</h3>
+<p>For <span class="math display">\[{\mathrm{d}\boldsymbol{u}(t) \over
+\mathrm{d}t} = \boldsymbol{f}(\boldsymbol{u}(t)),\quad 0&lt; t&lt;
+T,\quad \boldsymbol{u}(0) = \boldsymbol{u}_0.\]</span> <em>Time-stepping
+methods</em> estimate the solution at a set of grid points <span
+class="math inline">\(t_n\)</span>. <span
+class="math display">\[\boldsymbol{u}_n \approx
+\boldsymbol{u}(t_n)\]</span></p>
+<div class="tcolorbox">
+<div class="theorem">
+<p><strong>Theorem 69</strong> (Explict Euler Method). </p>
+<ul>
+<li><p><em>Divide <span class="math inline">\([0,T]\)</span> into <span
+class="math inline">\(N\)</span> intervals, and define the step size
+<span class="math display">\[\Delta t \coloneqq
+T/N.\]</span></em></p></li>
+<li><p><em>Choose the <em>grid point</em> <span
+class="math inline">\(t_n = n\Delta t\)</span>, <span
+class="math inline">\(n = 0,1,\dots,N\)</span>.</em></p></li>
+<li><p><em>Starting with <span
+class="math inline">\(\boldsymbol{u}_0\)</span>, compute <span
+class="math display">\[\boldsymbol{u}_{n+1} = \boldsymbol{u}_n + \Delta
+t \ \boldsymbol{f} (\boldsymbol{u}_n),\quad n =
+1,2,\dots,N.\]</span></em></p></li>
+</ul>
+</div>
+</div>
+<p>What can we say about the <em>error</em> <span
+class="math inline">\(\|\boldsymbol{u}(t_n)-\boldsymbol{u}_n\|_2\)</span>
+at time <span class="math inline">\(t_n\)</span>?</p>
+<div class="tcolorbox">
+<div class="theorem">
+<p><strong>Theorem 70</strong>. <em>Suppose <span
+class="math inline">\(\boldsymbol{f}:\mathbf{R}^d \to
+\mathbf{R}^d\)</span> satisfies the Lipschitz condition <span
+class="math display">\[\|\boldsymbol{f}(\boldsymbol{v}) -
+\boldsymbol{f}(\boldsymbol{w})\|_2 \leq L \|\boldsymbol{x} -
+\boldsymbol{w}\|_2,\quad \forall \boldsymbol{v},\boldsymbol{w} \in
+\mathbf{R}^d.\]</span> for some <span
+class="math inline">\(L&gt;0\)</span> and that the true solution <span
+class="math inline">\(\boldsymbol{u}(t)\)</span> is twice
+<em>continuosly differentiable</em>. Then, for any <span
+class="math inline">\(\boldsymbol{u}_0\in \mathbf{R}^d\)</span>, there
+exist a constant <span class="math inline">\(K&gt;0\)</span> independent
+of <span class="math inline">\(\Delta t\)</span> such that <span
+class="math display">\[\max_{0\leq t_n\leq T}\| \boldsymbol{u}(t_n) -
+\boldsymbol{u}_n\|_2 \leq K \Delta t.\]</span></em></p>
+</div>
+</div>
+<p>Hence the explicit Euler error is <span
+class="math inline">\(O(\Delta t)\)</span>.</p>
+<h2 data-number="3.3" id="ivp-uncertain-initial-condition"><span
+class="header-section-number">3.3</span> IVP &amp; Uncertain Initial
+Condition</h2>
+<div id="fig:7" class="example">
+<p><strong><em>Example</em> 71</strong> (Population Model). <span
+id="example:3.7" label="example:3.7"></span> <span
+class="math display">\[\frac{\mathrm{d}}{\mathrm{d}t}\left(\begin{array}{l}
+        u_{1}(t) \\
+        u_{2}(t)
+        \end{array}\right)=\left(\begin{array}{l}
+        u_{1}(t)\left(1-u_{2}(t)\right) \\
+        u_{2}(t)\left(u_{1}(t)-1\right)
+        \end{array}\right), \quad\left(\begin{array}{l}
+        u_{1}(0) \\
+        u_{2}(0)
+        \end{array}\right)=\left(\begin{array}{l}
+        u_{1,0} \\
+        u_{2,0}
+        \end{array}\right)\]</span> If we model <span
+class="math inline">\(u_{1,0}\)</span> and <span
+class="math inline">\(u_{2,0}\)</span> as <em>random variables</em>,
+then the ODE solution <span
+class="math inline">\(\boldsymbol{u}:[0,T]\times \varOmega\to
+\mathbf{R}^2\)</span> is a vector-valued <em>stochastic process</em>
+<span class="math display">\[\boldsymbol{u}(t,\omega) = \begin{pmatrix}
+            u_1(t,\omega)\\ u_2(t,\omega)
+        \end{pmatrix}.\]</span> For this example, we modelled as <span
+class="math display">\[u_{1,0} \sim U(\overline u_1 - \tau ,\overline
+u_1 + \tau),\qquad u_{2,0}\sim U(\overline u_2 - \tau, \overline u_2 +
+\tau).\]</span> and we choose: <span class="math inline">\(\overline u_1
+= 0.5\)</span>, <span class="math inline">\(\overline u_2 = 2\)</span>,
+and <span class="math inline">\(\tau = 0.1\)</span>. For each sample
+<span class="math inline">\(\boldsymbol{u}_0^i = u_0(\omega_i)\)</span>
+of the initial condition, we can apply the explicit Euler method (with
+<span class="math inline">\(N\)</span> intervals) to approximate <span
+class="math display">\[\boldsymbol{u}_n^i \approx
+\boldsymbol{u}(t_n,\omega_i),\quad n = 1,2,\dots,N,\]</span> at the grid
+points <span class="math inline">\(t_n\)</span> on <span
+class="math inline">\([0,T]\)</span>. If we choose <span
+class="math inline">\(T =6\)</span> and <span class="math inline">\(N =
+10^6\)</span>, we have the figure <a href="#fig:7"
+data-reference-type="ref" data-reference="fig:7">71</a>.</p>
+<figure>
+<img src="figs/7.PNG" id="fig:7" style="width:75.0%"
+alt="Ten samples of the explicit Euler approximation to the solution to Example [example:3.7] computed with T=6, and N=10^{6} and \tau=0.1 (left) and \tau=0.2 (right)." />
+<figcaption aria-hidden="true">Ten samples of the explicit Euler
+approximation to the solution to Example <a href="#example:3.7"
+data-reference-type="ref" data-reference="example:3.7">[example:3.7]</a>
+computed with <span class="math inline">\(T=6\)</span>, and <span
+class="math inline">\(N=10^{6}\)</span> and <span
+class="math inline">\(\tau=0.1\)</span> (left) and <span
+class="math inline">\(\tau=0.2\)</span> (right).</figcaption>
+</figure>
+</div>
+<h3 data-number="3.3.1" id="estimating-mean-of-quantity-of-intest"><span
+class="header-section-number">3.3.1</span> Estimating Mean of Quantity
+of Intest</h3>
+<p>Suppose our quantity of interest is <span
+class="math display">\[X\coloneqq u_2(T,\omega).\]</span></p>
+<p><span><strong><em>Key Question.</em></strong></span> How can we
+estimate <span
+class="math inline">\(\mathop{\mathrm{\mathbf{E}}}[X]\)</span>
+efficiently and accurately?</p>
+<p>But we don’t have access to samples of the exact solution <span
+class="math inline">\(X_i\coloneqq u_2(T,\omega_i)\)</span>. For a fixed
+<span class="math inline">\(N\)</span>, we can define the random
+variable <span class="math display">\[{\color{blue} X _N =
+u_{2,N}},\quad {\text{where }} \boldsymbol{u}_N(\omega) =
+\begin{pmatrix}
+        u_{1,N}(\omega)\\ {\color{blue} u _{2,N}(\omega)}
+    \end{pmatrix}\]</span> is the <em>explicit Euler</em> approximation
+at <span class="math inline">\(t_N = T\)</span>.</p>
+<p>Let <span class="math inline">\(X_N^i\)</span> denote a sample of
+<span class="math inline">\(X_N\)</span> and define the Monte Carlo
+estimate <span class="math display">\[\label{eq:3.23}
+    \mu_{M,N}\coloneqq \frac{1}{M}\sum_{i=1}^M X_N^i \approx
+\mathop{\mathrm{\mathbf{E}}}[X_N]\approx
+\mathop{\mathrm{\mathbf{E}}}[X].\]</span> If we use <span
+class="math inline">\(\mu_{M,N}\)</span> to estimate <span
+class="math inline">\(\mathop{\mathrm{\mathbf{E}}}[X]\)</span>, then the
+error depends on:</p>
+<ul>
+<li><p>the number of <em>samples</em> <span
+class="math inline">\(M\)</span>,</p></li>
+<li><p>the number of <em>intervals</em> <span
+class="math inline">\(N\)</span> (equivalently, the <em>step size</em>
+<span class="math inline">\(\Delta t\)</span>).</p></li>
+</ul>
+<h2 data-number="3.4" id="standard-monte-carlo-cost-accuracy"><span
+class="header-section-number">3.4</span> Standard Monte Carlo: Cost
+&amp; Accuracy</h2>
+<p>Let <span class="math inline">\(X\)</span> be a <span
+class="math inline">\(\mathbf{R}\)</span>-valued random variable with
+mean <span class="math display">\[\mathop{\mathrm{\mathbf{E}}}[X] =
+\mu.\]</span> Let Equation <a href="#eq:3.23"
+data-reference-type="eqref" data-reference="eq:3.23">[eq:3.23]</a> be
+the standard MC estimate.</p>
+<div class="question">
+<p><strong>Question 4</strong>. How do we choose <span
+class="math inline">\(M,N\)</span> so that we can guarantee <span
+class="math display">\[\mathbf{RMSE}(\mu_{M,N})\leq \epsilon.\]</span>
+and what will be the corresponding cost?</p>
+</div>
+<div class="tcolorbox">
+<div id="thm:3.8" class="theorem">
+<p><strong>Theorem 72</strong>. <em>Let <span
+class="math inline">\(\mu_{M,N} \coloneqq {1\over M}\sum_{i=1}^M X_N^i
+\approx \mu\)</span>, then <span
+class="math display">\[\mathop{\mathrm{MSE}}(\mu_{M,N}) =
+\mathop{\mathrm{\mathbf{E}}}[(\mu_{M,N} - \mu)^2] =
+\underbrace{M^{-1}\mathbf{Var}[X_N]}_{\text{MC Samping Error}} +
+\underbrace{(\mathop{\mathrm{\mathbf{E}}}[X_N - X])^2}_{\text{Bias term
+} \mathop{\mathrm{\mathbf{E}}}[X_N]\neq
+\mathop{\mathrm{\mathbf{E}}}[X]}\]</span></em></p>
+</div>
+</div>
+<div class="proof">
+<p><em>Proof.</em> <span class="math display">\[\label{3.26}
+        \begin{aligned}
+            \mathop{\mathrm{MSE}}(\mu_{M,N}) &amp; =
+\mathop{\mathrm{\mathbf{E}}}[\mu_{M,N} - 2\mu \mu_{M,N} + \mu^2]\\
+            &amp; = \mathop{\mathrm{\mathbf{E}}}[\mu_{M,N}^2] - 2\mu
+\mathop{\mathrm{\mathbf{E}}}[\mu_{M,N}] + \mu^2 \\
+            &amp; = \mathop{\mathrm{\mathbf{E}}}[\mu^2_{M,N}] -
+\mathop{\mathrm{\mathbf{E}}}[\mu_{M,N}]^2 +
+\mathop{\mathrm{\mathbf{E}}}[\mu_{M,N}]^2 - 2\mu
+\mathop{\mathrm{\mathbf{E}}}[\mu_{M,N}] + \mu^2 \\
+            &amp; = \mathbf{Var}[\mu_{M,N}] +
+(\mathop{\mathrm{\mathbf{E}}}[\mu_{M,N}] - \mu)^2\\
+            &amp; = \mathbf{Var}[\mu_{M,N}] +
+(\mathop{\mathrm{\mathbf{E}}}[\mu_{M,N}-X])^2 \quad (\mu =
+\mathop{\mathrm{\mathbf{E}}}[X]).\\
+            \mathbf{Var}[\mu_{M,N}]&amp;=\mathbf{Var}[{1\over
+M}\sum_{i=1}^M X_N^i]\\
+            &amp; = {1\over M^2}\sum_{i=1}^M \mathbf{Var}[X_N^i]={1\over
+M}\mathbf{Var}[X_N].\\
+            \mathop{\mathrm{\mathbf{E}}}[\mu_{M,N}] &amp; = {1\over M}
+\sum_{i=1}^M \mathop{\mathrm{\mathbf{E}}}[X_N^i] =
+\mathop{\mathrm{\mathbf{E}}}[X_N]\\
+            \mathop{\mathrm{MSE}}(\mu_{M,N}) &amp;=
+M^{-1}\mathbf{Var}[X_N] + (\mathop{\mathrm{\mathbf{E}}}[X_N - X])^2
+\quad \text{as required}.
+        \end{aligned}\]</span> ◻</p>
+</div>
+<h3 data-number="3.4.1" id="bias-accuracy-of-x_n"><span
+class="header-section-number">3.4.1</span> Bias : Accuracy of <span
+class="math inline">\(X_N\)</span></h3>
+<p>To investigate the <em>bias</em>, we need information about the
+quality of the approximation, <span class="math inline">\(X_N\approx
+X\)</span>, and how the error depends on <span
+class="math inline">\(N\)</span>.</p>
+<div id="ass:3.9" class="assumption">
+<p><strong>Assumption 73</strong>. <em>We assume that <span
+class="math inline">\(\exists C\)</span> and <span
+class="math inline">\(\alpha&gt;0\)</span> such that <span
+class="math display">\[|\mathop{\mathrm{\mathbf{E}}}[X_N - X]|\leq
+CN^{-\alpha},\]</span> where <span class="math inline">\(C\)</span> is
+independent of <span class="math inline">\(N\)</span>.</em></p>
+<ul>
+<li><p><em><span class="math inline">\(X_N\)</span> converges <em>in
+mean</em> to <span class="math inline">\(X\)</span> as <span
+class="math inline">\(N \to \infty\)</span>,</em></p></li>
+<li><p><em><span class="math inline">\(\alpha\)</span> is the rate of
+convergence.</em></p></li>
+</ul>
+</div>
+<h3 data-number="3.4.2" id="cost-to-controlling-the-mse"><span
+class="header-section-number">3.4.2</span> Cost to Controlling the
+MSE</h3>
+<p>To obtain <span class="math inline">\(\mathbf{RMSE}(\mu_{M,N})\leq
+\epsilon\)</span>, where <span class="math inline">\(\epsilon\)</span>
+is a fixed tolerance, we need <span
+class="math inline">\(\mathop{\mathrm{MSE}}(\mu_{M,N})\leq
+\epsilon^2\)</span>. From Theorem <a href="#thm:3.8"
+data-reference-type="ref" data-reference="thm:3.8">72</a>, this is
+satisfied if <span class="math display">\[M^{-1}\mathbf{Var}[X_N] \leq
+{\epsilon^2 \over 2} \qquad \&amp; \qquad
+(\mathop{\mathrm{\mathbf{E}}}[X_N - X])^2 \leq {\epsilon^2\over
+2}\]</span> Hence we could choose</p>
+<ul>
+<li><p><span class="math inline">\(M\geq 2\mathbf{Var}[X_N]\epsilon^{-2}
+\to M = O(\epsilon^{-2})\)</span>.</p></li>
+<li><p><span class="math inline">\(N\geq
+(2C^2)^{1/2\alpha}\epsilon^{-1/\alpha} \to N =
+O(\epsilon^{-1/\alpha})\)</span>. (From Assumption <a href="#ass:3.9"
+data-reference-type="ref" data-reference="ass:3.9">73</a>)</p></li>
+</ul>
+<div class="tcolorbox">
+<div class="theorem">
+<p><strong>Theorem 74</strong> (Cost of MC estimator). <em>If the cost
+of generating one sample of <span class="math inline">\(X_N\)</span> is
+<span class="math inline">\(O(N^{\beta})\)</span>, then the cost to
+compute <span class="math inline">\(\mu_{M,N}\)</span> is <span
+class="math display">\[C_{MC} = M\times O(N^{\beta}).\]</span> The cost
+to deliver an estimate such that <span
+class="math inline">\(\mathbf{RMSE}(\mu_{M,N}) \leq \epsilon\)</span> is
+<span class="math display">\[C_{MC} = O(\epsilon^{-2})\times
+O(\epsilon^{-\beta/\alpha}) = O(\epsilon^{-2 -
+\beta/\alpha}).\]</span></em></p>
+</div>
+</div>
+<h2 data-number="3.5" id="multilevel-monte-carlo-key-idea"><span
+class="header-section-number">3.5</span> Multilevel Monte Carlo : Key
+idea</h2>
+<p>Recap: Let <span class="math inline">\(X\)</span> be real-valued r.v.
+with mean <span
+class="math inline">\(\mathop{\mathrm{\mathbf{E}}}[X]=\mu\)</span>.
+Suppose <span class="math inline">\(X_N\approx X\)</span> is another
+r.v. associated with a <em>discretization parameter</em> <span
+class="math inline">\(N\)</span> and the standard Monte Carlo estimate
+is: <span class="math display">\[\mu_{M,N}:={1\over
+M}\sum_{i=1}^MX_N^i\approx \mu\]</span> with the <em>mean-square
+error</em> <span
+class="math display">\[\mathop{\mathrm{MSE}}(\mu_{M,N})=M^{-1}\underbrace{\mathbf{Var}[X_N]}_{\text{Sampling
+error}}+(\underbrace{\mathop{\mathrm{\mathbf{E}}}[X_N-X]}_{\text{bias
+due to approximation}})^2\]</span> But we have some key
+disadvantages:</p>
+<ol>
+<li><p>Error depends on <span
+class="math inline">\(\mathbf{Var}[X_N]\)</span>.</p></li>
+<li><p>Cost to achieve <span class="math inline">\(\mathbf{RMSE}\leq
+\epsilon\)</span> often too high.</p></li>
+</ol>
+<h3 data-number="3.5.1" id="sequence-of-approximation"><span
+class="header-section-number">3.5.1</span> Sequence of
+Approximation</h3>
+<p>Suppose we have access to samples of a sequence of r.v.s <span
+class="math inline">\(X_{N_0},X_{N_1},\dots,X_{N_L}\)</span> that each
+approximate <span class="math inline">\(X\)</span>, where <span
+class="math inline">\(N_0\)</span> is fixed and <span
+class="math display">\[N_\ell=sN_{\ell-1},\quad
+\ell=1,2,\dots,L,\]</span> for some <span
+class="math inline">\(s&gt;1\)</span>. (We ensure that <span
+class="math inline">\(N_0&lt;N_1&lt;\cdots&lt;N_L\)</span>)</p>
+<p>Here <span class="math inline">\(\ell\)</span> is the <em>level</em>
+number of the approximation <span
+class="math inline">\(X_{N_\ell}\)</span>.</p>
+<div class="assumption">
+<p><strong>Assumption 75</strong>. </p>
+<ul>
+<li><p><em><span class="math inline">\(X_{N_\ell}\)</span> is a more
+<em>accurate</em> approxoimation of <span
+class="math inline">\(X\)</span> as <span class="math inline">\(\ell\to
+\infty\)</span>.</em></p></li>
+<li><p><em>Samples of <span class="math inline">\(X_{N_\ell}\)</span>
+Become more <em>expensive</em> to generate as <span
+class="math inline">\(\ell\to \infty\)</span>.</em></p></li>
+</ul>
+</div>
+<h3 data-number="3.5.2" id="mlmc-basic-ideas"><span
+class="header-section-number">3.5.2</span> MLMC : Basic Ideas</h3>
+<p>In the MLMC method, we use a <em>decreasing</em> number of samples of
+<span class="math inline">\(X_{N_\ell}\)</span> to estimate <span
+class="math inline">\(\mu=\mathop{\mathrm{\mathbf{E}}}[X]\)</span> as
+the level number <span class="math inline">\(\ell\)</span>
+<em>increases</em>.</p>
+<div class="recall">
+<p><strong>Recall 8</strong>. Samples of <span
+class="math inline">\(X_{N_0}\)</span> are cheaper to compute and
+samples of <span class="math inline">\(X_{N_\ell}\)</span> are the most
+<em>expensive</em> to compute.</p>
+</div>
+<h2 data-number="3.6" id="mlmc-estimator-definition-properties"><span
+class="header-section-number">3.6</span> MLMC Estimator : Definition
+&amp; Properties</h2>
+<p>The standard MC estimator of <span
+class="math inline">\(\mu=\mathop{\mathrm{\mathbf{E}}}[X]\)</span>
+associated with level <span class="math inline">\(L\)</span> is <span
+class="math display">\[\mu_{M,N_L}:={1\over
+M}\sum_{i=1}^MX_{N_L}^i\approx\mu.\]</span></p>
+<h3 data-number="3.6.1" id="telescoping-sum"><span
+class="header-section-number">3.6.1</span> Telescoping Sum</h3>
+<p>First observe that <span
+class="math inline">\(\mathop{\mathrm{\mathbf{E}}}[X_{N_L}]\)</span> can
+be decomposed as follows: <span
+class="math display">\[\mathop{\mathrm{\mathbf{E}}}[X_{N_L}]=\mathop{\mathrm{\mathbf{E}}}[X_{N_0}]+\sum_{\ell=1}^L\left\{
+\mathop{\mathrm{\mathbf{E}}}[X_{N_\ell}]-\mathop{\mathrm{\mathbf{E}}}[X_{N_{\ell-1}}]
+\right\},\]</span> using linearity of <span
+class="math inline">\(\mathop{\mathrm{\mathbf{E}}}[\cdot]\)</span>, we
+have <span
+class="math display">\[\mathop{\mathrm{\mathbf{E}}}[X_{N_L}]=\mathop{\mathrm{\mathbf{E}}}[X_{N_0}]+\sum_{\ell=1}^L\underbrace{\mathop{\mathrm{\mathbf{E}}}[X_{N_{\ell}}-X_{N_{\ell-1}}]}_{\text{Correction
+terms}}.\]</span> By defining <span
+class="math display">\[Y_0=X_{N_0}\  \text{ and
+}\  Y_\ell:=X_{N_\ell}-X_{N_{\ell-1}}\quad \text{for
+}\  \ell=1,2,\dots,L.\]</span> We could write <span
+class="math display">\[\mathop{\mathrm{\mathbf{E}}}[X_{N_L}]=\mathop{\mathrm{\mathbf{E}}}[Y_0]+\sum_{\ell=1}^L\mathop{\mathrm{\mathbf{E}}}[Y_\ell]\to\text{The
+Telescoping Sum}\]</span></p>
+<h3 data-number="3.6.2" id="mlmc-estimator"><span
+class="header-section-number">3.6.2</span> MLMC Estimator</h3>
+<p><em>Idea</em>: Estimate the terms associated with each level
+<em>separately</em> using the standard MC method with <span
+class="math inline">\(M_\ell\)</span> samples.</p>
+<ol>
+<li><p>On <em>level</em> <span class="math inline">\(0\)</span>, define
+<span class="math display">\[\widehat{\mu_0}:={1\over
+M_0}\sum_{i=1}^{M_0}Y_0^i,\]</span> using <span
+class="math inline">\(M_0\)</span> <em>independent</em> samples of <span
+class="math inline">\(Y_0=X_{N_0}\)</span>.</p></li>
+<li><p>On <span class="math inline">\(level\)</span> <span
+class="math inline">\(1,2,\dots,L\)</span>, define <span
+class="math display">\[\widehat{\mu_\ell}:={1\over
+M_\ell}\sum_{i=1}^{M_\ell}Y_\ell^i,\]</span> using <span
+class="math inline">\(M_\ell\)</span> <em>independent</em> samples of
+<span
+class="math inline">\(Y_{\ell}:=X_{N_\ell}-X_{N_{\ell-1}}\)</span>.</p></li>
+</ol>
+<div class="note">
+<p><strong>NOTE 4</strong>. To stress that samples should be
+<em>independent</em> for each level <span
+class="math inline">\(\ell\)</span>, we can also use the alternative
+notation: <span
+class="math display">\[\widehat{\mu}_{\ell}:=\frac{1}{M_{\ell}}
+\sum_{i_{\ell}=1}^{M_{\ell}} Y_{N_{\ell}}^{i_{\ell}}.\]</span></p>
+</div>
+<p>Using the definition of <span
+class="math inline">\(Y_{N_\ell}\)</span> gives, <span
+class="math display">\[Y_{N_{\ell}}^{i}=X_{N_{\ell}}^{i}-X_{N_{\ell-1}}^{i}=X_{N_{\ell}}\left(\omega_{i}\right)-X_{N_{\ell-1}}\left(\omega_{i}\right)\]</span></p>
+<p>To compute <span class="math inline">\(\widehat{\mu_\ell}\)</span>,
+<span class="math inline">\(X^i_{N_\ell}\)</span> and <span
+class="math inline">\(X^i_{N_{\ell-1}}\)</span> correspond to the same
+input sample.</p>
+<p>Combing the estimates for each term, the final MLMC estimator is</p>
+<p><span
+class="math display">\[\widehat\mu_{\mathrm{MLMC}}:=\sum_{\ell=0}^L\widehat
+{\mu_\ell}\]</span></p>
+<div class="question">
+<p><strong>Question 5</strong>. </p>
+<ol>
+<li><p>How to choose <span class="math inline">\(L\)</span>? (No. of
+levels)</p></li>
+<li><p>How to choose <span
+class="math inline">\(M_0,M_1,\dots,M_L\)</span>? (No. of samples at
+each level)</p></li>
+</ol>
+</div>
+<div class="tcolorbox">
+<div class="theorem">
+<p><strong>Theorem 76</strong> (Mean and Variance of MLMC estimator).
+<em><span class="math display">\[\begin{aligned}
+            \mathop{\mathrm{\mathbf{E}}}[\widehat\mu_{\mathrm{MLMC}}]=\mathop{\mathrm{\mathbf{E}}}[\widehat{\mu_L}]=\mathop{\mathrm{\mathbf{E}}}[X_{N_L}]
+,\\
+            \mathbf{Var}[\widehat\mu_{\mathrm{MLMC}}]=\sum_{\ell=0}^LM^{-1}_\ell\mathbf{Var}[Y_\ell]
+        \end{aligned}\]</span></em></p>
+</div>
+</div>
+<div class="proof">
+<p><em>Proof.</em> <span
+class="math display">\[\mathop{\mathrm{\mathbf{E}}}[\widehat\mu_{\mathrm{MLMC}}]=\mathop{\mathrm{\mathbf{E}}}[\sum_{\ell=0}^L\widehat
+\mu_\ell]=\sum_{\ell=0}^L\mathop{\mathrm{\mathbf{E}}}[\widehat
+\mu_\ell].\]</span> We evaluate these separately <span
+class="math display">\[\begin{aligned}
+        \mathop{\mathrm{\mathbf{E}}}[\widehat
+\mu_0]&amp;=\mathop{\mathrm{\mathbf{E}}}[{1\over
+M_0}\sum_{i=1}^{M_0}X_{N_0}^i]={1\over
+M_0}\sum_{i=1}^{M_0}\mathop{\mathrm{\mathbf{E}}}[X_{N_0}^i]=\mathop{\mathrm{\mathbf{E}}}[X_{N_0}].
+\\
+        \mathop{\mathrm{\mathbf{E}}}[\widehat \mu_\ell]&amp;=\cdots
+=\mathop{\mathrm{\mathbf{E}}}[X_{N_\ell}]-\mathop{\mathrm{\mathbf{E}}}[X_{N_{\ell-1}}].
+        \end{aligned}\]</span> Substituted into the first equation:
+<span
+class="math display">\[\mathop{\mathrm{\mathbf{E}}}[\widehat\mu_{\mathrm{MLMC}}]=\mathop{\mathrm{\mathbf{E}}}[X_{N_0}]+\mathop{\mathrm{\mathbf{E}}}[X_{N_1}]-\mathop{\mathrm{\mathbf{E}}}[X_{N_0}]+\cdots
++\mathop{\mathrm{\mathbf{E}}}[X_{N_L}]-\mathop{\mathrm{\mathbf{E}}}[X_{N_{L-1}}]=\mathop{\mathrm{\mathbf{E}}}[X_{N_L}]\]</span>
+<span
+class="math display">\[\mathbf{Var}[\widehat\mu_{\mathrm{MLMC}}]=\mathbf{Var}[\sum_{\ell=0}^L\widehat
+\mu_\ell]=\sum_{\ell=0}^L\mathbf{Var}[\widehat \mu_\ell].\]</span> For
+<span class="math inline">\(\ell=0,1,2\dots,L\)</span>, we always have
+<span
+class="math display">\[\mathbf{Var}[\widehat\mu_\ell]=\mathbf{Var}[{1\over
+M_\ell}\sum_{i=1}^{M_\ell}Y_{\ell}]={1\over
+M_\ell^2}\sum_{i=1}^{M_\ell}\mathbf{Var}[Y_{\ell}]=M_\ell^{-1}\mathbf{Var}[Y_\ell]\]</span>
+Substituted into the first equation <span
+class="math display">\[\mathbf{Var}[\widehat\mu_{\mathrm{MLMC}}]=\sum_{\ell=0}^L\mathbf{Var}[\widehat\mu_\ell]=\sum_{\ell=0}^LM_{\ell}^{-1}\mathbf{Var}[Y_\ell].\]</span> ◻</p>
+</div>
+<h2 data-number="3.7" id="mlmc-mean-square-error"><span
+class="header-section-number">3.7</span> MLMC : Mean Square Error</h2>
+<p><em>Goal</em>: Compute an estimator <span
+class="math inline">\(\widehat\mu_{\mathrm{MLMC}}\)</span> such that</p>
+<p><span
+class="math display">\[\mathbf{RMSE}(\widehat\mu_{\mathrm{MLMC}})\leq
+\epsilon\Longleftrightarrow\mathop{\mathrm{MSE}}(\widehat\mu_{\mathrm{MLMC}})\leq
+\epsilon^2\]</span></p>
+<div class="tcolorbox">
+<div id="thm:3.13" class="theorem">
+<p><strong>Theorem 77</strong> (Mean Square Error of MLMC estimator).
+<em>The mean-square error of the MLMC estimator <span
+class="math inline">\(\widehat\mu_{\mathrm{MLMC}}\)</span> satisfies
+<span
+class="math display">\[\mathop{\mathrm{MSE}}(\widehat\mu_{\mathrm{MLMC}})=\sum_{\ell=0}^LM_\ell^{-1}\mathbf{Var}[Y_\ell]+(\mathop{\mathrm{\mathbf{E}}}[X_{N_L}-X])^2\]</span></em></p>
+</div>
+</div>
+<div class="proof">
+<p><em>Proof.</em> <span class="math display">\[\begin{aligned}
+            \mathop{\mathrm{MSE}}(\widehat\mu_{\mathrm{MLMC}})&amp;=\mathop{\mathrm{\mathbf{E}}}\left[\left(\widehat\mu_{\mathrm{MLMC}}-\mu\right)^2\right]\\
+            &amp;=\mathop{\mathrm{\mathbf{E}}}\left[\left(\left(\widehat\mu_{\mathrm{MLMC}}-\mathop{\mathrm{\mathbf{E}}}\left[\widehat\mu_{\mathrm{MLMC}}\right]\right)+\left(\mathop{\mathrm{\mathbf{E}}}\left[\widehat\mu_{\mathrm{MLMC}}\right]-\mu\right)\right)^2\right]\\
+            &amp;=\mathop{\mathrm{\mathbf{E}}}\left[\left({\underbrace{\widehat\mu_{\mathrm{MLMC}}-\mathop{\mathrm{\mathbf{E}}}\left[\widehat\mu_{\mathrm{MLMC}}\right]}_{\text{R.V.
+with mean
+}0}}\right)^2\right]+\mathop{\mathrm{\mathbf{E}}}\left[\left({\underbrace{\mathop{\mathrm{\mathbf{E}}}\left[\widehat\mu_{\mathrm{MLMC}}\right]-\mu}_{\text{real
+number}}}\right) ^2\right]\\
+            &amp;\quad \quad\quad\quad
+\qquad-2\cdot\underbrace{\mathop{\mathrm{\mathbf{E}}}\left[\left(
+\widehat\mu_{\mathrm{MLMC}}-\mathop{\mathrm{\mathbf{E}}}\left[\widehat\mu_{\mathrm{MLMC}}\right]
+\right)\left(
+\mathop{\mathrm{\mathbf{E}}}\left[\widehat\mu_{\mathrm{MLMC}}\right]-\mu
+\right)\right]}_{=0}\\
+            &amp;=\mathop{\mathrm{\mathbf{E}}}\left[\left(\widehat\mu_{\mathrm{MLMC}}-\mathop{\mathrm{\mathbf{E}}}\left[\widehat\mu_{\mathrm{MLMC}}\right]\right)^{2}\right]+\left(\mathop{\mathrm{\mathbf{E}}}\left[\widehat\mu_{\mathrm{MLMC}}\right]-\mu\right)^{2}\\
+            &amp;=\mathbf{Var}[\widehat\mu_{\mathrm{MLMC}}]+\left(\mathop{\mathrm{\mathbf{E}}}\left[X_{N_L}\right]-\mathop{\mathrm{\mathbf{E}}}[X]\right)^2\\
+            &amp;=\mathbf{Var}[\widehat\mu_{\mathrm{MLMC}}]+\left(
+\mathop{\mathrm{\mathbf{E}}}\left[X_{N_L}-X\right]  \right)^2\\
+            &amp;=\sum_{\ell=0}^LM_\ell^{-1}\mathbf{Var}[Y_\ell]+(\mathop{\mathrm{\mathbf{E}}}[X_{N_L}-X])^2
+        \end{aligned}\]</span> ◻</p>
+</div>
+<h3 data-number="3.7.1" id="controlling-the-mse-bias"><span
+class="header-section-number">3.7.1</span> Controlling the MSE :
+Bias</h3>
+<p><em>Goal</em> to achieve <span
+class="math inline">\(\mathop{\mathrm{MSE}}(\widehat\mu_{\mathrm{MLMC}})\leq
+\epsilon^2\)</span>, and this is satisfied if <span
+class="math display">\[\left(
+\mathop{\mathrm{\mathbf{E}}}[X_{N_L}-X]\right)^2 \leq {\epsilon^2\over
+2}\quad \And \quad \left(
+\sum_{\ell=0}^LM_\ell^{-1}\mathbf{Var}[Y_\ell]\right)\leq
+{\epsilon^2\over 2}\]</span></p>
+<div class="assumption">
+<p><strong>Assumption 78</strong>. <em>We assume that there exist <span
+class="math inline">\(C\)</span> and <span
+class="math inline">\(\alpha&gt;0\)</span> such that <span
+class="math display">\[\left|\mathop{\mathrm{\mathbf{E}}}\left[X_{N_L}-X\right]\right|\leq
+CN_L^{-\alpha},\]</span> where <span class="math inline">\(C\)</span> is
+independent of <span class="math inline">\(N_L\)</span>.</em></p>
+</div>
+<p>Using this assumption, we obtain <span
+class="math display">\[\left(\mathop{\mathrm{\mathbf{E}}}\left[X_{N_L}-X\right]\right)^2\leq{\epsilon^2\over
+2},\]</span> if we choose <span
+class="math display">\[N_L&gt;(2C^2)^{1/2\alpha}\epsilon^{-1/\alpha}\]</span>
+Assuming that <span class="math inline">\(N_0\)</span> and <span
+class="math inline">\(s\)</span> are given, and <span
+class="math display">\[N_\ell=sN_{\ell-1}\quad \text{for }
+\ell=1,2,\dots,L.\]</span> How many levels <span
+class="math inline">\(L\)</span> are needed to control the bias?</p>
+<h2 data-number="3.8" id="variance-of-correction-terms"><span
+class="header-section-number">3.8</span> Variance of Correction
+Terms</h2>
+<p><em>Recall</em>: The mean square error of MLMC estimator <span
+class="math inline">\(\widehat\mu_{\mathrm{MLMC}}\)</span> satisfies
+<span
+class="math display">\[\mathop{\mathrm{MSE}}(\widehat\mu_{\mathrm{MLMC}})=\sum_{\ell=0}^LM_\ell^{-1}\mathbf{Var}[Y_\ell]+\underbrace{(\mathop{\mathrm{\mathbf{E}}}[X_{N_L}-X])^2}_{\text{bias
+term}}\]</span> The bias term can be satisfied if we choose <span
+class="math inline">\(L\)</span> properly by section 1.3.1. How we could
+deal with <span class="math display">\[\quad \left(
+\sum_{\ell=0}^LM_\ell^{-1}\mathbf{Var}[Y_\ell]\right)\leq
+{\epsilon^2\over 2}.\]</span> If we have a <em>sequence</em> of
+approximations <span
+class="math inline">\(X_{N_0},X_{N_1},\dots,X_{N_L}\)</span> to <span
+class="math inline">\(X\)</span> and <span
+class="math inline">\(Y_0=X_{N_0}\)</span>, and <span
+class="math inline">\(Y_\ell:=X_{N_\ell}-X_{N_{\ell-1}}\)</span> for
+<span class="math inline">\(\ell=1,2,\dots,L\)</span>.</p>
+<div id="ass:1" class="assumption">
+<p><strong>Assumption 79</strong>. <em>The sequence <span
+class="math inline">\(X_{N_0},X_{N_1},\dots,X_{N_L}\)</span> converges
+to <span class="math inline">\(X\)</span> in the <em>mean-square</em>
+sense, i.e. <span
+class="math display">\[\mathop{\mathrm{\mathbf{E}}}\left[
+\left(X_{N_\ell}-X\right)^2
+\right]=\left\|X_{N_\ell}-X\right\|_{L^2(\varOmega)}^2\to
+0\quad  \text{as}\quad \ell\to \infty.\]</span></em></p>
+</div>
+<div class="tcolorbox">
+<div class="lemma">
+<p><strong>Lemma 80</strong>. <em>If the assumption <a href="#ass:1"
+data-reference-type="ref" data-reference="ass:1">79</a> is satisfied,
+then <span class="math display">\[\mathbf{Var}[Y_\ell]\to 0\quad
+\text{as}\quad \ell\to \infty\]</span></em></p>
+</div>
+</div>
+<div class="proof">
+<p><em>Proof.</em> For <span
+class="math inline">\(\ell=1,2,\dots\)</span>, (not include <span
+class="math inline">\(0\)</span>). <span
+class="math display">\[\begin{aligned}
+        \mathbf{Var}[Y_\ell]&amp;=\mathop{\mathrm{\mathbf{E}}}[Y_\ell^2]-(\mathop{\mathrm{\mathbf{E}}}[Y_\ell])^2
+\\
+        &amp;\leq \mathop{\mathrm{\mathbf{E}}}[Y_\ell^2]\\
+        &amp;=\left\|Y_\ell\right\|_{L^2(\varOmega)}^2\\
+        &amp;=\left\|X_{N_\ell}-X_{N_{\ell-1}}\right\|_{L^2(\varOmega)}^2\\
+        &amp;=\left\|X_{N_\ell}-X+X-X_{N_{\ell-1}}\right\|_{L^2(\varOmega)}^2\\
+        &amp;\leq\left(\underbrace{\left\|X_{N_\ell}-X\right\|_{L^2(\varOmega)}}_{\to
+0\text{ as }\ell\to
+\infty}+\underbrace{\left\|X-X_{N_{\ell-1}}\right\|_{L^2(\varOmega)}}_{\to
+0\text{ as }(\ell-1)\to \infty}\right)^2\\
+        &amp;\Rightarrow \mathbf{Var}[Y_\ell]\to 0 \ \text{ as
+}\  \ell\to\infty
+    \end{aligned}\]</span> ◻</p>
+</div>
+<h3 data-number="3.8.1" id="mean-square-error-1"><span
+class="header-section-number">3.8.1</span> Mean Square Error</h3>
+<p>We need to choose <span
+class="math inline">\(M_0,M_1,\dots,M_L\)</span> such that <span
+class="math display">\[M_0^{-1}\mathbf{Var}[X_{N_0}]+\sum_{\ell=1}^LM_{\ell}^{-1}\mathbf{Var}[Y_\ell]\leq
+{\epsilon^2\over 2}.\]</span> <span><strong><em>Simple
+way</em></strong></span>: There are <span
+class="math inline">\(L+1\)</span> terms in total. The condition is
+satisfied if <span
+class="math display">\[M_0^{-1}\mathbf{Var}[X_{N_0}]\leq
+{\epsilon^2\over 2(L+1)}\quad \And\quad
+M_{\ell}^{-1}\mathbf{Var}[Y_\ell]\leq {\epsilon^2\over 2(L+1)}.\]</span>
+That is, if we choose the <em>number of samples</em> such that <span
+class="math display">\[M_0\geq
+2(L+1)\mathbf{Var}[X_{N_0}]\epsilon^{-2}\quad \And \quad M_\ell\geq
+2(L+1)\mathbf{Var}[Y_\ell]\epsilon^{-2}\]</span> <span><strong><em>Key
+Conclusion</em></strong></span>: If <span
+class="math inline">\(\mathbf{Var}[Y_\ell]\to 0\)</span> as <span
+class="math inline">\(\ell \to \infty\)</span>, the number of samples
+<span class="math inline">\(M_\ell\)</span> we need to choose to control
+the MSE also decrease as <span class="math inline">\(\ell \to
+\infty\)</span>.</p>
+<h2 data-number="3.9" id="mlmc-accuracy-and-cost"><span
+class="header-section-number">3.9</span> MLMC : Accuracy and Cost</h2>
+<div class="recall">
+<p><strong>Recall 9</strong>. MLMC estimator for <span
+class="math inline">\(\mu=\mathop{\mathrm{\mathbf{E}}}[X]\)</span> is
+<span class="math display">\[\widehat\mu_{\mathrm{MLMC}}:=
+\sum_{\ell=0}^L\widehat\mu_\ell \quad \text{where } \widehat\mu_\ell
+={1\over M_\ell}\sum_{i=1}^{M_\ell}Y_\ell^i\]</span> where we define the
+following: <span class="math display">\[Y_0 \coloneqq X_{N_0},\quad
+Y_\ell \coloneqq X_{N_\ell}-X_{N_{\ell-1}},\quad
+\ell=1,2,\dots,L.\]</span></p>
+</div>
+<div class="question">
+<p><strong>Question 6</strong>. What is the <em>cost</em> of computing
+<span class="math inline">\(\widehat\mu_{\mathrm{MLMC}}\)</span> in such
+a way that <span
+class="math inline">\(\mathbf{RMSE}(\widehat\mu_{\mathrm{MLMC}})\leq
+\epsilon\)</span></p>
+</div>
+<h3 data-number="3.9.1" id="mlmc-cost"><span
+class="header-section-number">3.9.1</span> MLMC Cost</h3>
+<p>Let <span class="math inline">\(C_{N_\ell}\)</span> denote the cost
+of generate <em>one</em> sample of <span
+class="math inline">\(Y_\ell\)</span>, <span
+class="math inline">\(\ell=0,1,\dots,L\)</span>. Hence the total cost of
+computing the samples needed for <span
+class="math inline">\(\widehat\mu_{\mathrm{MLMC}}\)</span> is <span
+class="math display">\[\label{eq:1.1}
+    \begin{aligned}
+        C_{MLMC}=\sum_{\ell=0}^LM_\ell\times C_{N_\ell}.
+    \end{aligned}\]</span></p>
+<div class="example">
+<p><strong><em>Example</em> 81</strong> (Population Model). The cost of
+computing one sample of <span class="math inline">\(X_{N_\ell}\)</span>
+using the explicit Euler method with <span
+class="math inline">\(N_\ell\)</span> intervals can be
+<em>characteristised by the number of intervals</em>. <span
+class="math display">\[\label{1.2}
+    \begin{aligned}
+        C_{N_0}=N_0,\quad C_{N_\ell}=N_\ell+N_{\ell-1}=(1+s^{-1})N_\ell
+= (1+s^{-1})s^\ell N_0.
+    \end{aligned}\]</span> Hence, <span
+class="math display">\[\label{1.3}
+    \begin{aligned}
+        C_{MLMC}={\color{blue} M_0}N_0+\sum_{\ell=1}^{{\color{blue}
+L}}{\color{blue} M_\ell}(1+s^{-1})s^{\ell}N_0.
+    \end{aligned}\]</span> The cost dependents on <span
+class="math inline">\(s,N_0\)</span> and <span
+class="math inline">\(L\)</span> and <span
+class="math inline">\(M_\ell\)</span>.</p>
+</div>
+<h3 data-number="3.9.2" id="controlling-the-mse"><span
+class="header-section-number">3.9.2</span> Controlling the MSE</h3>
+<div class="recall">
+<p><strong>Recall 10</strong> (Theorerm <a href="#thm:3.13"
+data-reference-type="ref" data-reference="thm:3.13">77</a>). The
+mean-square error of <span
+class="math inline">\(\widehat\mu_{\mathrm{MLMC}}\)</span> satisfies
+<span
+class="math display">\[\mathop{\mathrm{MSE}}(\widehat\mu_{\mathrm{MLMC}})=\sum_{\ell=0}^L
+M_\ell^{-1}\mathbf{Var}[Y_\ell]+(\mathop{\mathrm{\mathbf{E}}}[X_{N_\ell}-X])^2.\]</span></p>
+</div>
+<p>To satisfy <span
+class="math inline">\(\mathop{\mathrm{MSE}}(\widehat\mu_{\mathrm{MLMC}})\leq
+\epsilon^2\)</span>, we could choose <span
+class="math inline">\(L\)</span> (no. of levels) and <span
+class="math inline">\(M_\ell\)</span> (no. of samples at each levels)
+such that <span class="math display">\[\label{1.4}
+    \begin{aligned}
+        (\mathop{\mathrm{\mathbf{E}}}[X_{N_\ell}-X])^2\leq
+{\epsilon^2\over 2} \quad \And \quad \sum_{\ell=0}^L
+M_\ell^{-1}\mathbf{Var}[Y_\ell]\leq {\epsilon^2\over 2}.
+    \end{aligned}\]</span></p>
+<h3 data-number="3.9.3" id="number-of-samples."><span
+class="header-section-number">3.9.3</span> Number of Samples.</h3>
+<p>If we choose the number of samples so that <span
+class="math display">\[\label{1.5}
+    \begin{aligned}
+        M_0\geq 2(L+1)\mathbf{Var}[X_{N_0}]\epsilon^{-2}\quad \And \quad
+M_\ell\geq 2(L+1)\mathbf{Var}[Y_\ell]\epsilon^{-2}.
+    \end{aligned}\]</span> to get integers: <span
+class="math display">\[M_0=
+\ceil{2(L+1)\mathbf{Var}[X_{N_0}]\epsilon^{-2}}\quad  \And \quad
+\ceil{M_\ell = 2(L+1)\mathbf{Var}[Y_\ell]\epsilon^{-2}}.\]</span></p>
+<div class="example">
+<p><strong><em>Example</em> 82</strong> (Population Model). We have
+proved that <span class="math inline">\(\mathbf{Var}[Y_\ell]\leq
+C_sT^2N_\ell^{-2}\)</span>, hence we could choose <span
+class="math inline">\(M_\ell =\ceil{
+2(L+1)C_sT^2N_\ell^{-2}\epsilon^{-2}}\)</span></p>
+</div>
+<h3 data-number="3.9.4" id="number-of-levels."><span
+class="header-section-number">3.9.4</span> Number of Levels.</h3>
+<div class="assumption">
+<p><strong>Assumption 83</strong>. <em>There exist <span
+class="math inline">\(C\)</span> and <span
+class="math inline">\(\alpha&gt;0\)</span> such that <span
+class="math display">\[|\mathop{\mathrm{\mathbf{E}}}[X_{N_\ell}-X]|\leq
+CN_L^{-\alpha},\]</span> where <span class="math inline">\(C\)</span> is
+independent of <span class="math inline">\(L\)</span>.</em></p>
+</div>
+<p>Then we obtain <span
+class="math inline">\((\mathop{\mathrm{\mathbf{E}}}[X_{N_\ell}-X])^2\leq
+{\epsilon^2/2}\)</span> if we choose <span class="math inline">\(N_L
+\geq (2C^2)^{1/2\alpha}\epsilon^{-1/\alpha}\)</span>.</p>
+<div id="example:1" class="example">
+<p><strong><em>Example</em> 84</strong> (Population Model (<span
+class="math inline">\(\alpha=1\)</span>)). Since <span
+class="math inline">\(N_L=s^LN_0\)</span>, we show that <span
+class="math inline">\(L= O(|\log(\epsilon)|)\)</span>. Then the
+<em>total cost of the Population model</em> will be <span
+class="math display">\[C_{MLMC}\coloneqq \sum_{\ell=0}^L M_\ell \times
+C_{N_\ell}=M_0N_0 + \sum_{\ell=1}^LM_\ell (1+s^{-1})N_\ell.\]</span> We
+obtain <span
+class="math inline">\(\mathop{\mathrm{MSE}}(\widehat\mu_{\mathrm{MLMC}})\leq
+\epsilon^2\)</span> if we choose:</p>
+<ul>
+<li><p><span
+class="math inline">\(L=O(|\log(\epsilon)|)\)</span>.</p></li>
+<li><p><span class="math inline">\(M_0=
+\ceil{2(L+1)\mathbf{Var}[X_{N_0}]\epsilon^{-2}}\)</span>.</p></li>
+<li><p><span class="math inline">\(M_\ell =\ceil{
+2(L+1)C_sT^2N_\ell^{-2}\epsilon^{-2}}\)</span>.</p></li>
+</ul>
+<p>Since <span class="math inline">\(M_\ell\)</span> decays to zero more
+quickly than <span class="math inline">\(C_{N_\ell}\)</span> increase as
+<span class="math inline">\(\ell\to \infty\)</span>, the dominant term
+is <span class="math display">\[\label{}
+    \begin{aligned}
+        M_0N_0=\ceil{2(L+1)\mathbf{Var}[X_{N_0}]\epsilon^{-2}}N_0=O(\epsilon^{-2}|\log(\epsilon)|)
+    \end{aligned}\]</span></p>
+<pre><code>adas
+asdasd
+a
+sdasd</code></pre>
+</div>
+</body>
+</html>
