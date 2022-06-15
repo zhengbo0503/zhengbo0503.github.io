@@ -1,18 +1,59 @@
 <head>
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script>
+  MathJax = {
+    tex: {inlineMath: [['$', '$'], ['\\(', '\\)']]}
+  };
+  </script>
+  <style type="text/css">
+    <!--
+     .tab { margin-left: 40px; }
+    -->
+    </style>
+  <style>
+    @font-face {
+      font-family: 'Computer Modern';
+      font-style: normal;
+      font-weight: normal;
+      src: url('./font/cmunrm.ttf');
+    }
+    @font-face {
+      font-family: 'Computer Modern';
+      font-style: italic;
+      font-weight: normal;
+      src: url('./font/cmunti.ttf');
+    }
+    
+    @font-face {
+      font-family: 'Computer Modern';
+      font-style: normal;
+      font-weight: bold;
+      src: url('./font/cmunbx.ttf');
+    }
+    
+    @font-face {
+      font-family: 'Computer Modern';
+      font-style: italic;
+      font-weight: bold;
+      src: url('./font/cmunbi.ttf');
+    }
+  </style>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
   <meta name="author" content="Zhengbo Zhou" />
   <title>Zhengbo</title>
   <style>
     html {
       line-height: normal;
-      font-family: Verdana, Geneva, Tahoma, sans-serif;
+      font-family:'Computer Modern', 'Times New Roman', Times, serif ;
       font-size: 16px;
       color: #1a1a1a;
       background-color: aliceblue;
     }
     body {
       margin: 0 auto;
-      max-width: 70em;
+      max-width: 60em;
       padding-left: 50px;
       padding-right: 50px;
       padding-top: 50px;
@@ -22,10 +63,23 @@
       text-rendering: optimizeLegibility;
       font-kerning: normal;
     }
+    h1 {
+      font-size: 1.5rem;
+      font-variant-caps: small-caps;
+      text-align: center;
+    }
+    
+    h2 {
+      font-size: 1.3rem;
+      font-variant-caps: small-caps;
+    }
+    
+    h3 {
+      font-size: 1rem;
+    }
   </style>
 </head>
-<h1> Hello there </h1>
-<h3> Welcome to Zhengbo's Page </h3>
+<h1> Hello there! Welcome to Zhengbo's Page </h1>
 <body>
   <p>
   I am a student in <a href="https://www.maths.manchester.ac.uk/">the University of Manchester Mathematics Department</a> <a href="https://nla-group.org/">Numerical Linear Algebra Group</a>.
@@ -38,10 +92,46 @@
     </ul>
   </p>
   <hr>
+  <h2>Research Interest</h2>
   <p>
-    <h1>Here are some notes in HTML form</h1>
-    <p><i>Note that these notes may not work as well on phones compare to on computer, since the formulas are undividable!</i></p>
-    <h3>Advanced Uncertainty Quantification</h3>
+    Do for life:
+    <ul>
+      <li>Numerical Linear Algebra</li>
+      <li>Numerical Analysis</li>
+    </ul>
+    My personal interest:
+    <ul>
+      <li>Analytic Number Theory (Inspired by <a href="https://en.wikipedia.org/wiki/Chen_Jingrun">Chen Jingrun</a>, a remarkable master on <a href="https://en.wikipedia.org/wiki/Sieve_theory">Method of Sieve theory</a> on <a href="https://en.wikipedia.org/wiki/Goldbach's_conjecture#Rigorous_results">Goldbach's conjecture</a>)</li>
+      $$P_{x}(1,2) \geq \frac{0.67 x C_{x}}{(\log x)^{2}}$$
+      <li>Complex Analysis and Partial Differential Equations</li>
+      $$ \Gamma(z)=\int_{0}^{\infty} e^{-t} t^{z-1} \mathrm{d}t $$
+    </ul>
+  </p>
+  <hr>
+  <h2>Short Bio</h2>
+  <p class="tab">
+    <ul>
+      <li>(2022 -- 20??) PhD in Numerical Analysis</li>
+      <li>(2021 -- 2022) Master of Science in Applied Mathematics</li>
+      <li>(2018 -- 2021) Bachelor of Science (Hons) in Mathematics. Graduate with <a href="./fig/Document.pdf">first-class degree</a></li>
+    </ul>
+  </p>
+  <hr>
+  <h2>Contact Information</h2>
+  <p class="tab">
+    <ul>
+      <li>Email: <a href="mailto:zhengbo.zhou@student.manchester.ac.uk">zhengbo.zhou[at]student.manchester.ac.uk</a></li>
+      <li>If you would like to contact using Wechat, you may do so by request a QR code via email. qwq</li>
+      <li>Meet another me at <a href="https://space.bilibili.com/11670504?spm_id_from=444.41.0.0">Bilibili</a>! (哔哩哔哩 (゜-゜)つロ 干杯~)</li>
+    </ul>
+  </p>
+  <hr>
+<h2>Here are some notes in HTML form</h2>
+  <p class="tab">
+    <i>Note that these notes may not work as well on phones compare to on computer, since the formulas are unbreakable!</i>
+  </p>
+  <h3>Advanced Uncertainty Quantification (2021--2022, taught by Professor <a href="https://personalpages.manchester.ac.uk/staff/Catherine.Powell/">Catherine E. Powell</a>)</h3>
+  <p class="tab">
     Here is a <a href="./notes/advanced UQ/advanceduq.html">note</a> for first three chapters, listed below, of Advanced UQ. Here is also a <a href="./notes/advanced UQ/main.pdf">PDF</a> version avaliable.
     <ul>
       <li>1. Representation of Second Order Random Fields</li>
