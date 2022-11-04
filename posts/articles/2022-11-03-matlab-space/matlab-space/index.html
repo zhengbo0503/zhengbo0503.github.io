@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge"><title>MATLAB Space - 你好！Hello！Hallo！Bonjour！</title><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+	<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+	<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+	<link rel="manifest" href="/site.webmanifest">
+
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta itemprop="name" content="MATLAB Space">
+<meta itemprop="description" content="vertcat When we concentrate two different vectors in MATLAB, for example
+a = [1,2,3,4]; b = [3,4,5]; Only [a,b] is valid, [a;b] is not valid, the output is the following
+&gt;&gt; [a,b] ans = 1 2 3 4 3 4 5 &gt;&gt; [a;b] Error using vertcat Dimensions of arrays being concatenated are not consistent. Interesting Example Here is an interesting example from my friend&rsquo;s homework,
+&gt;&gt; f = -3 * 1 -3*(-2); g = 1 &#43; 1 &#43; 1 &#43;1; k = [f;g] k = 3 4 Seems trivial, isn&rsquo;t it?"><meta itemprop="datePublished" content="2022-11-04T01:28:35+00:00" />
+<meta itemprop="dateModified" content="2022-11-04T01:28:35+00:00" />
+<meta itemprop="wordCount" content="330">
+<meta itemprop="keywords" content="MATLAB," /><meta property="og:title" content="MATLAB Space" />
+<meta property="og:description" content="vertcat When we concentrate two different vectors in MATLAB, for example
+a = [1,2,3,4]; b = [3,4,5]; Only [a,b] is valid, [a;b] is not valid, the output is the following
+&gt;&gt; [a,b] ans = 1 2 3 4 3 4 5 &gt;&gt; [a;b] Error using vertcat Dimensions of arrays being concatenated are not consistent. Interesting Example Here is an interesting example from my friend&rsquo;s homework,
+&gt;&gt; f = -3 * 1 -3*(-2); g = 1 &#43; 1 &#43; 1 &#43;1; k = [f;g] k = 3 4 Seems trivial, isn&rsquo;t it?" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://zhengbo0503.github.io/posts/articles/2022-11-03-matlab-space/matlab-space/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2022-11-04T01:28:35+00:00" />
+<meta property="article:modified_time" content="2022-11-04T01:28:35+00:00" />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="MATLAB Space"/>
+<meta name="twitter:description" content="vertcat When we concentrate two different vectors in MATLAB, for example
+a = [1,2,3,4]; b = [3,4,5]; Only [a,b] is valid, [a;b] is not valid, the output is the following
+&gt;&gt; [a,b] ans = 1 2 3 4 3 4 5 &gt;&gt; [a;b] Error using vertcat Dimensions of arrays being concatenated are not consistent. Interesting Example Here is an interesting example from my friend&rsquo;s homework,
+&gt;&gt; f = -3 * 1 -3*(-2); g = 1 &#43; 1 &#43; 1 &#43;1; k = [f;g] k = 3 4 Seems trivial, isn&rsquo;t it?"/>
+<link href='https://fonts.googleapis.com/css?family=Playfair+Display:700' rel='stylesheet' type='text/css'>
+	<link rel="stylesheet" type="text/css" media="screen" href="https://zhengbo0503.github.io/css/normalize.css" />
+	<link rel="stylesheet" type="text/css" media="screen" href="https://zhengbo0503.github.io/css/main.css" />
+
+        <link id="dark-scheme" rel="stylesheet" type="text/css" href="https://zhengbo0503.github.io/css/dark.css" />
+
+	
+		<script src="https://zhengbo0503.github.io/js/main.js"></script>
+	
+</head>
+
+
+
+<body>
+	<div class="container wrapper">
+		<div class="header">
+	
+		<div class="avatar">
+			<a href="https://zhengbo0503.github.io/">
+				<img src="https://avatars.githubusercontent.com/u/4198311" alt="你好！Hello！Hallo！Bonjour！" />
+			</a>
+		</div>
+	
+	<h1 class="site-title"><a href="https://zhengbo0503.github.io/">你好！Hello！Hallo！Bonjour！</a></h1>
+	<div class="site-description"><p>Good Good Study, Day Day Up</p><nav class="nav social">
+			<ul class="flat"></ul>
+		</nav>
+	</div>
+
+	<nav class="nav">
+		<ul class="flat">
+			
+		</ul>
+	</nav>
+</div>
+
+
+		<div class="post">
+			<div class="post-header">
+				
+					
+						<div class="meta">
+							<div class="date">
+								<span class="day">04</span>
+								<span class="rest">Nov 2022</span>
+							</div>
+						</div>
+					
+				
+				<div class="matter">
+					<h1 class="title">MATLAB Space</h1>
+					
+				</div>
+			</div>
+					
+			<div>
+				
+			</div>
+			<div class="markdown">
+				<h2 id="vertcat"><code>vertcat</code></h2>
+<p>When we concentrate two different vectors in MATLAB, for example</p>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-matlab" data-lang="matlab"><span style="display:flex;"><span>a = [1,2,3,4]; b = [3,4,5];
+</span></span></code></pre></div><p>Only <code>[a,b]</code> is valid, <code>[a;b]</code> is not valid, the output is the following</p>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-matlab" data-lang="matlab"><span style="display:flex;"><span>&gt;&gt; [a,b]
+</span></span><span style="display:flex;"><span>ans =
+</span></span><span style="display:flex;"><span>     1     2     3     4     3     4     5
+</span></span><span style="display:flex;"><span>&gt;&gt; [a;b]
+</span></span><span style="display:flex;"><span>Error using vertcat
+</span></span><span style="display:flex;"><span>Dimensions of arrays being concatenated are not consistent. 
+</span></span></code></pre></div><h2 id="interesting-example">Interesting Example</h2>
+<p>Here is an interesting example from my friend&rsquo;s homework,</p>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-matlab" data-lang="matlab"><span style="display:flex;"><span>&gt;&gt; f = -3 * 1 -3*(-2); g = 1 + 1 + 1 +1; k = [f;g]
+</span></span><span style="display:flex;"><span>k =
+</span></span><span style="display:flex;"><span>     3
+</span></span><span style="display:flex;"><span>     4
+</span></span></code></pre></div><p>Seems trivial, isn&rsquo;t it? How about we try again, but without using the intermidiate variables <code>f</code> and <code>g</code>?</p>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-matlab" data-lang="matlab"><span style="display:flex;"><span>&gt;&gt; k = [-3 * 1 -3*(-2);1 + 1 + 1 +1]
+</span></span><span style="display:flex;"><span>k =
+</span></span><span style="display:flex;"><span>    -3     6
+</span></span><span style="display:flex;"><span>     3     1
+</span></span></code></pre></div><p>The exactly same input rise different problem, is this a bug in MATLAB? Clearly not! And by viewing the <a href="https://uk.mathworks.com/help/matlab/ref/double.vertcat.html">vertcat</a>, I notice the error we made in the above example. In MATLAB, it recognizes the two expressions below as the same</p>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-matlab" data-lang="matlab"><span style="display:flex;"><span>&gt;&gt; A = [1,2]
+</span></span><span style="display:flex;"><span>A =
+</span></span><span style="display:flex;"><span>     1     2
+</span></span><span style="display:flex;"><span>&gt;&gt; A = [1 2]
+</span></span><span style="display:flex;"><span>A =
+</span></span><span style="display:flex;"><span>     1     2
+</span></span></code></pre></div><p>Hence in the expression <code>k = [-3 * 1 -3*(-2);1 + 1 + 1 +1]</code>, it interprets, for example, the former entry as <code>-3*1</code> and <code>-3*(-2)</code>. Similarly, the latter one is interpreted as <code>1+1+1</code> and <code>+1</code>. This is probably due to the plus or minus sign have two meanings in MATLAB</p>
+<ul>
+<li>Binary operator: <code>a + b</code>, and</li>
+<li>Sign: <code>-a</code> will be interpret as <code>-1*a</code>.</li>
+</ul>
+<p>In order to resolve this problem, we just need to <strong>be consistent on the spacing beside binary operators</strong>, like</p>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-matlab" data-lang="matlab"><span style="display:flex;"><span>&gt;&gt; k = [-3 * 1 - 3 * (-2);1 + 1 + 1 + 1]
+</span></span><span style="display:flex;"><span>k =
+</span></span><span style="display:flex;"><span>     3
+</span></span><span style="display:flex;"><span>     4
+</span></span></code></pre></div><p>or</p>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-matlab" data-lang="matlab"><span style="display:flex;"><span>&gt;&gt; k = [-3*1-3*(-2);1+1+1+1]
+</span></span><span style="display:flex;"><span>k =
+</span></span><span style="display:flex;"><span>     3
+</span></span><span style="display:flex;"><span>     4
+</span></span></code></pre></div><p>and both gives the same answer as expected.</p>
+<p>Personally, I will always add spaces beside the binary operator to make the code more readable. This is also consistence with the spacing policy of the <em>Microsoft Visual Studio</em>.</p>
+
+				
+			</div>
+
+			<div class="tags">
+				
+					
+						<ul class="flat">
+							
+							<li><a href="/tags/matlab">MATLAB</a></li>
+							
+						</ul>
+					
+				
+			</div></div>
+	</div>
+	<div class="footer wrapper">
+	<nav class="nav">
+		<div>2022  <a href="https://github.com/knadh/hugo-ink">Ink</a> theme on <a href="https://gohugo.io">Hugo</a></div>
+	</nav>
+</div>
+
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-52525161-8', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+</body>
+</html>
