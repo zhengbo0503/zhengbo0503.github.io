@@ -8,9 +8,22 @@
     <language>en-us</language>
     <lastBuildDate>Fri, 04 Nov 2022 01:28:35 +0000</lastBuildDate><atom:link href="https://zhengbo0503.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
     <item>
+      <title>Usage of trapz</title>
+      <link>https://zhengbo0503.github.io/posts/articles/2022-11-04-usage-of-trapz/usage-of-trapz/</link>
+      <pubDate>Fri, 04 Nov 2022 01:28:35 +0000</pubDate>
+      
+      <guid>https://zhengbo0503.github.io/posts/articles/2022-11-04-usage-of-trapz/usage-of-trapz/</guid>
+      <description>trapz is the Trapezoidal numerical integration. Normally the usage will be
+x = linspace(0,1,100); y = x.^2; I = trapz(x,y) This will approximate the integral
+$$ \tag{1} \int_0^1 x^2~\mathrm{d}x $$
+One less known usage There is one usage of trapz can cause problem. Suppose we want to approximate the same integral $(1)$ again, however instead of the code above, we mistype and write
+x = linspace(0,1,100); y = x.^2; I = trapz(y); This can happen if the code is long and the expression is complicated.</description>
+    </item>
+    
+    <item>
       <title>MATLAB Space</title>
       <link>https://zhengbo0503.github.io/posts/articles/2022-11-03-matlab-space/matlab-space/</link>
-      <pubDate>Fri, 04 Nov 2022 01:28:35 +0000</pubDate>
+      <pubDate>Thu, 03 Nov 2022 01:28:35 +0000</pubDate>
       
       <guid>https://zhengbo0503.github.io/posts/articles/2022-11-03-matlab-space/matlab-space/</guid>
       <description>vertcat When we concentrate two different vectors in MATLAB, for example
