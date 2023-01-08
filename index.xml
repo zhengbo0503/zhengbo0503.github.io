@@ -7,40 +7,5 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Mon, 19 Dec 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://zhengbo0503.github.io/index.xml" rel="self" type="application/rss+xml" />
-    <item>
-      <title>Notability 2022-11-10 Update</title>
-      <link>https://zhengbo0503.github.io/posts/articles/2022-11-10-notability-new-update/notability-2022-11-10-update/</link>
-      <pubDate>Thu, 10 Nov 2022 19:13:15 +0000</pubDate>
-      
-      <guid>https://zhengbo0503.github.io/posts/articles/2022-11-10-notability-new-update/notability-2022-11-10-update/</guid>
-      <description>Today is 2022-11-10, 2 days ago Notability updated a new version (Version 11.8) involves a high-demanding feature &amp;ndash; Night version.
-Programmers and researchers spend a lot of time on screens, especially for people use iPad to take notes. Staring at the screen for a long time is harmful, whereas using a dark background and reduce the harmness. Personally, I use PDF Expert as my primary PDF viewer, and the reason is simply it have the so-called &amp;ldquo;dark mode&amp;rdquo; option.</description>
-    </item>
-    
-    <item>
-      <title>Usage of trapz</title>
-      <link>https://zhengbo0503.github.io/posts/articles/2022-11-04-usage-of-trapz/usage-of-trapz/</link>
-      <pubDate>Fri, 04 Nov 2022 01:28:35 +0000</pubDate>
-      
-      <guid>https://zhengbo0503.github.io/posts/articles/2022-11-04-usage-of-trapz/usage-of-trapz/</guid>
-      <description>trapz is the Trapezoidal numerical integration. Normally the usage will be
-x = linspace(0,1,100); y = x.^2; I = trapz(x,y) This will approximate the integral
-$$ \tag{1} \int_0^1 x^2~\mathrm{d}x $$
-One less known usage There is one usage of trapz can cause problem. Suppose we want to approximate the same integral $(1)$ again, however instead of the code above, we mistype and write
-x = linspace(0,1,100); y = x.^2; I = trapz(y); This can happen if the code is long and the expression is complicated.</description>
-    </item>
-    
-    <item>
-      <title>MATLAB Space</title>
-      <link>https://zhengbo0503.github.io/posts/articles/2022-11-03-matlab-space/matlab-space/</link>
-      <pubDate>Thu, 03 Nov 2022 01:28:35 +0000</pubDate>
-      
-      <guid>https://zhengbo0503.github.io/posts/articles/2022-11-03-matlab-space/matlab-space/</guid>
-      <description>vertcat When we concentrate two different vectors in MATLAB, for example
-a = [1,2,3,4]; b = [3,4,5]; Only [a,b] is valid, [a;b] is not valid, the output is the following
-&amp;gt;&amp;gt; [a,b] ans = 1 2 3 4 3 4 5 &amp;gt;&amp;gt; [a;b] Error using vertcat Dimensions of arrays being concatenated are not consistent. Interesting Example Here is an interesting example from my friend&amp;rsquo;s homework,
-&amp;gt;&amp;gt; f = -3 * 1 -3*(-2); g = 1 + 1 + 1 +1; k = [f;g] k = 3 4 Seems trivial, isn&amp;rsquo;t it?</description>
-    </item>
-    
   </channel>
 </rss>
