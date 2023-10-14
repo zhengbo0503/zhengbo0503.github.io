@@ -1,7 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap');
 
 body {
-    font-family: 'Calibri', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    font-family: Arial, 'Calibri', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
     font-weight: 400;
     color: #000000;
     line-height: 1sem;
@@ -111,7 +111,7 @@ blockquote {
     margin-left: 1rem;
     font-style: italic;
     font-size: 1rem;
-    font-family: calibri, bitstream charter, serif;
+    font-family: Arial, Helvetica, sans-serif, bitstream charter, serif;
     border-left: 3px solid;
     border-color: #3700ff;
     padding-left: 20px;
