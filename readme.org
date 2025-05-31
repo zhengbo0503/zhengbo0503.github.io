@@ -1,7 +1,8 @@
-#+title: My page 
+#+title: readme 
 #+author: Zhengbo Zhou 
 
-* This is a readme file 
-We start with nothing but this. 
-
-* This is another website testing. 
+This is a place for hosting my personal website.
+The website is designed such that it contains lots of personalized
+settings. Therefore one shouldn't expect to get too much information from
+the website. This place is like a bulk storage that contains things which I
+don't feel comfortable to put on [[https://zbzhou.com][my main website]].
