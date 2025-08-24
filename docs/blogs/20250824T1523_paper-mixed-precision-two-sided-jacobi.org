@@ -1,0 +1,29 @@
+#+BLOG: wordpress
+#+POSTID: 549
+#+ORG2BLOG:
+#+DATE: [2025-08-24 Sun 15:19]
+#+OPTIONS: toc:nil num:nil todo:nil pri:nil tags:nil ^:nil
+#+CATEGORY: paper
+#+TAGS: preconditioner, eigenvalues, mixed-precision
+#+TITLE: Computing accurate eigenvalues using a mixed-precision Jacobi algorithm 
+#+DESCRIPTION:
+
+[[https://nhigham.com/][Nicholas J. Higham]], [[https://scholar.google.com/citations?user=iA1h0jgAAAAJ&hl=en][Françoise Tisseur]], [[https://personalpages.manchester.ac.uk/staff/marcus.webb/][Marcus Webb]] and I 
+have uploaded to the arXiv our paper 
+"[[https://arxiv.org/abs/2501.03742][Computing accurate eigenvalues using a mixed-precision Jacobi algorithm]]".
+This paper build upon the famous result by [[https://epubs.siam.org/doi/10.1137/0613074][Demmel and Veselić 
+on the high accuracy of the Jacobi algorithm]] in which 
+they proved that for $A \in \mathbb{R}^{n\times n}$
+\begin{equation}\notag
+\Big|  
+\frac{\hat{\lambda}_{k}(A) - \lambda_{k}(A)}{\lambda_{k}(A)}
+\Big|
+\le p(n) u \kappa(A),
+\end{equation}
+where $\lambda_{k}(A)$ is the $k$ largest exact eigenvalue of $A$,
+$\hat{\lambda}_{k}(A)$ is the $k$ largest computed eigenvalue 
+of $A$ by Jacobi algorithm with a proper stopping criterion,
+$p(n)$ is a low degree polynomial, 
+$u$ is the unit roundoff of the working precision, 
+and $\kappa(A)$ is the $2$-norm condition number of $A$.
+

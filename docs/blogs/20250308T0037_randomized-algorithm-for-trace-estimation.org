@@ -1,0 +1,72 @@
+#+BLOG: wordpress
+#+POSTID: 511
+#+ORG2BLOG:
+#+DATE: [2025-03-08 Mon 00:39]
+#+OPTIONS: toc:nil num:nil todo:nil pri:nil tags:nil ^:nil
+#+CATEGORY: Research
+#+TAGS: trace, RNLA, algorithm
+#+startup: all indent
+#+TITLE: Randomized Algorithm for Trace Estimation
+
+** Trace
+
+The trace of a matrix $A \in \mathbb{R}^{n \times n}$ is the sum of its diagonal entries:
+
+\begin{equation} \notag
+\text{tr}(A) = \sum_{i=1}^n a_{ii} = \sum_{i=1}^n e_i^T A e_i,
+\end{equation}
+
+where $e_i$ is the $i$-th column of the identity matrix. Many scientific computing and machine learning applications require estimating the trace of a square linear operator $A$ that is represented implicitly. For example, the matrix-vector product $u \mapsto Au$ might represent the solution of a linear differential equation with initial condition $u$. In such cases, we aim to avoid applying this procedure $n$ times.
+
+** Trace Estimation by Random Sampling
+
+Randomized trace estimation is based on the insight that *it is
+straightforward to construct a random variable whose expectation equals the
+trace of the input matrix*.
+
+*Lemma.* /Let $\omega \in \mathbb{C}^n$ be a random test vector that is isotropic, i.e., $\mathbb{E}[\omega\omega^*] = I$. Then,/
+\begin{equation} \notag
+\mathbb{E}[X] = \text{tr}(A) \quad \text{where } X = \omega^*(A\omega).
+\end{equation}
+
+/Proof/. 
+Since $\mathbb{E}[\omega\omega^*] = I$, we have $\mathbb{E}[\omega_i \omega_j] = \delta_{ij}$, where $\delta_{ij}$ is the [[https://en.wikipedia.org/wiki/Kronecker_delta][Kronecker delta]]. Therefore,
+
+\begin{equation} \notag
+\mathbb{E}[X] = \mathbb{E}\left[\sum_{i,j} \omega_i a_{ij} \omega_j\right] = \sum_{i,j} a_{ij} \mathbb{E}[\omega_i \omega_j] = \sum_{i=1}^n a_{ii} = \text{tr}(A),
+\end{equation}
+
+which follows from the linearity of expectation. $\quad \Box$
+
+In other words, the random variable $X$ is an unbiased estimator of the trace. This idea dates back to Girard, who suggested drawing $\omega$ from a uniform distribution over the $\ell_2$ hypersphere with radius $\sqrt{n}$. Later, [[https://doi.org/10.1080/03610919008812866][Hutchinson]] proposed using [[https://en.wikipedia.org/wiki/Rademacher_distribution][Rademacher random vectors]].
+
+** Monte Carlo Sampling
+
+A single sample of $X$ is rarely enough because its variance, $\mathbb{V}[X]$, tends to be large. The most common mechanism for reducing the variance is to average $k$ independent copies of $X$, a technique known as the *Monte Carlo Method*. For $k \in \mathbb{N}$, define
+
+\begin{equation} \notag
+\overline{X}_k = \frac{1}{k} \sum_{i=1}^k X_i,
+\end{equation}
+
+where $X_i \sim X$ are independent and identically distributed (i.i.d.). By linearity, $\overline{X}_k$ is also an unbiased estimator of the trace. More importantly,
+
+\begin{equation} \notag
+\mathbb{E}[\overline{X}_k] = \text{tr}(A), \quad \mathbb{V}[\overline{X}_k] = \frac{\mathbb{V}[X]}{k}.
+\end{equation}
+
+** More Algorithms
+
+- The trace estimator discussed above is called the *Girard–Hutchinson estimator*.
+- [[https://doi.org/10.1007/s00211-017-0880-z][Saibaba, Alexanderian, and Ipsen]] proposed two randomized algorithms for estimating the trace of a positive semidefinite linear operator. Their algorithms are based on subspace iteration and low-rank approximation.
+- [[https://doi.org/10.1137/1.9781611976496.16][Meyer, Musco, Musco, and Woodruff]] combined ideas from low-rank approximation with the Girard–Hutchinson estimator to develop =Hutch++=. This method is very effective in reducing the variance of the Girard–Hutchinson estimator.
+- [[https://doi.org/10.1137/23M1548323][Epperly, Tropp, and Webber]] introduced a trace estimator based on the [[https://en.wikipedia.org/wiki/Exchangeable_random_variables]["exchangeability principle"]]. Their =XTrace= algorithm can be viewed as a symmetrized version of =Hutch++=.
+
+** References
+
+1. Riley Murray, James Demmel, Michael W. Mahoney, N. Benjamin Erichson, Maksim Melnichenko, Osman Asif Malik, Laura Grigori, Piotr Luszczek, Michał Derezínski, Miles E. Lopes, Tianyu Liang, Hengrui Luo, and Jack J. Dongarra. [[https://arxiv.org/abs/2302.11474][Randomized numerical linear algebra: A perspective on the field with an eye to software]]. arXiv:2302.11474, April 2023. 202 pp.
+2. Per-Gunnar Martinsson and Joel A. Tropp. [[https://doi.org/10.1017/s0962492920000021][Randomized numerical linear algebra: Foundations and algorithms]]. *Acta Numerica*, 29:403–572, 2020.
+3. Didier Girard. Un algorithme simple et rapide pour la validation croisée généralisée sur des problèmes de grande taille. Research Report 669, Institut d‘Informatique et de Mathématiques Appliquées de Grenoble, France, March 1987. 32 pp.
+4. Arvind K. Saibaba, Alen Alexanderian, and Ilse C. F. Ipsen. [[https://doi.org/10.1007/s00211-017-0880-z][Randomized matrix-free trace and log-determinant estimators]]. *Numer. Math.*, 137(2):353–395, 2017.
+5. Raphael A. Meyer, Cameron Musco, Christopher Musco, and David P. Woodruff. [[https://doi.org/10.1137/1.9781611976496.16][Hutch++: Optimal stochastic trace estimation]]. *Symposium on Simplicity in Algorithms (SOSA)*, SIAM, 2021, pp. 142–155.
+6. Ethan N. Epperly, Joel A. Tropp, and Robert J. Webber. [[https://doi.org/10.1137/23m1548323][XTrace: Making the most of every sample in stochastic trace estimation]]. *SIAM J. Matrix Anal. Appl.*, 45(1):1–23, 2024.
+

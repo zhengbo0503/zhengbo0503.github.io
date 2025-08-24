@@ -1,0 +1,130 @@
+#+BLOG: wordpress
+#+POSTID: 534
+#+ORG2BLOG:
+#+DATE: [2023-12-08 Fri 09:45]
+#+OPTIONS: toc:nil num:nil todo:nil pri:nil tags:nil ^:nil
+#+CATEGORY: Research
+#+TAGS: spectral decomposition, algorithm
+#+DESCRIPTION:
+#+TITLE: The Jacobi algorithm for eigenvalues
+
+Given a symmetric $A \in \mathbb{R}^{n\times n}$, 
+the Jacobi algorithm produces a sequence of orthogonally similar 
+matrices $A_{k+1} = J_{k}^{T} A_{k} J_{k}$ for $k = 1,2,\dots$,
+$A_{1} = A$, and $J_{k}$ are the carefully constructed Jacobi rotations.
+In fact, the Jacobi rotation is the same as the [[https://en.wikipedia.org/wiki/Givens_rotation][Givens rotation]], 
+but we give the credit to the inventor, Carl G. J. Jacobi.
+
+We now describe the $k$ th step of the Jacobi algorithm. 
+We first choose a pivot $(i,j)$, 
+and the task of this step is to eliminate $a_{ij}^{(k)}$
+and $a_{ji}^{(k)}$. 
+Let us now focused on the operations on the $(i,j)$ plane of iterates,
+with 
+\begin{equation}\notag
+  A_{k}([i,j],[i,j]) = 
+\begin{bmatrix}
+  \alpha & \gamma \\ \gamma & \beta
+\end{bmatrix}.
+\end{equation}
+Then, the Jacobi algorithm will produce
+\begin{equation}\label{eq1}
+  A_{k+1}([i,j],[i,j]) = 
+\begin{bmatrix}
+  \widetilde{\alpha} & 0 \\ 0 & \widetilde{\beta}
+\end{bmatrix} = 
+\begin{bmatrix}
+  c & s \\ -s & c 
+\end{bmatrix}^T 
+\begin{bmatrix}
+  \alpha & \gamma \\ \gamma & \beta
+\end{bmatrix}
+\begin{bmatrix}
+  c & s \\ -s & c 
+\end{bmatrix},
+\end{equation}
+with specially chosen $c$ and $s$. 
+Rutishauser in /Handbook for Automatic Computation/ provided a nice way to
+compute the Jacobi rotation. He first computes a parameter $t$ by 
+\begin{equation}\notag
+  \displaystyle\zeta = \frac{\beta - \alpha}{2\gamma}, \quad 
+t = {\rm sign}(\zeta)/(|\zeta| + \sqrt{1+\zeta^{2}}),
+\end{equation}
+with ${\rm sign}(0) = -1$, and then we have 
+\begin{equation}\notag
+  c = 1/\sqrt{1+t^{2}}, \quad s = ct. 
+\end{equation}
+
+** Convergence in general 
+Define ${\rm off}(A) = \sqrt{\sum_{i > j}^{} a_{ij}^{2}} = \|A\|_{F}^{2} -
+\sum_{k=1}^{n}a_{kk}^{2}$.
+Since the Jacobi rotation is orthogonal, we have 
+$\widetilde{\alpha}^{2} + \widetilde{\beta}^{2} =  
+\alpha^{2} + \beta^{2} + 2\gamma^{2}$.
+More importantly, we have 
+${\rm off}(A_{k+1})^{2} = {\rm off}(A_{k})^{2} - 2\gamma^{2}$.
+Although later steps of the Jacobi algorithm can make $\gamma$ 
+to become nonzero again, 
+the above relation ensures the off-diagonal entries are decreasing
+overall. 
+
+
+** Classical Jacobi algorithm 
+Jacobi in his original paper choose the largest in magnitude 
+off-diagonal entries as the pivot element. 
+The Jacobi algorithm with such choice is called the 
+/classical Jacobi algorithm/. 
+It has been proved by Jacobi that, the classical Jacobi algorithm 
+converges linearly,
+\begin{equation}\notag
+\displaystyle 
+  {\rm off}(A_{k+1}) \le \sqrt{1-1/N} {\rm off}(A),
+\qquad N = \frac{n(n-1)}{2}. 
+\end{equation}
+We will call $N$ iterations as a sweep. 
+Later, its local quadratic convergence has been proved by 
+Henrici (/J. Soc. Indust. Appl. Math./ 6, 144–162, 1958), 
+which said for large enough $i$, we have 
+\begin{equation}\notag
+  {\rm off}(A_{i+N}) \le c \cdot {\rm off}(A_{i})^{2},
+\end{equation}
+for some constant $c$.
+This method does not attractive in practice, 
+due to the searching time is more than the performing 
+time ($O(n^{2})$ flops versus $O(n)$ flops)!
+
+** Cyclic Jacobi algorithm
+Gregory (/Math. Comp./ 7, 215-220, 1953)
+discussed choosing $a_{ij}$ in a row-by-row fashion, 
+\begin{equation}\notag
+  (i,j) = (1,2),\dots,(1,n),(2,3),\dots,(n-1,n),(1,2),\dots.
+\end{equation}
+This type of the Jacobi algorithm is known as the 
+/cyclic Jacobi algorithm/. 
+One requires the magnitude of the rotation angle 
+to be less than $\pi/4$ in order to achieve convergence. 
+In fact, the difficulty of proving the convergence of the 
+cyclic Jacobi algorithm is the possibility that
+the larger off-diagonal elements 
+are always moving around /ahead/ of the current element.
+The cyclic Jacobi algorithm is also asymptotically 
+quadratically convergent like the classical Jacobi algorithm. 
+
+** Implementation
+The Jacobi algorithm for eigenvalues 
+is not implemented in LAPACK.
+The only related routines in LAPACK Version 3.12.0 are 
+[[https://www.netlib.org/lapack/explore-html/d9/deb/group__gesvj_ga7aec05d2a1523bbeee77ece21b12187c.html#ga7aec05d2a1523bbeee77ece21b12187c][DGESVJ]] and [[https://www.netlib.org/lapack/explore-html/d8/d78/group__gejsv_gaca7ba7f1e8002c7a1d5bffa4ccbb541f.html#gaca7ba7f1e8002c7a1d5bffa4ccbb541f][DGEJSV]] 
+which use the /one-sided Jacobi algorithm/ to compute the singular values,
+see Drmač and Veselić (/SIAM J. Matrix Anal. Appl./ 29, 1322-1342, 2008).
+
+
+** Further readings 
+- Parlett, [[https://epubs.siam.org/doi/book/10.1137/1.9781611971163][The Symmetric Eigenvalue Problem]], xxiv+398, Society for
+  Industrial and Applied Mathematics, 1998.
+- Demmel, [[https://epubs.siam.org/doi/book/10.1137/1.9781611971446][Applied Numerical Linear Algebra]], xi+416, Society for
+  Industrial and Applied Mathematics, 1997
+
+
+
+

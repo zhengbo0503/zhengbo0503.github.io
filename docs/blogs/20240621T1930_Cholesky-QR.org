@@ -1,0 +1,60 @@
+#+BLOG: wordpress
+#+POSTID: 128
+#+ORG2BLOG:
+#+DATE: [2024-06-21 Fri 18:32]
+#+OPTIONS: toc:nil num:nil todo:nil pri:nil tags:nil ^:nil
+#+CATEGORY: Research
+#+TAGS: algorithm, Cholesky, QR
+#+TITLE: Cholesky QR Algorithm
+
+Let $X \in \mathbb{R}^{ m \times n }$ with $m \ge n$ of full column rank.
+The /Cholesky QR/ (CholQR) algorithm computes a QR factorization of $X$ by 
+ - forming the Gram matrix $A = X^{T} X$,
+ - computing its Cholesky factorization $A = R^{T} R$, and 
+ - finally finding the $Q$ factor by $Q = XR^{-1}$. 
+
+Here, the requirement of full column rank ensure the Cholesky factorization 
+succeed. 
+Let $X=U\varSigma V^{T}$ be a singular value decomposition, 
+where $U\in\mathbb{R}^{m\times n}$, 
+$\varSigma\in\mathbb{R}^{n\times n}$
+and $V\in\mathbb{R}^{n\times n}$. 
+Full column rank implies $\sigma_{ii} > 0$, 
+which is equivalent as $\sigma_{i}(X^{T} X) > 0$
+since $X^{T} X = V \varSigma^{2} V^{T}$. 
+
+This algorithm is ideal in high performance computing.
+ - Its complexity is $2mn^{2}$, which is the same as the MGS.
+ - The first and third steps can be done in parallel BLAS 3 way,
+   which makes it very efficient.
+ - The second step, which can only perform sequentially,
+   requires only $O(n^{3})$ flops compare to $O(mn^{2})$ flops
+   for the other two steps. 
+
+However, CholQR is not stable. 
+We can provide several heuristic observations. 
+Suppose $\kappa_{2}(X) > u^{-1/2}$, then 
+$\kappa_{2}(X^{T} X) > u^{-1}$ which can result in loss 
+of positive definiteness. 
+Even though we are lucky enough to be able to form $R$,
+ill conditioned $R$ and $X$ can still result in 
+a large deviation from orthogonality. 
+Stathopoulos and Wu [SIAM J. Sci. Comput. 23, 2165–2182, 2002]
+proved that $\| Q^{T} Q-I \| \le O(\kappa_{2}(A)^{2})$. 
+
+** Solutions to the instability
+ - Apply the CholQR twice
+   [Electron. Trans. Numer. Anal. 44, 306–326, 2015].
+   The deviation reduces to $O(mnu)$,
+   which drops the dependence on $\kappa_{2}(A)$.
+ - Perform the first two steps at high precision $u_{h}$,
+   and the last step at working precision $u$
+   [SIAM J. Sci. Comput. 37, C307–C330, 2015].
+   The deviation from orthogonality can then be written as 
+   $O(u_{h} \kappa_{2}(A)^{2} + u \kappa_{2}(A))$,
+   which can drop the dependency on $\kappa_{2}(A)^{2}$
+   for $u_{h}$ sufficiently small.
+   
+   
+   
+

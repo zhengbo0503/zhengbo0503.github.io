@@ -1,0 +1,119 @@
+#+BLOG: wordpress
+#+POSTID: 521
+#+ORG2BLOG:
+#+DATE: [2025-03-07 Fri 00:01]
+#+OPTIONS: toc:nil num:nil todo:nil pri:nil tags:nil ^:nil
+#+CATEGORY: Research
+#+TAGS: algorithm, Jacobi, SVD
+#+TITLE: One-sided Jacobi Algorithm
+#+startup: indent all 
+
+** Outline of the Algorithm
+
+The Jacobi algorithm for computing the singular value decomposition (SVD) of a general matrix $A \in \mathbb{R}^{m \times n}$ was proposed by [[https://doi.org/10.1137/0106005][Hestenes]]. The algorithm proceeds as follows:
+
+\begin{equation}\notag
+A^{(0)} = A, \quad A^{(k+1)} = A^{(k)} J^{(k)}, \quad A^{(\infty)} = U \varSigma,
+\end{equation}
+
+for $k = 1, 2, \dots$, where $J^{(k)}$ represents the Jacobi rotation applied at the $k$-th step to orthogonalize two distinct columns of $A^{(k)}$. Each $J^{(k)}$ is determined by the *pivot position* $(p, q) = (p(k), q(k))$, which depends on the chosen [[https://zbzhou.com/?p=9][pivot strategy]], such as classical or cyclic.
+
+Given a pivot $(p, q)$, we first form the $(p, q)$ submatrix of $(A^{(k)})^T A^{(k)}$:
+
+\begin{equation}\notag
+(A^{(k)})^T A^{(k)} ([p, q], [p, q]) =
+\begin{bmatrix}
+    a & c \\ c & b
+\end{bmatrix},
+\end{equation}
+
+where
+
+\begin{equation}
+\label{eq:abc} \tag{1}
+a = (a^{(k)}_p)^T a^{(k)}_p, \quad
+b = (a^{(k)}_q)^T a^{(k)}_q, \quad
+c = (a^{(k)}_p)^T a^{(k)}_q.
+\end{equation}
+
+The remaining steps mirror the procedure for the [[https://zbzhou.com/?p=9][two-sided Jacobi algorithm]]:
+
+\begin{equation}\notag
+\xi = \frac{b - a}{2c}, \quad
+t = \frac{\text{sign}(\xi)}{|\xi| + \sqrt{1 + \xi^2}}, \quad
+cs = \frac{1}{1 + t^2}, \quad
+sn = cs \times t,
+\end{equation}
+
+and
+
+\begin{equation}\notag
+V^{(k)} =
+\begin{bmatrix}
+    cs & sn \\ -sn & cs
+\end{bmatrix}.
+\end{equation}
+
+Suppose the algorithm converges after $m$ steps, yielding $A^{(m+1)}$. The column norms of $A^{(m+1)}$ correspond to the singular values of $A$, and $U = A^{(m+1)} \varSigma^{-1}$ represents the left singular vector matrix. The right singular vector matrix $V$ can be obtained either by accumulating $V = J^{(0)} \cdots J^{(m)}$ or by solving the matrix equation $AV = A^{(m)}$ for $V$, as described in [[https://doi.org/10.1093/imanum/19.2.191][this paper]]. Thus, $A = U \varSigma V^T$ constitutes the SVD of $A$.
+
+** Preconditioning
+
+Zlatko Drmač and Krešimir Veselić published a [[https://doi.org/10.1137/050639193][paper]] focusing on pre-processing the matrix to accelerate the convergence of the one-sided Jacobi algorithm. Their approach includes:
+
+1. *Choosing between $A$ and $A^T$ for square matrices*: Let $A = DQ$, where $D$ is diagonal and $Q$ is orthogonal. Applying the one-sided Jacobi algorithm to $A$ implicitly diagonalizes $A^T A = Q^T D^2 Q$. However, applying it to $A^T$ diagonalizes $AA^T = D^2$, which is already diagonal. Therefore, one should choose $A^{(0)}$ to maximize
+
+\begin{equation}\notag
+\| \text{diag}((A^{(0)})^T A^{(0)}) \|_2
+\end{equation}
+
+or minimize the diagonal entropy of $(A^{(0)})^T A^{(0)}$.
+
+2. *Using QR factorization with rank-revealing column pivoting*: Set $A^{(0)} = R$. This redistributes the mass of the diagonals of $R^T R$, positively impacting convergence. Additionally, for a rectangular $m \times n$ matrix, a rank-revealing algorithm can reduce the problem to $n \times n$.
+
+3. *Setting $A^{(0)} = R^T$*: This implicitly applies Rutishauser's LR diagonalization to $R^T R \to R R^T$, which has a nontrivial diagonalizing effect.
+
+** Superior Accuracy
+
+While the one-sided Jacobi algorithm typically struggles to match the performance of bidiagonalization methods like QR iteration and divide-and-conquer, it offers distinct advantages in accuracy for certain matrices. Perturbation theory for bidiagonalization methods shows that:
+
+\begin{equation}\notag
+\frac{|\sigma_i - \hat{\sigma}_i|}{\sigma_i} \le O(\varepsilon) \kappa(A),
+\end{equation}
+
+where $\sigma_i$ and $\hat{\sigma}_i$ are the singular values of $A$ and $A + \varDelta A$, respectively. Here, $\varDelta A$ is a small perturbation arising during the algorithm's application, satisfying
+
+\begin{equation}\notag
+\| \varDelta A \|_2 \le O(\varepsilon) \| A \|_2,
+\end{equation}
+
+and $\kappa(A) = \sigma_{\max}(A) / \sigma_{\min}(A)$ is the 2-norm condition number of $A$. This inequality implies that small singular values may be highly inaccurate if $\kappa(A)$ is large.
+
+However, the one-sided Jacobi algorithm improves this bound. Let $A = BD$, where $B$ has unit 2-norm and
+
+\begin{equation}\notag
+D = \text{diag}(\| a_i \|_2).
+\end{equation}
+
+Using the notations in \eqref{eq:abc}, James Demmel and Krešimir Veselić proved the bound:
+
+\begin{equation}\notag
+\frac{|\sigma_i - \hat{\sigma}_i|}{\sigma_i} \le O(\varepsilon) \kappa(B),
+\end{equation}
+
+provided the algorithm terminates only if
+
+\begin{equation}\notag
+|c| \le \text{tol} \times (ab),
+\end{equation}
+
+where $\text{tol} > 0$ is a convergence parameter. For strongly scaled matrices $A$, we expect that $\kappa(B) \ll \kappa(A)$.
+
+** Implementation
+
+The one-sided Jacobi algorithm has been implemented in [[https://www.netlib.org/lapack/explore-html/d9/deb/group__gesvj_ga7aec05d2a1523bbeee77ece21b12187c.html][LAPACK]].
+
+** References
+
+- Dongarra, Gates, Haidar, Kurzak, Luszczek, Tomov & Yamazaki, [[https://doi.org/10.1137/17M1117732][The Singular Value Decomposition: Anatomy of Optimizing an Algorithm for Extreme Scale]], *SIAM Rev.* 60, 808–865, 2018
+- Drmač & Veselić, [[https://doi.org/10.1137/050639193][New Fast and Accurate Jacobi SVD Algorithm. I]], *SIAM J. Matrix Anal. Appl.* 29, 1322–1342, 2008
+

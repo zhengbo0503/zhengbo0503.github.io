@@ -1,0 +1,128 @@
+#+BLOG: wordpress
+#+POSTID: 488
+#+ORG2BLOG:
+#+DATE: [2025-05-29 Thu 16:38]
+#+OPTIONS: num:nil todo:nil pri:nil tags:nil ^:nil toc:t
+#+CATEGORY: Software
+#+TAGS: MATLAB
+#+TITLE: What's new in MATLAB R2025a
+
+MATLAB R2025a was officially released on May 15, 2025, 
+which is [[https://uk.mathworks.com/matlabcentral/discussions/general/880613-where-is-matlab-2025a][delayed by the finalization process]].
+In this post, I will present several updates which has been made in MATLAB
+R2025a. For a detailed list of changes, please refer to [[https://uk.mathworks.com/help/matlab/release-notes.html][offical release
+note website]] or the [[https://zbzhou.com/wp-content/uploads/2025/06/MATLAB_R2025aV1_Release_Note.pdf][official PDF release note]]. 
+
+** Renewed user interface 
+ - The renewed MATLAB desktop is designed to improve productivity and
+   streamline workflows. In particular, the sidebar can now shows more
+   panels than previous versions, for example, a dedicated source control
+   panel. 
+ - The dark UI which has been [[https://uk.mathworks.com/matlabcentral/discussions/highlights/780745-try-dark-mode-in-the-matlab-desktop-beta/2528592][tested]] since version MATLAB R2023a via the
+   package [[https://uk.mathworks.com/matlabcentral/fileexchange/119593-new-desktop-for-matlab-beta][New Desktop for MATLAB (Beta)]], is now available in MATLAB desktop.
+ - MATLAB preferences are now renamed as settings, 
+   and you can search for and modify these settings 
+   using the updated Settings window.
+ - The command window is now supports auto-completion, which used to
+   works only for the editor. 
+   [[~/Org/blogs/20250529T1639_pic1.png]]
+   Notice that the MATLAB window on the left uses dark UI. 
+ - One can view and create figures in dark theme as well. By default,
+   figures use the theme of MATLAB desktop (light/dark). 
+
+** Improved Editor
+ - Now, the editor supports previewing the markdown files. As you make
+   edits to the file, the Editor updates the preview automatically.
+ - Some recurring code structures, such as the =If-Else= statement can be
+   inserted using a code snippets. However, the user is not able to create
+   their own snippets at this version.  
+ - One can now copy a line of code in the Editor without selecting the
+   code. To copy a line, use =Ctrl+L= (WIN) or =Command+C= (MAC). To cut a
+   code line, use =Ctrl+X= (WIN) or =Command+X= (MAC). 
+ - Figures now open as tabs in a figure container
+   [[~/Org/blogs/20250529T1639_pic2.png]] 
+   MATLAB R2025a is shown on the left with dark UI and MATLAB R2024b is
+   shown on the right. 
+
+** Read data from compressed and archived files 
+Since R2025a, archived file formats are treated as folders. 
+Suppose you have a archived zip file called =data.zip= with 
+=data1.csv= and =data2.csv= inside the zip file. 
+Now, you can import the data from =data1.csv= via 
+#+BEGIN_SRC octave
+A = readmatrix("data.zip/data1.csv"); 
+#+END_SRC
+However, there seems no auto-completion for =data1.csv= 
+since it is, in theory, not in your search path.
+There are other functions, besides =readmatrix=, also supports 
+this functionality, see [[https://uk.mathworks.com/help/matlab/release-notes.html?startrelease=R2022a&endrelease=R2025a&rntext=&groupby=release&sortby=descending&searchHighlight=#mw_78a43e74-e782-458e-8ad1-5a89e7fa62d7][here]] for a detailed list. 
+
+** Sparse matrix is supported in single precision 
+Single precision sparse matrices are now supported in all functions 
+that support double precision sparse matrix.
+A straightforward example is 
+#+BEGIN_SRC octave 
+>> # In MATLAB R2024b
+>> A = sparse(randn(10,1)); single(A)
+Error using single
+Attempt to convert to unimplemented sparse type
+>> # In MATLAB R2025a, it will create a single precision sparse matrix
+>> A = sparse(randn(10,1)); single(A)
+ans =
+  10×1 sparse single column vector (10 nonzeros)
+   (1,1)    -1.4150e+00
+   (2,1)    -3.3356e-02
+   (3,1)     2.6112e-01
+   (4,1)     5.2299e-01
+   (5,1)     6.7679e-01
+   (6,1)     6.7440e-01
+   (7,1)     6.7840e-01
+   (8,1)    -3.1258e-01
+   (9,1)     3.7924e-01
+  (10,1)    -2.2529e+00
+#+END_SRC
+Other possibilities such as creating a 50-by-100 single precision 
+sparse matrix with density 0.1 using =sprand(50,100,0.1,"single")= 
+is also supported. See [[https://uk.mathworks.com/help/matlab/release-notes.html?startrelease=R2022a&endrelease=R2025a&rntext=&groupby=release&sortby=descending&searchHighlight=#mw_add92a60-05d0-46be-b388-44510096b9ee][here]] for more usage.
+
+** =ode= supports more objects
+ - =ode= can solve /delay differential equations/ (DDEs) by specifying the
+   =Solver= property as ="dde23"=, ="ddesd"=, or ="ddensd"= and specifying
+   the =DelayDefinition= property as an [[https://uk.mathworks.com/help/matlab/ref/matlab.ode.odedelay.html][=odeDelay=]] object. If the user only
+   specify =DelayDefinition=, then the =ode= automatically selects a
+   solver.
+ - =ode= can solve ordinary differential equations (ODEs) with complex
+   solution values by specifying =SeperateComplexParts= as ="on"=. 
+   This is useful for solving implicit and stiff ODEs where the Jacobian is
+   not specified.
+
+** MATLAB Copilot
+[[https://uk.mathworks.com/products/matlab-copilot.html][The official web-page]]. 
+One can now work with copilot inside MATLAB desktop. 
+Now, there is a dedicated sidebar panel for Copilot chat,
+which can answer questions, help write and explain code, 
+and identify code issues.
+Thanks to MATLAB's [[https://uk.mathworks.com/help/matlab/index.html][super detailed documentations]] and 
+the [[https://uk.mathworks.com/company/technical-articles.html][technical articles]], Copilot can make use of them and provide reasonable
+and meaningful skeleton codes. By pressing =Shift+Command+P= (MAC) or
+=Shift+Ctrl+P= (WIN) in the Editor, one can directly ask Copilot to
+generate some codes for you without needing to copy and paste from the
+Copilot chat. 
+
+After experiencing this for several days, 
+I think Copilot integration is particularly useful 
+for starters to familiar with MATLAB syntax. 
+For experienced users, it brings no significant benefit 
+since MATLAB Copilot is usually not smart enough to generate code 
+with desired functionalities. 
+I wish to see more improvements when MATLAB Copilot can work with 
+AI models that are good at ``reasoning", e.g. ChatGPT 4o-mini.  
+
+
+# /Users/cyae/Org/blogs/20250529T1639_pic1.png https://zbzhou.com/wp-content/uploads/2025/06/20250529T1639_pic1.png
+
+# /Users/cyae/Org/blogs/20250529T1639_pic2.png
+# https://zbzhou.com/wp-content/uploads/2025/06/20250529T1639_pic2.png
+
+
+# /Users/cyae/Org/blogs/20250529T1639_pic2.png https://zbzhou.com/wp-content/uploads/2025/06/20250529T1639_pic2-1.png
