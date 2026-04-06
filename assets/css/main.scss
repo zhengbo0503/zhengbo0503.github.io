@@ -41,3 +41,21 @@
     "vendor/font-awesome/solid",
     "vendor/font-awesome/brands"
 ;
+
+@import "minimal-mistakes";
+
+body,
+.page__content,
+.archive,
+.sidebar,
+.masthead,
+.greedy-nav,
+.author__content {
+  font-family: "Times New Roman", Times, serif;
+}
+
+h1, h2, h3, h4, h5, h6,
+.page__title,
+.archive__item-title {
+  font-family: "Times New Roman", Times, serif;
+}
