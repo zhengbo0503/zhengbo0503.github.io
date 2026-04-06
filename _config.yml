@@ -26,11 +26,7 @@ author:
   avatar           : "profile.png"
   name             : "Zhengbo Zhou"
   pronouns         : # example: "she/her"  
-  bio              : "Department of Mathematics
-                      University of Manchester
-                      Manchester
-                      M13 9PL
-                      United Kingdom"
+  bio              : ""
   location         : "Manchester, UK"
   employer         : "University of Manchester"
   uri              : # URL
