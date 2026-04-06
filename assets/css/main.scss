@@ -42,7 +42,9 @@
     "vendor/font-awesome/brands"
 ;
 
-@import "minimal-mistakes";
+/* -------------------------
+   Font override
+   ------------------------- */
 
 body,
 .page__content,
@@ -50,12 +52,17 @@ body,
 .sidebar,
 .masthead,
 .greedy-nav,
-.author__content {
+.author__content,
+.author__bio,
+.archive__item,
+.page,
+.site-title {
   font-family: "Times New Roman", Times, serif;
 }
 
 h1, h2, h3, h4, h5, h6,
 .page__title,
-.archive__item-title {
+.archive__item-title,
+.author__name {
   font-family: "Times New Roman", Times, serif;
 }
