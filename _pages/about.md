@@ -7,8 +7,8 @@ redirect_from:
   - /about.html
 ---
 
-I am a fourth Ph.D. student in the [Department of Mathematics](https://www.maths.manchester.ac.uk/) at the [University of Manchester](https://www.manchester.ac.uk/).  
-I am supervised by [Dr. Marcus Webb](https://personalpages.manchester.ac.uk/staff/marcus.webb/) and [Prof. Françoise Tisseur](https://personal.maths.manchester.ac.uk/tisseur/).  
+I am a fourth Ph.D. student of the [Numerical Linear Algebra Group](https://nla-group.org/), [Department of Mathematics](https://www.maths.manchester.ac.uk/), [University of Manchester](https://www.manchester.ac.uk/). I am supervised by [Dr. Marcus Webb](https://personalpages.manchester.ac.uk/staff/marcus.webb/) and [Prof. Françoise Tisseur](https://personal.maths.manchester.ac.uk/tisseur/).  
+
 My research interest lies on numerical linear algebra, matrix analysis and high performance computing. My particular focus is on developing mixed-precision Jacobi algorithms for computing accurate eigensystems of symmetric positive definite matrix and singular value system for general matrix. 
 
 ## Short Bio 
