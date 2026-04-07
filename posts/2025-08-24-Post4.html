@@ -1,0 +1,97 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html lang="en">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Computing accurate eigenvalues using a mixed-precision Jacobi algorithm</title>
+    <meta name="author" content="Zhengbo Zhou" />
+
+    <!-- Bootstrap core CSS -->
+    <link href="../styfiles/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="../styfiles/style.css" rel="stylesheet">
+
+    <!-- MathJax -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: { '[+]': [['$', '$']] }
+            }
+        };
+    </script>
+    <script defer src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+</head>
+
+<body>
+
+    <!-- Fixed navbar -->
+    <nav class="navbar navbar-default navbar-fixed-top">
+        <div class="container">
+            <div class="navbar-header">
+                <a class="navbar-brand active" href="../index.html">Zhengbo Zhou</a>
+                <ul class="nav navbar-nav">
+                    <li role="presentation"><a href="../pages/pubs.html">Publications</a></li>
+                </ul>
+                <ul class="nav navbar-nav">
+                    <li role="presentation"><a href="../pages/talks.html">Talks</a></li>
+                </ul>
+                <ul class="nav navbar-nav">
+                    <li role="presentation" style="font-style: italic; font-weight: bolder;text-decoration: underline;">
+                        <a href="../pages/blog-archive.html">Blog Posts</a></li>
+                </ul>
+                <ul class="nav navbar-nav">
+                    <li role="presentation"><a href="../pages/teaching.html">Teaching</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="contentbox" style="margin-top: 20px; margin-bottom: 20px; font-size: 16px;">
+            <h1><a id="computing-accurate-eigenvalues-using-a-mixed-precision-jacobi-algorithm" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Computing accurate eigenvalues using a mixed-precision Jacobi algorithm</h1>
+<p>Posted <strong>August 24, 2025</strong></p>
+<hr />
+<p><a href="https://nhigham.com/">Nicholas J. Higham</a>, <a href="https://scholar.google.com/citations?user=iA1h0jgAAAAJ&amp;hl=en">François Tisseur</a>, <a href="https://personalpages.manchester.ac.uk/staff/marcus.webb/">Marcus Webb</a>, and I have uploaded to the arXiv our paper &quot;<a href="https://arxiv.org/abs/2501.03742">Computing accurate eigenvalues using a mixed-precision Jacobi algorithm</a>&quot;.</p>
+<p>This paper builds on the famous result by <a href="https://epubs.siam.org/doi/10.1137/0613074">Demmel and Veselić on the high accuracy of the Jacobi algorithm</a>, in which they proved that for \(A \in \mathbb{R}^{n\times n}\), if \(\lambda_{k}(A)\) denotes the \(k\)-th largest exact eigenvalue of \(A\) and \(\widehat{\lambda}_{k}(A)\) is the \(k\)-th largest eigenvalue computed by the Jacobi algorithm with a suitable stopping criterion, then</p>
+\[\left|  
+\frac{\widehat{\lambda}_{k}(A) - \lambda_{k}(A)}{\lambda_{k}(A)}
+\right|
+\le p(n)\,u\,\kappa_{2}^{S}(A),
+\]
+<p>where \(p(n)\) is a low-degree polynomial, \(u\) is the unit roundoff of the working precision, and \(\kappa_{2}^{S}(A) = \sigma_{\max}(DAD)/\sigma_{\min}(DAD)\) with \(D = \mathrm{diag}(a_{ii}^{-1/2})\).</p>
+<h2><a id="our-algorithm" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Our algorithm</h2>
+<p>We first construct a preconditioner \(\widetilde{Q}\) using either a spectral decomposition or a tridiagonal reduction computed at <strong>low precision</strong>. This preconditioner satisfies:</p>
+<ol>
+<li>\(\widetilde{Q}^{T}A\widetilde{Q}\) has small off-diagonal entries, and</li>
+<li>$||\widetilde{Q}^{T}\widetilde{Q} - I||_{2}$ is of order \(u\).</li>
+</ol>
+<p>We then apply the Jacobi algorithm at <strong>working precision</strong> to \(\widetilde{Q}^{T}A\widetilde{Q}\), which is evaluated at <strong>high precision</strong>. We refer to this approach as the <strong>mixed-precision preconditioned Jacobi algorithm</strong>.</p>
+<p>Let \(\widetilde{A} = \widetilde{Q}^{T}A\widetilde{Q}\). The eigenvalues computed by applying our algorithm to \(\widetilde{A}\) satisfy</p>
+\[\left|
+\frac{\widehat{\lambda}_{k}(\widetilde{A}) - \lambda_{k}(A)}{\lambda_{k}(A)}
+\right|
+\le p(n)\,u\,\kappa_{2}^{S}(\widetilde{A}).
+\]
+<p>Through this procedure, \(\kappa_{2}^{S}(A)\) is effectively replaced by \(\kappa_{2}^{S}(\widetilde{A})\), which is often much smaller. For example, if $||A - \mathrm{diag}(A)||_F/\min_i(\widetilde{a}_{ii}) &lt; 1/2$, then \(\kappa_{2}^{S}(\widetilde{A}) &lt; 3\).</p>
+<h2><a id="why-high-precision" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Why high precision?</h2>
+<p>A key feature of our algorithm is the use of <strong>high-precision matrix–matrix multiplication</strong>. With sufficiently high precision, we can overcome the large componentwise forward errors that would otherwise arise when forming \(\widetilde{Q}^{T}A\widetilde{Q}\).</p>
+<h2><a id="numerical-experiment" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Numerical Experiment</h2>
+<p>We compare four algorithms:<br />
+(a) <strong>MP2Jacobi</strong> -- our algorithm but with the matrix product \(\widetilde{Q}^{T}A\widetilde{Q}\) evaluated at working precision,<br />
+(b) <strong>MP3Jacobi</strong> -- our proposed algorithm (matrix product evaluated at high precision),<br />
+(c) <strong>Jacobi</strong> -- the Jacobi algorithm of Demmel and Veselić, and<br />
+(d) <strong>MATLAB</strong> -- <a href="https://mathworks.com/help/matlab/ref/eig.html"><code>eig</code> routine</a>.</p>
+<p>The test matrices are generated by:</p>
+<pre class="line-numbers"><code class="language-matlab">gallery('randsvd', 100, -kappa, 5);
+</code></pre>
+<p>with condition numbers \(\kappa\) varying from \(10\) to \(10^{16}\).<br />
+<img src="../media/20250824T1523_pic1.png" alt="" style="max-width: 100%; height: auto;"></p>
+<p>The results clearly show that our algorithm performs especially well for highly ill-conditioned matrices. For matrices with condition number \(10^{16}\), MP3Jacobi achieves <strong>7 correct digits of accuracy</strong>, whereas the other algorithms fail to reach <strong>3 correct digits</strong>.</p>
+
+        </div>
+    </div>
+</body>
+
+</html>
