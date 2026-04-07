@@ -1,0 +1,177 @@
+
+body {
+   font-family: Times, serif, 'Trebuchet MS', sans-serif;
+   font-size: 16px;
+}
+
+img {
+  border-radius: 5px;
+}
+
+code {
+    font-family: monospace;
+    font-size: smaller;
+}
+
+#headshot {
+	float:left;
+	margin: 0 25px 15px 0; /* t r b l */
+  width: 185px
+}
+
+.journalbtn {
+	background-color: #6600cc;
+	color: #fff;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.arXivbtn {
+	background-color: #b31b1b;
+	color: #fff;
+  font-weight:300;
+}
+
+.preprintbtn {
+	background-color: #0088cc;
+	color: #fff;
+  font-weight:300;
+}
+
+.withfrontmatterbtn {
+	background-color: #009933;
+	color: #fff;
+  font-weight:300;
+}
+
+.posterbtn {
+	background-color: #ff9900;
+	color: #fff;
+  font-weight:300;
+}
+
+.researchgatebtn {
+  background-color: #00cdbb;
+  color: #fff;
+  font-weight:300;
+}
+
+body {
+  padding-top: 70px;
+	padding-bottom: 10px;
+	line-height: 1.5;
+}
+
+.page-header {
+	margin-top: 20px;
+	width:900px;
+}
+
+.page-footer {
+	padding-top:15px;
+	margin:40px 0 15px; /* t r b l */
+	border-top:1px solid #eee;
+}
+
+.contentbox {
+	padding-bottom: 10px;
+	border-bottom: 1px solid #eee;
+}
+
+.container {
+	min-width:480px !important;
+	max-width:750px !important;
+}
+
+address {
+	margin-bottom: 0px;
+}
+
+.lead {
+  font-size: 20px;
+}
+
+.table {
+	margin-bottom: 0px;
+}
+
+.table>tbody>tr>td, .table>tbody>tr>th, .table>tfoot>tr>td, .table>tfoot>tr>th, .table>thead>tr>td, .table>thead>tr>th {
+    padding: 8px;
+    line-height: 1.42857143;
+    vertical-align: middle;
+    border-bottom: 1px solid #ddd;
+    border-top: 1px solid #ddd;
+}
+
+/* Always float the navbar header */
+.navbar-header {
+  float: left;
+}
+
+/* Undo the collapsing navbar */
+.navbar-collapse {
+  display: block !important;
+  height: auto !important;
+  padding-bottom: 0;
+  overflow: visible !important;
+  visibility: visible !important;
+}
+
+.navbar-toggle {
+  display: none;
+}
+.navbar-collapse {
+  border-top: 0;
+}
+
+/* Always apply the floated nav */
+.navbar-nav {
+  float: left;
+  margin: 0;
+}
+.navbar-nav > li {
+  float: left;
+}
+.navbar-nav > li > a {
+  padding: 15px;
+}
+
+pre[class*="language-"].line-numbers {
+  position: relative;
+  padding-left: 3.8rem;
+  counter-reset: linenumber;
+}
+
+pre[class*="language-"].line-numbers > code {
+  position: relative;
+  white-space: inherit;
+}
+
+.line-numbers .line-numbers-rows {
+  position: absolute;
+  pointer-events: none;
+  top: 0;
+  font-size: 100%;
+  left: -3.8rem;
+  width: 3rem; /* works for line-numbers below 1000 lines */
+  letter-spacing: -1px;
+  border-right: 1px solid #bfc0c0;
+
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+
+}
+
+.line-numbers-rows > span {
+display: block;
+counter-increment: linenumber;
+}
+
+.line-numbers-rows > span:before {
+    content: counter(linenumber);
+    color: #bfc0c0;
+    display: block;
+    padding-right: 0.8rem;
+    text-align: right;
+}

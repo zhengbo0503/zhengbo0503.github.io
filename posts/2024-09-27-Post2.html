@@ -1,0 +1,96 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html lang="en">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>A MATLAB function to generate random symmetric matrix</title>
+    <meta name="author" content="Zhengbo Zhou" />
+
+    <!-- Bootstrap core CSS -->
+    <link href="../styfiles/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="../styfiles/style.css" rel="stylesheet">
+
+    <!-- MathJax -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: { '[+]': [['$', '$']] }
+            }
+        };
+    </script>
+    <script defer src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+</head>
+
+<body>
+
+    <!-- Fixed navbar -->
+    <nav class="navbar navbar-default navbar-fixed-top">
+        <div class="container">
+            <div class="navbar-header">
+                <a class="navbar-brand active" href="../index.html">Zhengbo Zhou</a>
+                <ul class="nav navbar-nav">
+                    <li role="presentation"><a href="../pages/pubs.html">Publications</a></li>
+                </ul>
+                <ul class="nav navbar-nav">
+                    <li role="presentation"><a href="../pages/talks.html">Talks</a></li>
+                </ul>
+                <ul class="nav navbar-nav">
+                    <li role="presentation" style="font-style: italic; font-weight: bolder;text-decoration: underline;">
+                        <a href="../pages/blog-archive.html">Blog Posts</a></li>
+                </ul>
+                <ul class="nav navbar-nav">
+                    <li role="presentation"><a href="../pages/teaching.html">Teaching</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="contentbox" style="margin-top: 20px; margin-bottom: 20px; font-size: 16px;">
+            <h1><a id="what-s-new-in-matlab-r2024a" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>What's new in MATLAB R2024a</h1>
+<p>Posted <strong>September 27, 2024</strong></p>
+<hr />
+<p>In this post, I will present several updates which has been made in MATLAB R2024b. For a detailed list of changes in MATLAB, please refer to <a href="https://www.mathworks.com/help/matlab/release-notes.html">this page</a>.</p>
+<h2><a id="open-documentation-in-system-browser" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Open documentation in system browser</h2>
+<p>The <code>doc</code> function, which displays the documentation, will now show the documentation in the <em>system web browser</em> instead of the help browser. The help browser will be removed.</p>
+<h2><a id="determine-approximate-equality" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Determine approximate equality</h2>
+<p>One can now use <code>isapprox(A,B)</code> to determine whether <code>A</code> and <code>B</code> are <a href="https://uk.mathworks.com/help/matlab/ref/isapprox.html#mw_da42028f-56e4-4967-811a-6642335af9fc_head">approximately equal</a>.</p>
+<p>For example, <code>sin(3/4*pi)</code> and <code>1/sqrt(2)</code> are the same in theory. However, due to rounding errors, the expression <code>sin(3/4*pi)==1/sqrt(2)</code> will return <code>0</code>. In contrast, <code>isapprox</code> will take the rounding errors in to account. <code>A</code> and <code>B</code> will be treated as &quot;the same&quot; if the difference satisfies</p>
+\[  |{A-B}| \le \max 
+\left({\rm AbsTol}, 
+{\rm RelTol} \times \max(|{A}|,|{B}|)
+\right)
+\]
+<p>where <code>AbsTol</code> and <code>RelTol</code> are set to <code>1e-15</code> if <code>A</code> and <code>B</code> are of type <code>double</code>, and <code>5e-7</code> if <code>A</code> or <code>B</code> is of type <code>single</code>. As a result, the expression <code>isapprox(sin(3/4*pi),1/sqrt(2))</code> will return <code>1</code>.</p>
+<p>One can also specify <code>AbsTol</code> and <code>RelTol</code>. For example,</p>
+<pre class="line-numbers"><code class="language-matlab">&gt;&gt; isapprox(A,B,RelativeTolerance=1e-14,AbsoluteTolerance=1e-14)
+</code></pre>
+<p>will set <code>RelTol</code> and <code>AbsTol</code> both to <code>1e-14</code>. If only one of the tolerance is specified, then the other one will automatically set to zero.</p>
+<h2><a id="specify-tikhonov-regularization-factor" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Specify Tikhonov regularization factor</h2>
+<p>The function <code>lsqminnorm(A,B)</code> returns an array \(X\) that solves the linear system \(AX = B\) and minimize the values of $||AX - B||_2$. One can now specify the Tikhonov regularization factor <code>alpha</code> by</p>
+<pre class="line-numbers"><code class="language-matlab">lsqminnorm(A,B,RegularizationFactor=alpha)
+</code></pre>
+<p>which will minimize the norm</p>
+\[\|AX-B\|_2^2 + {\tt alpha}^2 \|X\|_2^{2}.
+\]
+<p>This is useful when the coefficient matrix <code>A</code> is very ill-conditioned.</p>
+<h2><a id="control-the-width-of-icons-in-legend" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Control the width of icons in legend</h2>
+<p>A new layout parameter <code>IconColumnWidth</code> has been added into MATLAB. One can now control the width of the legend icon by assigning a positive number to <code>IconColumnWidth</code> in point units, where 1 point is 1/72 inch. The following image shows the same legend but with different <code>IconColumnWidth</code> values.<br />
+<img src="../media/20240927T2108_pic1.png" alt="20240927T2108_pic1" /></p>
+<h2><a id="references" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>References</h2>
+<ul>
+<li>
+<p>Golub, G. H., Hansen, P. C., &amp; O'Leary, D. P. (1999). <a href="http://dx.doi.org/10.1137/s0895479897326432">Tikhonov regularization and total least squares</a>. SIAM J. Matrix Anal. Appl., 21(1), 185-194.</p>
+</li>
+<li>
+<p>Figure for different <code>IconColumnWidth</code> is taken from <a href="https://uk.mathworks.com/help/matlab/release-notes.html?startrelease=R2024b&amp;endrelease=R2024b&amp;rntext=&amp;groupby=release&amp;sortby=descending&amp;searchHighlight=">here</a>.</p>
+</li>
+</ul>
+        </div>
+    </div>
+</body>
+
+</html>

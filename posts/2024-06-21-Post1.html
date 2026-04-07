@@ -1,0 +1,86 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html lang="en">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>A MATLAB function to generate random symmetric matrix</title>
+    <meta name="author" content="Zhengbo Zhou" />
+
+    <!-- Bootstrap core CSS -->
+    <link href="../styfiles/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="../styfiles/style.css" rel="stylesheet">
+
+    <!-- MathJax -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: { '[+]': [['$', '$']] }
+            }
+        };
+    </script>
+    <script defer src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+</head>
+
+<body>
+
+    <!-- Fixed navbar -->
+    <nav class="navbar navbar-default navbar-fixed-top">
+        <div class="container">
+            <div class="navbar-header">
+                <a class="navbar-brand active" href="../index.html">Zhengbo Zhou</a>
+                <ul class="nav navbar-nav">
+                    <li role="presentation"><a href="../pages/pubs.html">Publications</a></li>
+                </ul>
+                <ul class="nav navbar-nav">
+                    <li role="presentation"><a href="../pages/talks.html">Talks</a></li>
+                </ul>
+                <ul class="nav navbar-nav">
+                    <li role="presentation" style="font-style: italic; font-weight: bolder;text-decoration: underline;">
+                        <a href="../pages/blog-archive.html">Blog Posts</a></li>
+                </ul>
+                <ul class="nav navbar-nav">
+                    <li role="presentation"><a href="../pages/teaching.html">Teaching</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="contentbox" style="margin-top: 20px; margin-bottom: 20px; font-size: 16px;">
+            <h1><a id="cholesky-qr-algorithm" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Cholesky QR Algorithm</h1>
+<p>Posted <strong>June 21, 2024</strong></p>
+<h2><a id="idea-of-cholesky-qr" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Idea of Cholesky QR</h2>
+<p>Let \(X \in \mathbb{R}^{ m \times n }\) with \(m \ge n\) of full column rank. The <em>Cholesky QR</em> (CholQR) algorithm computes a QR factorization of \(X\) by</p>
+<ul>
+<li>forming the Gram matrix \(A = X^{T} X\),</li>
+<li>computing its Cholesky factorization \(A = R^{T} R\), and</li>
+<li>finally finding the \(Q\) factor by \(Q = XR^{-1}\).</li>
+</ul>
+<p>Here, the requirement of full column rank ensure the Cholesky factorization<br />
+succeed.  Let \(X=U\varSigma V^{T}\) be a singular value decomposition,  where \(U\in\mathbb{R}^{m\times n}\),  \(\Sigma\in\mathbb{R}^{n\times n}\) and \(V\in\mathbb{R}^{n\times n}\).  Full column rank implies \(\sigma_{ii} &gt; 0\), which is equivalent as \(\sigma_{i}(X^{T} X) &gt; 0\) since \(X^{T} X = V \varSigma^{2} V^{T}\).</p>
+<p>This algorithm is ideal in high performance computing.</p>
+<ul>
+<li>Its complexity is \(2mn^{2}\), which is the same as the MGS.</li>
+<li>The first and third steps can be done in parallel BLAS 3 way, which makes it very efficient.</li>
+<li>The second step, which can only perform sequentially, requires only \(O(n^{3})\) flops compare to \(O(mn^{2})\) flops for the other two steps.</li>
+</ul>
+<h2><a id="drawback-and-solutions-to-the-instability" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Drawback and solutions to the instability</h2>
+<p>However, CholQR is <strong>NOT</strong> stable. We can provide several heuristic observations. Suppose \(\kappa_{2}(X) &gt; u^{-1/2}\), then \(\kappa_{2}(X^{T} X) &gt; u^{-1}\) which can result in loss of positive definiteness.</p>
+<p>Even though we are lucky enough to be able to form \(R\), ill conditioned \(R\) and \(X\) can still result in a large deviation from orthogonality. <a href="https://epubs.siam.org/doi/10.1137/S1064827500370883">Stathopoulos and Wu</a> proved that $|| Q^{T} Q-I || \le O(\kappa_{2}(X)^{2})$.</p>
+<p>To overcome the lack of orthogonality</p>
+<ul>
+<li><a href="https://www.jstage.jst.go.jp/article/jsiaml/8/0/8_5/_article">Yamamoto, Nakatsukasa, Yanagisawa and Fukaya</a> suggested that appling the CholQR algorithm twice will make the deviation from orthgonality reduces to \(O(mnu)\), which drops the dependence on \(\kappa_{2}(X)\).</li>
+<li><a href="https://epubs.siam.org/doi/10.1137/14M0973773">Yamazaki, Tomov and Dongarra</a> suggested that performing the first two steps at high precision \(u_{h}\), and the last step at working precision \(u\). Then the deviation from orthogonality can then be written as \(O(u_{h} \kappa_{2}(X)^{2} + u \kappa_{2}(X))\), which can drop the dependency on \(\kappa_{2}(X)^{2}\) for \(u_{h}\) sufficiently small.</li>
+</ul>
+<p>To overcome the instability,</p>
+<ul>
+<li><a href="https://epubs.siam.org/doi/epdf/10.1137/18M1218212">Fukaya Kannan Nakatsukasa Yamamoto And Yanagisawa</a> suggested using a shift \(s\) to ensure the success of the Cholesky factorization \(R^T R = X^T X + sI\). Then, instead of working with \(\kappa_2(X) &lt; u^{-1/2}\), the shifted CholQR works well on matrices with \(\kappa_2(X) &lt; u^{-1}\).</li>
+</ul>
+        </div>
+    </div>
+</body>
+
+</html>
