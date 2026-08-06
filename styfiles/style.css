@@ -1,7 +1,7 @@
 
 body {
    font-family: Times, serif, 'Trebuchet MS', sans-serif;
-   font-size: 16px;
+   font-size: 18px;
 }
 
 img {
@@ -75,6 +75,13 @@ body {
 .contentbox {
 	padding-bottom: 10px;
 	border-bottom: 1px solid #eee;
+	font-size: 18px;
+}
+
+.active-page {
+	font-weight: bolder;
+	font-style: italic;
+	text-decoration: underline;
 }
 
 .container {
@@ -133,6 +140,7 @@ address {
 }
 .navbar-nav > li > a {
   padding: 15px;
+  font-size: 16px;
 }
 
 pre[class*="language-"].line-numbers {
