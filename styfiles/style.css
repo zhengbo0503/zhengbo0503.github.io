@@ -85,8 +85,13 @@ body {
 }
 
 .container {
-	min-width:480px !important;
 	max-width:750px !important;
+}
+
+@media (min-width: 768px) {
+	.container {
+		min-width:480px !important;
+	}
 }
 
 address {
@@ -109,38 +114,65 @@ address {
     border-top: 1px solid #ddd;
 }
 
-/* Always float the navbar header */
-.navbar-header {
-  float: left;
+/* Desktop: keep the navbar expanded in a single row */
+@media (min-width: 768px) {
+  .navbar-header {
+    float: left;
+  }
+
+  /* Undo the collapsing navbar */
+  .navbar-collapse {
+    display: block !important;
+    height: auto !important;
+    padding-bottom: 0;
+    overflow: visible !important;
+    visibility: visible !important;
+  }
+
+  .navbar-toggle {
+    display: none;
+  }
+
+  /* Always apply the floated nav */
+  .navbar-nav {
+    float: left;
+    margin: 0;
+  }
+  .navbar-nav > li {
+    float: left;
+  }
+  .navbar-nav > li > a {
+    padding: 15px;
+    font-size: 16px;
+  }
 }
 
-/* Undo the collapsing navbar */
-.navbar-collapse {
-  display: block !important;
-  height: auto !important;
-  padding-bottom: 0;
-  overflow: visible !important;
-  visibility: visible !important;
-}
-
-.navbar-toggle {
-  display: none;
-}
 .navbar-collapse {
   border-top: 0;
 }
 
-/* Always apply the floated nav */
-.navbar-nav {
-  float: left;
-  margin: 0;
-}
-.navbar-nav > li {
-  float: left;
-}
-.navbar-nav > li > a {
-  padding: 15px;
-  font-size: 16px;
+/* Mobile: static navbar so the hamburger menu pushes content down */
+@media (max-width: 767px) {
+  .navbar-fixed-top {
+    position: static;
+    top: auto;
+  }
+  body {
+    padding-top: 0;
+  }
+
+  /* Blue hamburger button */
+  .navbar-default .navbar-toggle {
+    border: none;
+    background-color: #337ab7;
+  }
+  .navbar-default .navbar-toggle:hover,
+  .navbar-default .navbar-toggle:focus {
+    background-color: #286090;
+  }
+  .navbar-default .navbar-toggle .icon-bar {
+    background-color: #fff;
+  }
 }
 
 pre[class*="language-"].line-numbers {
