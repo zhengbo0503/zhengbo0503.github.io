@@ -1,7 +1,10 @@
 
 body {
-   font-family: Times, serif, 'Trebuchet MS', sans-serif;
-   font-size: 18px;
+	font-family: Times, 'Times New Roman', serif;
+	font-size: 18px;
+	line-height: 1.5;
+	padding-top: 70px;
+	padding-bottom: 10px;
 }
 
 img {
@@ -31,14 +34,8 @@ code {
   font-weight:300;
 }
 
-.preprintbtn {
-	background-color: #0088cc;
-	color: #fff;
-  font-weight:300;
-}
-
-.withfrontmatterbtn {
-	background-color: #009933;
+.doibtn {
+	background-color: #2e7d32;
 	color: #fff;
   font-weight:300;
 }
@@ -49,22 +46,26 @@ code {
   font-weight:300;
 }
 
-.researchgatebtn {
-  background-color: #00cdbb;
-  color: #fff;
-  font-weight:300;
+.profile-links {
+	margin-top: 10px;
+	margin-bottom: 15px;
 }
 
-body {
-  padding-top: 70px;
-	padding-bottom: 10px;
-	line-height: 1.5;
+.profile-links a {
+	white-space: nowrap;
 }
 
-.page-header {
-	margin-top: 20px;
-	width:900px;
+.profile-links .sep {
+	color: #999;
+	margin: 0 4px;
 }
+
+/* Brand colours for the icons; the link text keeps the site link colour */
+.profile-links .fa-envelope       { color: #5f6b7a; }
+.profile-links .fa-file-lines     { color: #b02b1f; }
+.profile-links .fa-github         { color: #181717; }
+.profile-links .fa-google-scholar { color: #4285f4; }
+.profile-links .fa-orcid          { color: #a6ce39; }
 
 .page-footer {
 	padding-top:15px;
