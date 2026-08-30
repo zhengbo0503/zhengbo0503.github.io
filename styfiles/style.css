@@ -12,8 +12,18 @@ img {
 }
 
 code {
-    font-family: monospace;
-    font-size: smaller;
+	font-family: monospace;
+	font-size: 14px;
+}
+
+/* Prism's theme sets font-size:1em, which makes code blocks as large as the
+   18px body text; these selectors match its specificity and style.css is
+   loaded after it, so 14px wins for both inline code and code blocks. */
+pre,
+pre code,
+code[class*="language-"],
+pre[class*="language-"] {
+	font-size: 14px;
 }
 
 #headshot {
@@ -66,6 +76,36 @@ code {
 .profile-links .fa-github         { color: #181717; }
 .profile-links .fa-google-scholar { color: #4285f4; }
 .profile-links .fa-orcid          { color: #a6ce39; }
+
+/* Anchor targets must clear the fixed navbar, or a #link scrolls the
+   heading underneath it. The navbar is static below 768px, so no offset. */
+@media (min-width: 768px) {
+	.contentbox [id] {
+		scroll-margin-top: 80px;
+	}
+}
+
+/* Generative AI disclosure note at the foot of a post */
+.ai-disclosure {
+	display: flex;
+	align-items: flex-start;
+	gap: 12px;
+	margin-top: 30px;
+	padding: 12px 15px;
+	border: 1px solid #e5e0d8;
+	border-left: 4px solid #d97757;
+	border-radius: 4px;
+	background-color: #faf8f5;
+	font-size: 15px;
+	line-height: 1.5;
+}
+
+.ai-disclosure img {
+	width: 28px;
+	height: 28px;
+	flex: 0 0 28px;
+	border-radius: 4px;
+}
 
 .page-footer {
 	padding-top:15px;

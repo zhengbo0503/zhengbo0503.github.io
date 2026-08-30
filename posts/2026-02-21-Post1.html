@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Computing accurate singular values using a mixed-precision one-sided Jacobi algorithm</title>
+    <meta name="author" content="Zhengbo Zhou" />
+    <link rel="icon" href="../favicon.svg" type="image/svg+xml">
+
+    <!-- Bootstrap core CSS -->
+    <link href="../styfiles/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Prism syntax highlighting -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="../styfiles/style.css" rel="stylesheet">
+
+    <!-- MathJax -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: { '[+]': [['$', '$']] }
+            }
+        };
+    </script>
+    <script defer src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+</head>
+
+<body>
+
+    <!-- Fixed navbar -->
+    <nav class="navbar navbar-default navbar-fixed-top">
+        <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#site-nav" aria-expanded="false" aria-controls="site-nav"><span class="sr-only">Toggle navigation</span><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></button>
+              <a class="navbar-brand active" href="../index.html">Zhengbo Zhou</a>
+            </div>
+            <div class="collapse navbar-collapse" id="site-nav">
+              <ul class="nav navbar-nav">
+                <li role="presentation"><a href="../pages/pubs.html">Publications</a></li>
+                <li role="presentation"><a href="../pages/talks.html">Talks</a></li>
+                <li role="presentation"><a href="../pages/blog-archive.html" class="active-page">Blog Posts</a></li>
+                <li role="presentation"><a href="../pages/teaching.html">Teaching</a></li>
+              </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="contentbox" style="margin-top: 20px; margin-bottom: 20px;">
+            <h1><a id="computing-accurate-singular-values-using-a-mixed-precision-one-sided-jacobi-algorithm" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Computing accurate singular values using a mixed-precision one-sided Jacobi algorithm</h1>
+<p>Posted <strong>February 21, 2026</strong></p>
+<hr />
+
+<p><a href="https://personal.maths.manchester.ac.uk/tisseur/">Françoise Tisseur</a>, <a href="https://personalpages.manchester.ac.uk/staff/marcus.webb/">Marcus Webb</a>, and I have uploaded to the arXiv our paper &quot;<a href="https://arxiv.org/abs/2602.18134">Computing accurate singular values using a mixed-precision one-sided Jacobi algorithm</a>&quot;. It extends the mixed-precision preconditioning of our earlier work on <a href="2025-08-24-Post4.html">computing accurate eigenvalues</a> to the SVD of a general matrix. MATLAB code is <a href="https://github.com/zhengbo0503/Code_twz26a">on GitHub</a>.</p>
+
+<h2><a id="the-one-sided-jacobi-algorithm" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>The one-sided Jacobi algorithm</h2>
+
+<p>The <a href="2025-03-07-Post1.html">one-sided Jacobi algorithm</a> applied to \(A\) is mathematically equivalent to the Jacobi eigenvalue algorithm applied to \(A^{T}A\), which we describe as two-sided. Throughout, \(A \in \mathbb{R}^{m\times n}\) is a full-rank matrix with \(m \ge n\). Define the one-sided scaled condition number</p>
+
+\[\kappa_{2}^{D}(A) = \kappa_{2}(AD), \qquad D = \mathrm{diag}(\|a_{j}\|_{2}^{-1}),\]
+
+<p>with \(a_{j}\) the \(j\)th column of \(A\). <a href="https://epubs.siam.org/doi/10.1137/0613074">Demmel and Veselić</a> showed that the accuracy of the algorithm rests on its stopping criterion. If the iteration stops when</p>
+
+\[|a_{i}^{T}a_{j}| \le \mathrm{tol}\cdot\|a_{i}\|_{2}\|a_{j}\|_{2} \quad \text{for all } i \ne j,\]
+
+<p>then</p>
+
+\[\frac{|\widehat{\sigma}_{k}(A) - \sigma_{k}(A)|}{\sigma_{k}(A)} \le p(m,n)\,u\,\kappa_{2}^{D}(A),\]
+
+<p>where \(u\) is the unit roundoff of the working precision and \(p\) is a low-degree polynomial. For algorithms based on an initial bidiagonal reduction a similar bound can be derived, but with \(\kappa_{2}^{D}(A)\) replaced by the standard condition number \(\kappa_{2}(A)\).</p>
+
+<p>Preconditioning replaces \(\kappa_{2}^{D}(A)\) here by \(\kappa_{2}^{D}(\widetilde{A})\), where \(\widetilde{A} = A\widetilde{V}\), and \(\kappa_{2}^{D}(\widetilde{A})\) can be far smaller. It also reduces \(\mathrm{off}(\widetilde{A}^{T}\widetilde{A})\), where \(\mathrm{off}(A) = \|A - \mathrm{diag}(A)\|_{F}\); it is known that if \(\mathrm{off}(A^{T}A)\) is sufficiently small then the convergence of the algorithm is <a href="https://doi.org/10.1007/BF01385728">quadratic</a>, so preconditioning improves the accuracy and the speed of convergence at the same time.</p>
+
+<h2><a id="the-algorithm" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>The algorithm and its error bound</h2>
+
+<p>Given \(\widetilde{V} \in \mathbb{R}^{n\times n}\) numerically orthogonal at working precision, \(\|\widetilde{V}^{T}\widetilde{V} - I\|_{2} \le p_{1}u < 1\), the algorithm, which we call MP3JacobiSVD, has three steps and three precisions \(u_{h} < u < u_{\ell}\):</p>
+
+<ol>
+  <li>Form \(A\widetilde{V}\) at high precision \(u_{h}\) and round to working precision, giving \(\widetilde{A}_{\mathrm{comp}}\).</li>
+  <li>Compute an SVD \(\widetilde{A}_{\mathrm{comp}} = U\Sigma V_{J}^{T}\) by one-sided Jacobi at working precision \(u\), with the <a href="#the-one-sided-jacobi-algorithm">stopping criterion</a> above.</li>
+  <li>Set \(V = \widetilde{V}V_{J}\) at working precision.</li>
+</ol>
+
+<p>\(\widetilde{V}\) itself is computed at the low precision \(u_{\ell}\); see <a href="#constructing-the-preconditioner">Constructing the preconditioner</a>.</p>
+
+<p>We split the relative forward error \(\varepsilon_{\mathrm{fwd}}^{(k)}\) into three parts: the error the Jacobi iteration makes on the matrix it is given, the error in forming that matrix, and the error from \(\widetilde{V}\) not being exactly orthogonal. The relative Weyl theorem for multiplicative perturbations bounds the last by \(\|\widetilde{V}^{T}\widetilde{V} - I\|_{2} \le p_{1}u\).</p>
+
+<p>The second part needs the high precision. In step 1, \(A\) and \(\widetilde{V}\) are first promoted to high precision, which is error free; their product is then computed at precision \(u_{h}\); and the result is rounded once, on demotion to the working precision. This gives a componentwise bound on \(\Delta\widetilde{A} = \widetilde{A}_{\mathrm{comp}} - \widetilde{A}\):</p>
+
+\[|\Delta\widetilde{A}| \le u|\widetilde{A}| + 2\gamma_{h}|A||\widetilde{V}|.\]
+
+<p>The first term comes from that final rounding to working precision. The second is the error of the matrix product carried out at high precision. Provided \(u_{h}\) is small enough relative to \(u\) and \(\kappa_{2}(A)\), the second term can be absorbed into the first, and the bound is then governed by the working-precision rounding alone. This is the role of the high precision: were \(A\widetilde{V}\) formed at working precision instead, the product would itself destroy the accuracy we are trying to preserve.</p>
+
+<p>The three parts combine to give</p>
+
+\[\varepsilon_{\mathrm{fwd}}^{(k)} \le p_{1}u + p_{2}\,\kappa_{2}^{D}(\widetilde{A})\,u.\]
+
+<p>Compared with Demmel&ndash;Veselić, \(\kappa_{2}^{D}(A)\) is replaced by \(\kappa_{2}^{D}(\widetilde{A})\). This helps only if \(\kappa_{2}^{D}(\widetilde{A})\) can be guaranteed small.</p>
+
+<h2><a id="obliquity" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Obliquity</h2>
+
+<p>That guarantee is what does not carry over from the symmetric case. There we controlled the scaled condition number through the \(\mathrm{off}\) quantity, and the same route exists here: \(\mathrm{off}(\widetilde{A}^{T}\widetilde{A})/\min_{j}\|\widetilde{a}_{j}\|_{2}^{2} \le \theta < 1\) gives \(\kappa_{2}^{D}(\widetilde{A}) \le ((1+\theta)/(1-\theta))^{1/2}\).</p>
+
+<p>The hypothesis is the problem. Bounding \(\theta\) by the two-sided argument gave us only \(\theta \propto \kappa_{2}(A)^{2}\), not the linear scaling in \(\kappa_{2}(A)\) we wanted, and the condition is then too strong to use. But \(\widetilde{A}\widetilde{D}\) is close to a matrix with orthonormal columns, and measuring that directly gives the right scaling.</p>
+
+<p>We call the new quantity the <strong>obliquity</strong>. For \(A \in \mathbb{R}^{m\times n}\) with \(m \ge n\),</p>
+
+\[\mathrm{obliq}(A) := \|AD - U\|_{2},\]
+
+<p>with \(D\) as above and \(U\) an orthogonal polar factor of \(AD\). Writing \(AD = UH\) with \(H\) symmetric positive semidefinite gives \(\mathrm{obliq}(A) = \|H - I\|_{2}\), so the definition is independent of the choice of \(U\). It measures how oblique the columns of \(A\) are; if \(A = U_{A}\Sigma_{A}V_{A}^{T}\) is an SVD then \(\mathrm{obliq}(AV_{A}) = 0\).</p>
+
+<p>If \(\mathrm{obliq}(\widetilde{A}) \le \theta < 1\) then</p>
+
+\[\kappa_{2}^{D}(\widetilde{A}) \le \frac{1+\theta}{1-\theta},\]
+
+<p>so \(\mathrm{obliq}(\widetilde{A}) \le 1/2\) gives \(\kappa_{2}^{D}(\widetilde{A}) \le 3\), whatever \(\kappa_{2}^{D}(A)\) was. It is also the weaker hypothesis, since \(\mathrm{obliq}(A) \le \mathrm{off}(A^{T}A)/\min_{j}\|a_{j}\|_{2}^{2}\). We expect the obliquity to be useful elsewhere in SVD analysis.</p>
+
+<h2><a id="constructing-the-preconditioner" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Constructing the preconditioner</h2>
+
+<p>We need a \(\widetilde{V}\) that is numerically orthogonal at working precision and orthonormalizes the columns of \(\widetilde{A} = A\widetilde{V}\) enough that \(\mathrm{off}(\widetilde{A}^{T}\widetilde{A}) \le p_{5}u_{\ell}\|A^{T}A\|_{F}\), computed by exploiting the low precision \(u_{\ell}\). Two constructions, both adapted from the symmetric case:</p>
+
+<ol>
+  <li>Compute an SVD of \(A\) at precision \(u_{\ell}\), then orthogonalize the right singular vector matrix \(V_{\ell}\) at working precision.</li>
+  <li>Bidiagonalize \(A\) at precision \(u_{\ell}\) by Householder, keeping the Householder vectors; compute the SVD of the bidiagonal factor at working precision; apply the stored Householder matrices to \(V_{\ell}\).</li>
+</ol>
+
+<p>Only the right singular vectors are needed, so the left transformations are never accumulated.</p>
+
+<h2><a id="where-the-qr-factorization-goes" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Where the QR factorization goes</h2>
+
+<p>A QR factorization is sometimes used before applying an SVD algorithm when \(m \gg n\), for dimension reduction, and the one-sided Jacobi algorithm can be accelerated on trapezoidal matrices by exploiting their structure. The obvious order is doing the QR before preconditioning.</p>
+
+<p>That order behaves differently here. Applied before preconditioning, the QR factorization returns the forward error to \(\kappa_{2}^{D}(A)\) scaling rather than \(\kappa_{2}^{D}(\widetilde{A})\), the quantity we have just reduced; we confirmed this numerically and theoretically. While computing the QR factorization in higher precision would compensate, it could be prohibitively expensive. We therefore perform the QR factorization at working precision after applying the preconditioner. Accuracy is preserved and the Jacobi iterations run on a smaller matrix.</p>
+
+<h2><a id="numerical-experiments" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Numerical experiments</h2>
+
+<p>We compared our algorithm with the LAPACK routines <code>DGESVJ</code> and <code>DGEJSV</code> and with MATLAB's <code>svd</code>, on matrices from</p>
+
+<pre class="line-numbers"><code class="language-matlab">gallery('randsvd', [m,n], kappa, MODE);
+</code></pre>
+
+<p>for all five distributions, with \(A \in \mathbb{R}^{1000\times 800}\) and \(\kappa_{2}(A)\) from \(10^{3}\) to \(10^{15}\). Reference values were computed in octuple precision.</p>
+
+<p><img src="../media/20260221T1455_fwderr_mode3.svg" alt="Maximum relative forward error against condition number for MP3JacobiSVD, DGESVJ, DGEJSV and MATLAB svd, on 1000-by-800 matrices with geometrically distributed singular values" style="width: 100%; height: auto;" /></p>
+
+<p>The plot is \(\texttt{MODE} = 3\), geometrically distributed singular values; the dotted line is \((mn)^{1/2}u\,\kappa_{2}^{D}(\widetilde{A})\). The three competitors degrade together with \(\kappa_{2}(A)\) and lose all accuracy by \(10^{15}\). MP3JacobiSVD stays near \(10^{-13}\) until \(\kappa_{2}(A) \approx 10^{9}\) and is still near \(10^{-6}\) at the right-hand edge, some eight orders of magnitude better. The other four distributions are similar. Accuracy is retained even on a numerically rank-deficient matrix, where our assumptions do not hold.</p>
+
+<h2><a id="performance-tests-and-discussion" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Performance tests and discussion</h2>
+
+<p>Preconditioning does speed up the iteration: the one-sided Jacobi step inside MP3JacobiSVD is markedly faster than <code>DGESVJ</code> alone. But in total runtime MP3JacobiSVD comes in last. Profiling shows \(66\%\) of the time in a single quadruple-precision matrix&ndash;matrix product, against \(24\%\) in the Jacobi step.</p>
+
+<p id="quad-timing">We further investigated this and found out that it is the software bottleneck, not the algorithm. Quadruple precision had to be simulated, and applying the preconditioner at quadruple precision was over \(800\) times slower than at double. Optimized quadruple precision implementations exist that are less than \(50\) times slower, but they are not available in MATLAB.</p>
+
+<p>Whether the bottleneck really is the simulated arithmetic rather than the algorithm can be tested directly. We use <b>MPJacobiSVD_SSD</b>, which is MP3JacobiSVD with single, single and double precision as the low, working and high precision, respectively, so that it uses only precisions available natively on our hardware. The bottleneck disappears:</p>
+
+<p><img src="../media/20260221T1510_timing_ssd.svg" alt="Left: maximum relative forward error against n for MPJacobiSVD_SSD, SGESVJ and SGEJSV. Right: total runtime against n for the same three algorithms." style="width: 100%; height: auto;" /></p>
+
+<p>Here \(m = 3000\), \(n\) from \(100\) to \(3000\), \(\kappa_{2}(A) = 10^{6}\), geometrically distributed singular values. On the left MPJacobiSVD_SSD is two to three orders of magnitude more accurate than both LAPACK routines. On the right it follows <code>SGEJSV</code> almost exactly and is significantly faster than plain <code>SGESVJ</code>. The accuracy is therefore not being paid for in speed. What is expensive in the <a href="#quad-timing">timing test above</a> is the simulated quadruple precision, not the algorithm.</p>
+
+<p>The analysis also indicates how to choose the precisions: \(u_{h} = c_{1}u\kappa_{2}(A)^{-1}\) and \(u_{\ell} = c_{2}\kappa_{2}(A)^{-1}\). An estimate of \(\kappa_{2}(A)\) is therefore enough to choose them.</p>
+
+<p>A forthcoming paper analyses the accuracy of the computed vectors, eigenvectors and singular vectors, for this algorithm and its two-sided predecessor.</p>
+
+<div class="ai-disclosure">
+  <img src="../media/claude-icon.png" alt="Claude" />
+  <div><strong>Generative AI disclosure.</strong> The prose of this post was drafted by <a href="https://claude.ai">Claude</a> from our paper. I have reviewed it in full, and I am responsible for its content.</div>
+</div>
+
+        </div>
+    </div>
+    <script src="../styfiles/jquery.min.js"></script>
+    <script src="../styfiles/bootstrap.min.js"></script>
+    <!-- Prism syntax highlighting -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-matlab.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.js"></script>
+    <script src="../styfiles/ie10-viewport-bug-workaround.js"></script>
+
+</body>
+
+</html>
