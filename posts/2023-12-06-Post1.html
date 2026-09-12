@@ -6,7 +6,21 @@
     <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>A MATLAB function to generate random symmetric matrix</title>
+    <link rel="canonical" href="https://zbzhou.com/posts/2023-12-06-Post1.html">
+    <meta property="og:type" content="article">
+    <meta property="og:site_name" content="Zhengbo Zhou">
+    <meta property="og:title" content="A MATLAB function to generate random symmetric matrix">
+    <meta property="og:description" content="A MATLAB function for generating random symmetric matrices with prescribed singular values and condition numbers.">
+    <meta property="og:url" content="https://zbzhou.com/posts/2023-12-06-Post1.html">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta property="og:image" content="https://zbzhou.com/media/og-card.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="Zhengbo Zhou, Research Associate at the University of Leicester">
+    <meta property="article:published_time" content="2023-12-06">
+    <link rel="alternate" type="application/atom+xml" title="Zhengbo Zhou: blog posts" href="../feed.xml">
     <meta name="author" content="Zhengbo Zhou" />
+    <meta name="description" content="A MATLAB function for generating random symmetric matrices with prescribed singular values and condition numbers.">
     <link rel="icon" href="../favicon.svg" type="image/svg+xml">
 
     <!-- Bootstrap core CSS -->
@@ -22,28 +36,30 @@
 
 <body>
 
+    <a class="skip-link" href="#main-content">Skip to main content</a>
+
     <!-- Fixed navbar -->
-    <nav class="navbar navbar-default navbar-fixed-top">
+    <nav aria-label="Main navigation" class="navbar navbar-default navbar-fixed-top">
         <div class="container">
             <div class="navbar-header">
               <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#site-nav" aria-expanded="false" aria-controls="site-nav"><span class="sr-only">Toggle navigation</span><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></button>
-              <a class="navbar-brand active" href="../index.html">Zhengbo Zhou</a>
+              <a class="navbar-brand active" href="../">Zhengbo Zhou</a>
             </div>
             <div class="collapse navbar-collapse" id="site-nav">
               <ul class="nav navbar-nav">
-                <li role="presentation"><a href="../pages/pubs.html">Publications</a></li>
-                <li role="presentation"><a href="../pages/talks.html">Talks</a></li>
-                <li role="presentation"><a href="../pages/blog-archive.html" class="active-page">Blog Posts</a></li>
-                <li role="presentation"><a href="../pages/teaching.html">Teaching</a></li>
+                <li><a href="../pages/pubs.html">Publications</a></li>
+                <li><a href="../pages/talks.html">Talks</a></li>
+                <li><a href="../pages/blog-archive.html" class="active-page" aria-current="true">Blog Posts</a></li>
+                <li><a href="../pages/teaching.html">Teaching</a></li>
               </ul>
             </div>
         </div>
     </nav>
 
     <div class="container">
-        <div class="contentbox" style="margin-top: 20px; margin-bottom: 20px;">
-            <h1><a id="a-matlab-function-to-generate-random-symmetric-matrix" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>A MATLAB function to generate random symmetric matrix</h1>
-            <p>Posted <strong>December 6, 2023</strong></p>
+        <main id="main-content" tabindex="-1" class="contentbox post" style="margin-top: 20px; margin-bottom: 20px;">
+            <h1 class="page__title" id="a-matlab-function-to-generate-random-symmetric-matrix">A MATLAB function to generate random symmetric matrix</h1>
+            <p class="post-meta">Posted <time datetime="2023-12-06">December 6, 2023</time></p>
             <hr>
 <p>The MATLAB builtin function <code>gallery('randsvd',...)</code> can only generate a random matrix or a symmetric positive definite matrix. However, sometimes, we need to test our algorithms for symmetric matrices. Although you can get a symmetric matrix by <code>A = randn(n); A = A + A';</code>, it would be nice to inherit the features from <code>gallery('randsvd')</code>, such as the ability to control the distributions of the singular values. The attached code achieves such desire by</p>
 <ul>
@@ -207,8 +223,20 @@ S = sign(A);
 S(S==0) = 1;
 end
 </code></pre>
+<aside class="related-posts" aria-labelledby="related-posts">
+  <h2 id="related-posts">Related posts</h2>
+  <ul>
+    <li><a href="2023-12-08-Post2.html">The Jacobi algorithm for eigenvalues</a></li>
+    <li><a href="2025-03-07-Post1.html">One-sided Jacobi algorithm</a></li>
+  </ul>
+</aside>
+<p class="post-meta"><a href="../pages/blog-archive.html">All blog posts</a></p>
 
-        </div>
+        </main>
+
+        <footer class="site-footer" id="site-credits" aria-label="Site credits">
+          <p><span>Powered by</span> <img src="../media/openai-blossom.svg" alt="" width="18" height="18"> <span><a href="https://developers.openai.com/api/docs/models/gpt-6-astra">GPT-6 Astra</a></span> <span class="sep">&#183;</span> <img src="../media/claude-burst.png" alt="" width="18" height="18"> <span><a href="https://platform.claude.com/docs/en/models/overview">Claude Opus 5</a></span></p>
+        </footer>
     </div>
     <script src="../styfiles/jquery.min.js"></script>
     <script src="../styfiles/bootstrap.min.js"></script>

@@ -5,7 +5,21 @@
     <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>The Jacobi algorithm for eigenvalues</title>
+    <link rel="canonical" href="https://zbzhou.com/posts/2023-12-08-Post2.html">
+    <meta property="og:type" content="article">
+    <meta property="og:site_name" content="Zhengbo Zhou">
+    <meta property="og:title" content="The Jacobi algorithm for eigenvalues">
+    <meta property="og:description" content="An introduction to the Jacobi eigenvalue algorithm, its rotations, convergence, and pivot strategies.">
+    <meta property="og:url" content="https://zbzhou.com/posts/2023-12-08-Post2.html">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta property="og:image" content="https://zbzhou.com/media/og-card.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="Zhengbo Zhou, Research Associate at the University of Leicester">
+    <meta property="article:published_time" content="2023-12-08">
+    <link rel="alternate" type="application/atom+xml" title="Zhengbo Zhou: blog posts" href="../feed.xml">
     <meta name="author" content="Zhengbo Zhou" />
+    <meta name="description" content="An introduction to the Jacobi eigenvalue algorithm, its rotations, convergence, and pivot strategies.">
     <link rel="icon" href="../favicon.svg" type="image/svg+xml">
 
     <!-- Bootstrap core CSS -->
@@ -22,7 +36,8 @@
         window.MathJax = {
             tex: {
                 inlineMath: { '[+]': [['$', '$']] }
-            }
+            },
+            output: { displayOverflow: 'scroll' }
         };
     </script>
     <script defer src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
@@ -30,31 +45,45 @@
 
 <body>
 
+    <a class="skip-link" href="#main-content">Skip to main content</a>
+
     <!-- Fixed navbar -->
-    <nav class="navbar navbar-default navbar-fixed-top">
+    <nav aria-label="Main navigation" class="navbar navbar-default navbar-fixed-top">
         <div class="container">
             <div class="navbar-header">
               <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#site-nav" aria-expanded="false" aria-controls="site-nav"><span class="sr-only">Toggle navigation</span><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></button>
-              <a class="navbar-brand active" href="../index.html">Zhengbo Zhou</a>
+              <a class="navbar-brand active" href="../">Zhengbo Zhou</a>
             </div>
             <div class="collapse navbar-collapse" id="site-nav">
               <ul class="nav navbar-nav">
-                <li role="presentation"><a href="../pages/pubs.html">Publications</a></li>
-                <li role="presentation"><a href="../pages/talks.html">Talks</a></li>
-                <li role="presentation"><a href="../pages/blog-archive.html" class="active-page">Blog Posts</a></li>
-                <li role="presentation"><a href="../pages/teaching.html">Teaching</a></li>
+                <li><a href="../pages/pubs.html">Publications</a></li>
+                <li><a href="../pages/talks.html">Talks</a></li>
+                <li><a href="../pages/blog-archive.html" class="active-page" aria-current="true">Blog Posts</a></li>
+                <li><a href="../pages/teaching.html">Teaching</a></li>
               </ul>
             </div>
         </div>
     </nav>
 
     <div class="container">
-        <div class="contentbox" style="margin-top: 20px; margin-bottom: 20px;">
-        </div>
-        <h1><a id="the-jacobi-algorithm-for-eigenvalues" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>The Jacobi algorithm for eigenvalues</h1>
-        <p>Posted <strong>December 8, 2023</strong></p>
+        <main id="main-content" tabindex="-1" class="contentbox post" style="margin-top: 20px; margin-bottom: 20px;">
+        <h1 class="page__title" id="the-jacobi-algorithm-for-eigenvalues">The Jacobi algorithm for eigenvalues</h1>
+        <p class="post-meta">Posted <time datetime="2023-12-08">December 8, 2023</time></p>
 <hr>
-<h2><a id="jacobi-algorithm" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Jacobi algorithm</h2>
+<details class="post-contents">
+  <summary>On this page</summary>
+  <nav aria-label="On this page">
+    <ol>
+      <li><a href="#jacobi-algorithm">Jacobi algorithm</a></li>
+      <li><a href="#convergence-in-general">Convergence in general</a></li>
+      <li><a href="#pivot-strategies">Pivot strategies</a></li>
+      <li><a href="#implementation">Implementation</a></li>
+      <li><a href="#further-readings">Further readings</a></li>
+    </ol>
+  </nav>
+</details>
+
+<h2 id="jacobi-algorithm">Jacobi algorithm</h2>
 <p>Given a symmetric \(A \in \mathbb{R}^{n\times n}\), the Jacobi algorithm produces a sequence of orthogonally similar  matrices \(A_{k+1} = J_{k}^{T} A_{k} J_{k}\) for \(k = 1,2,\dots\), \(A_{1} = A\), and \(J_{k}\) are the carefully constructed Jacobi rotations. In fact, the Jacobi rotation is the same as the <a href="https://en.wikipedia.org/wiki/Givens_rotation">Givens rotation</a>, but we give the credit to the inventor, Carl G. J. Jacobi.</p>
 <p>We now describe the \(k\)th step of the Jacobi algorithm. We first choose a pivot \((i,j)\), and the task of this step is to eliminate \(a_{ij}^{(k)}\) and \(a_{ji}^{(k)}\). Let us now focused on the operations on the \((i,j)\) plane of iterates, with</p>
 \[  A_{k}([i,j],[i,j]) = 
@@ -78,39 +107,52 @@
     c &amp; s \\ -s &amp; c 
     \end{bmatrix},\tag{1} \label{eq.Jacobi}
 \]
-<p>with specially chosen \(c\) and \(s\). Rutishauser provided a nice way to compute the Jacobi rotation in his book <a href="https://link.springer.com/book/10.1007/978-3-642-86934-1"><em>Handbook for Automatic Computation</em> </a>. He first computes a parameter \(t\) by</p>
+<p>with specially chosen \(c\) and \(s\). Rutishauser provided a nice way to compute the Jacobi rotation in his book <a href="https://link.springer.com/book/10.1007/978-3-642-86934-1"><em>Handbook for Automatic Computation</em></a>. He first computes a parameter \(t\) by</p>
 \[  \displaystyle\zeta = \frac{\beta - \alpha}{2\gamma}, \quad 
 t = {\rm sign}(\zeta)/(|\zeta| + \sqrt{1+\zeta^{2}}),
 \]
 <p>with \({\rm sign}(0) = -1\), and then we have</p>
 \[  c = 1/\sqrt{1+t^{2}}, \quad s = ct. 
 \]
-<h2><a id="convergence-in-general" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Convergence in general</h2>
-<p>Define ${\rm off}(A) = \sqrt{\sum_{i &gt; j}^{} a_{ij}^{2}} = |A|_{F}^{2} -\sum_{k=1}^{n}a_{kk}^{2}$. Since the Jacobi rotation is orthogonal, we have  \(\widetilde{\alpha}^{2} + \widetilde{\beta}^{2} =   \alpha^{2} + \beta^{2} + 2\gamma^{2}\). More importantly, we have
+<h2 id="convergence-in-general">Convergence in general</h2>
+<p>Define \({\rm off}(A)^{2} = \sum_{i \ne j} a_{ij}^{2} = \|A\|_{F}^{2} - \sum_{k=1}^{n} a_{kk}^{2}\). Since the Jacobi rotation is orthogonal, we have  \(\widetilde{\alpha}^{2} + \widetilde{\beta}^{2} =   \alpha^{2} + \beta^{2} + 2\gamma^{2}\). More importantly, we have
 \({\rm off}(A_{k+1})^{2} = {\rm off}(A_{k})^{2} - 2\gamma^{2}\). Although later steps of the Jacobi algorithm can make \(\gamma\)  to become nonzero again,  the above relation ensures the off-diagonal entries are decreasing overall.</p>
-<h2><a id="pivot-strategies" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Pivot strategies</h2>
-<h3><a id="classical-jacobi-algorithm" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Classical Jacobi algorithm</h3>
+<h2 id="pivot-strategies">Pivot strategies</h2>
+<h3 id="classical-jacobi-algorithm">Classical Jacobi algorithm</h3>
 <p>Jacobi in his original paper choose the largest in magnitude off-diagonal entries as the pivot element. The Jacobi algorithm with such choice is called the <em>classical Jacobi algorithm</em>. It has been proved by Jacobi that, the classical Jacobi algorithm converges linearly,</p>
-\[  {\rm off}(A_{k+1}) \le \sqrt{1-1/N} {\rm off}(A),
+\[  {\rm off}(A_{k+1}) \le \sqrt{1-1/N}\,{\rm off}(A_{k}),
 \qquad N = \frac{n(n-1)}{2}. 
 \]
 <p>We will call \(N\) iterations as a <strong>sweep</strong>.  Later, its local quadratic convergence has been proved by <a href="https://epubs.siam.org/doi/10.1137/0106008">Henrici</a>,  which said that for large enough \(i\), we have</p>
 \[  {\rm off}(A_{i+N}) \le c \cdot {\rm off}(A_{i})^{2},
 \]
 <p>for some constant \(c\). This method does not attractive in practice,  due to the searching time is more than the performing time (\(O(n^{2})\) flops versus \(O(n)\) flops)!</p>
-<h3><a id="cyclic-jacobi-algorithm" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Cyclic Jacobi algorithm</h3>
+<h3 id="cyclic-jacobi-algorithm">Cyclic Jacobi algorithm</h3>
 <p><a href="https://doi.org/10.1090/S0025-5718-1953-0057643-6">Gregory</a> discussed choosing \(a_{ij}\) in a row-by-row fashion,</p>
 \[  (i,j) = (1,2),\dots,(1,n),(2,3),\dots,(n-1,n),(1,2),\dots.
 \]
 <p>This type of the Jacobi algorithm is known as the <strong>cyclic Jacobi algorithm</strong>.</p>
 <p>One requires the magnitude of the rotation angle  to be less than \(\pi/4\) in order to achieve convergence. In fact, the difficulty of proving the convergence of the cyclic Jacobi algorithm is the possibility that the larger off-diagonal elements are always moving around <em>ahead</em> of the current element. The cyclic Jacobi algorithm is also asymptotically quadratically convergent like the classical Jacobi algorithm.</p>
-<h2><a id="implementation" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Implementation</h2>
+<h2 id="implementation">Implementation</h2>
 <p>The Jacobi algorithm for eigenvalues is not implemented in LAPACK. The only related routines in LAPACK Version 3.12.0 are <a href="https://www.netlib.org/lapack/explore-html/d9/deb/group__gesvj_ga7aec05d2a1523bbeee77ece21b12187c.html#ga7aec05d2a1523bbeee77ece21b12187c">DGESVJ</a> and <a href="https://www.netlib.org/lapack/explore-html/d8/d78/group__gejsv_gaca7ba7f1e8002c7a1d5bffa4ccbb541f.html#gaca7ba7f1e8002c7a1d5bffa4ccbb541f">DGEJSV</a> which use the one-sided Jacobi algorithm to compute the singular values, see <a href="https://epubs.siam.org/doi/10.1137/050639193">Drmač and Veselić</a>.</p>
-<h2><a id="further-readings" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Further readings</h2>
+<h2 id="further-readings">Further readings</h2>
 <ul>
 <li>Beresford N. Parlett, <a href="https://epubs.siam.org/doi/book/10.1137/1.9781611971163">The Symmetric Eigenvalue Problem</a>, xxiv+398, Society for Industrial and Applied Mathematics, 1998.</li>
 <li>James Demmel, <a href="https://epubs.siam.org/doi/book/10.1137/1.9781611971446">Applied Numerical Linear Algebra</a>, xi+416, Society for Industrial and Applied Mathematics, 1997</li>
 </ul>
+<aside class="related-posts" aria-labelledby="related-posts">
+  <h2 id="related-posts">Related posts</h2>
+  <ul>
+    <li><a href="2025-03-07-Post1.html">One-sided Jacobi algorithm</a></li>
+    <li><a href="2025-08-24-Post4.html">Computing accurate eigenvalues using a mixed-precision Jacobi algorithm</a></li>
+  </ul>
+</aside>
+<p class="post-meta"><a href="../pages/blog-archive.html">All blog posts</a></p>
+        </main>
+
+        <footer class="site-footer" id="site-credits" aria-label="Site credits">
+          <p><span>Powered by</span> <img src="../media/openai-blossom.svg" alt="" width="18" height="18"> <span><a href="https://developers.openai.com/api/docs/models/gpt-6-astra">GPT-6 Astra</a></span> <span class="sep">&#183;</span> <img src="../media/claude-burst.png" alt="" width="18" height="18"> <span><a href="https://platform.claude.com/docs/en/models/overview">Claude Opus 5</a></span></p>
+        </footer>
     </div>
     <script src="../styfiles/jquery.min.js"></script>
     <script src="../styfiles/bootstrap.min.js"></script>

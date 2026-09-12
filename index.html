@@ -4,10 +4,22 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <meta name="description" content="The homepage of Zhengbo Zhou">
+    <meta name="description" content="Zhengbo Zhou, Research Associate at the University of Leicester, working on numerical linear algebra and mixed-precision matrix computations.">
     <meta name="author" content="Zhengbo Zhou">
     <link rel="icon" href="./favicon.svg" type="image/svg+xml">
     <title>Zhengbo Zhou</title>
+    <link rel="canonical" href="https://zbzhou.com/">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Zhengbo Zhou">
+    <meta property="og:title" content="Zhengbo Zhou">
+    <meta property="og:description" content="Zhengbo Zhou, Research Associate at the University of Leicester, working on numerical linear algebra and mixed-precision matrix computations.">
+    <meta property="og:url" content="https://zbzhou.com/">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta property="og:image" content="https://zbzhou.com/media/og-card.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="Zhengbo Zhou, Research Associate at the University of Leicester">
+    <link rel="alternate" type="application/atom+xml" title="Zhengbo Zhou: blog posts" href="./feed.xml">
 
     <!-- Bootstrap core CSS -->
     <link href="./styfiles/bootstrap.min.css" rel="stylesheet">
@@ -22,19 +34,21 @@
 
   <body>
 
+    <a class="skip-link" href="#main-content">Skip to main content</a>
+
     <!-- Fixed navbar -->
-    <nav class="navbar navbar-default navbar-fixed-top">
+    <nav aria-label="Main navigation" class="navbar navbar-default navbar-fixed-top">
       <div class="container">
         <div class="navbar-header">
           <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#site-nav" aria-expanded="false" aria-controls="site-nav"><span class="sr-only">Toggle navigation</span><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></button>
-          <a class="navbar-brand active active-page" href="index.html">Zhengbo Zhou</a>
+          <a class="navbar-brand active active-page" href="./" aria-current="page">Zhengbo Zhou</a>
         </div>
         <div class="collapse navbar-collapse" id="site-nav">
           <ul class="nav navbar-nav">
-            <li role="presentation"><a href="pages/pubs.html">Publications</a></li>
-            <li role="presentation"><a href="pages/talks.html">Talks</a></li>
-            <li role="presentation"><a href="pages/blog-archive.html">Blog Posts</a></li>
-            <li role="presentation"><a href="pages/teaching.html">Teaching</a></li>
+            <li><a href="pages/pubs.html">Publications</a></li>
+            <li><a href="pages/talks.html">Talks</a></li>
+            <li><a href="pages/blog-archive.html">Blog Posts</a></li>
+            <li><a href="pages/teaching.html">Teaching</a></li>
           </ul>
         </div>
       </div>
@@ -42,9 +56,10 @@
 
     <div class="container">
 
-      <div class="contentbox" style="margin-top: 20px; margin-bottom: 20px;">
+      <main id="main-content" tabindex="-1" class="contentbox" style="margin-top: 20px; margin-bottom: 20px;">
 
-        <h1 class="page__title">About Me</h1>
+        <h1 class="page__title">Zhengbo Zhou</h1>
+        <p class="profile-role">Research Associate · <a href="https://le.ac.uk/">University of Leicester</a></p>
 
         <p class="profile-links">
           <a href="mailto:zz359@leicester.ac.uk"><i class="fa-solid fa-envelope" aria-hidden="true"></i> Email</a>
@@ -58,45 +73,51 @@
           <a href="https://orcid.org/0000-0003-0439-4206"><i class="fa-brands fa-orcid" aria-hidden="true"></i> ORCID</a>
         </p>
 
-        <p>I am a Research Associate at the <a href="https://le.ac.uk/">University of Leicester</a>, working with <a href="https://sites.google.com/view/bhashemi">Dr. Behnam Hashemi</a>. I am currently finishing my Ph.D. in the <a href="https://nla-group.org/">Numerical Linear Algebra Group</a>, <a href="https://www.maths.manchester.ac.uk/">Department of Mathematics</a>, <a href="https://www.manchester.ac.uk/">University of Manchester</a>, supervised by <a href="https://personalpages.manchester.ac.uk/staff/marcus.webb/">Dr. Marcus Webb</a> and <a href="https://personal.maths.manchester.ac.uk/tisseur/">Prof. Françoise Tisseur</a>.</p>
+        <p>My research focuses on numerical linear algebra, matrix analysis, and high-performance computing. I develop mixed-precision Jacobi algorithms for accurately computing eigenvalues and eigenvectors of symmetric positive definite matrices, and singular values and singular vectors of general matrices.</p>
 
-        <p>My research interest lies on numerical linear algebra, matrix analysis and high performance computing. My particular focus is on developing mixed-precision Jacobi algorithms for computing accurate eigensystems of symmetric positive definite matrix and singular value system for general matrix. </p>
+        <p>I work with <a href="https://sites.google.com/view/bhashemi">Dr. Behnam Hashemi</a> at Leicester. See my <a href="pages/pubs.html">publications</a> for papers and accompanying research code. My <a href="pages/blog-archive.html">blog</a> contains research announcements and notes on numerical linear algebra and MATLAB.</p>
 
-        <h3>Short Bio</h3>
-        <ul>
-          <li>2026 Aug - present: Research Associate, University of Leicester, UK</li>
-          <li>2022 Sep - 2026 Sep: Ph.D. in Numerical Analysis, University of Manchester, UK</li>
-          <li>2021 Sep - 2022 Sep: M.Sc. in Applied Mathematics, University of Manchester, UK</li>
-          <li>2018 Sep - 2021 Jun: B.Sc. (Hons) in Mathematics, University of Manchester, UK</li>
-        </ul>
-
-        <h3>News</h3>
-        <table class="table">
+        <h2 id="news">News</h2>
+        <table class="table news-table">
+          <caption class="sr-only">Recent news, newest first</caption>
           <tbody>
             <tr>
-              <td style="white-space: nowrap;">Aug 10, 2026</td>
-              <td>I am very happy to share that I will join the University of Leicester, working with <a href="https://sites.google.com/view/bhashemi">Behnam Hashemi</a>, from August 10.</td>
+              <th scope="row"><time datetime="2026-08-10">Aug 10, 2026</time></th>
+              <td>I am happy to share that I joined the University of Leicester on August 10, working with <a href="https://sites.google.com/view/bhashemi">Behnam Hashemi</a>.</td>
             </tr>
             <tr>
-              <td style="white-space: nowrap;">Aug 6, 2026</td>
+              <th scope="row"><time datetime="2026-08-06">Aug 6, 2026</time></th>
               <td>I am happy to share a new preprint on arXiv: <a href="https://arxiv.org/abs/2606.28069">Computing Accurate Singular Vectors and Eigenvectors using Mixed-Precision Jacobi Algorithms</a>, joint work with Françoise Tisseur and Marcus Webb.</td>
             </tr>
             <tr>
-              <td style="white-space: nowrap;">Mar 2026</td>
+              <th scope="row"><time datetime="2026-03">Mar 2026</time></th>
               <td>Many thanks to the <a href="https://scicomp.leeds.ac.uk/">Scientific Computation Seminar</a> at the University of Leeds for the invitation to present our work on computing accurate eigenvalues and singular values using mixed-precision (one-sided) Jacobi algorithms.</td>
             </tr>
             <tr>
-              <td style="white-space: nowrap;">Feb 2026</td>
+              <th scope="row"><time datetime="2026-02">Feb 2026</time></th>
               <td>A new preprint is now available on arXiv: <a href="https://arxiv.org/abs/2602.18134">Computing Accurate Singular Values using a Mixed-Precision One-sided Jacobi Algorithm</a>, joint work with Françoise Tisseur and Marcus Webb.</td>
             </tr>
             <tr>
-              <td style="white-space: nowrap;">Oct 2025</td>
+              <th scope="row"><time datetime="2025-10">Oct 2025</time></th>
               <td>I am delighted that our paper <a href="https://doi.org/10.1137/25M1723748">Computing Accurate Eigenvalues using a Mixed-Precision Jacobi Algorithm</a>, with Nicholas J. Higham, Françoise Tisseur and Marcus Webb, has been published in SIAM J. Matrix Anal. Appl.</td>
             </tr>
           </tbody>
         </table>
 
-      </div>
+        <h2 id="short-bio">Short Bio</h2>
+        <p>I am currently finishing my Ph.D. in the <a href="https://nla-group.org/">Numerical Linear Algebra Group</a>, <a href="https://www.maths.manchester.ac.uk/">Department of Mathematics</a>, <a href="https://www.manchester.ac.uk/">University of Manchester</a>, supervised by <a href="https://personalpages.manchester.ac.uk/staff/marcus.webb/">Dr. Marcus Webb</a> and <a href="https://personal.maths.manchester.ac.uk/tisseur/">Prof. Françoise Tisseur</a>.</p>
+        <ul class="bio-list">
+          <li><span class="bio-date">Aug 2026 – present</span> Research Associate, University of Leicester, UK</li>
+          <li><span class="bio-date">Sep 2022 – present</span> Ph.D. in Numerical Analysis, University of Manchester, UK</li>
+          <li><span class="bio-date">Sep 2021 – Sep 2022</span> M.Sc. in Applied Mathematics, University of Manchester, UK</li>
+          <li><span class="bio-date">Sep 2018 – Jun 2021</span> B.Sc. (Hons) in Mathematics, University of Manchester, UK</li>
+        </ul>
+
+      </main>
+
+      <footer class="site-footer" id="site-credits" aria-label="Site credits">
+        <p><span>Powered by</span> <img src="./media/openai-blossom.svg" alt="" width="18" height="18"> <span><a href="https://developers.openai.com/api/docs/models/gpt-6-astra">GPT-6 Astra</a></span> <span class="sep">&#183;</span> <img src="./media/claude-burst.png" alt="" width="18" height="18"> <span><a href="https://platform.claude.com/docs/en/models/opus-5/overview">Claude Opus 5</a></span></p>
+      </footer>
 
     </div> <!-- /container -->
 

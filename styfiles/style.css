@@ -2,23 +2,24 @@
 body {
 	font-family: Times, 'Times New Roman', serif;
 	font-size: 18px;
-	line-height: 1.5;
+	line-height: 1.6;
 	padding-top: 70px;
 	padding-bottom: 10px;
 }
 
 img {
   border-radius: 5px;
+  max-width: 100%;
+  height: auto;
 }
 
 code {
 	font-family: monospace;
-	font-size: 14px;
+	font-size: 0.9em;
 }
 
-/* Prism's theme sets font-size:1em, which makes code blocks as large as the
-   18px body text; these selectors match its specificity and style.css is
-   loaded after it, so 14px wins for both inline code and code blocks. */
+/* Keep code blocks compact while inline code follows the surrounding text.
+   These selectors override Prism because this stylesheet is loaded last. */
 pre,
 pre code,
 code[class*="language-"],
@@ -35,30 +36,26 @@ pre[class*="language-"] {
 .journalbtn {
 	background-color: #6600cc;
 	color: #fff;
-    font-family: Arial, Helvetica, sans-serif;
 }
 
 .arXivbtn {
 	background-color: #b31b1b;
 	color: #fff;
-  font-weight:300;
 }
 
 .doibtn {
 	background-color: #2e7d32;
 	color: #fff;
-  font-weight:300;
 }
 
 .posterbtn {
-	background-color: #ff9900;
+	background-color: #b35c00;
 	color: #fff;
-  font-weight:300;
 }
 
 .profile-links {
-	margin-top: 10px;
-	margin-bottom: 15px;
+	margin-top: 12px;
+	margin-bottom: 24px;
 }
 
 .profile-links a {
@@ -80,6 +77,7 @@ pre[class*="language-"] {
 /* Anchor targets must clear the fixed navbar, or a #link scrolls the
    heading underneath it. The navbar is static below 768px, so no offset. */
 @media (min-width: 768px) {
+	.contentbox[id],
 	.contentbox [id] {
 		scroll-margin-top: 80px;
 	}
@@ -107,22 +105,50 @@ pre[class*="language-"] {
 	border-radius: 4px;
 }
 
-.page-footer {
-	padding-top:15px;
-	margin:40px 0 15px; /* t r b l */
-	border-top:1px solid #eee;
-}
-
 .contentbox {
 	padding-bottom: 10px;
 	border-bottom: 1px solid #eee;
 	font-size: 18px;
 }
 
+/* A quiet site credit below the content, in normal document flow. */
+.site-footer {
+  padding-bottom: 16px;
+  color: #666;
+  font-size: 14px;
+  text-align: center;
+}
+
+.site-footer p {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  margin: 0;
+}
+
+.site-footer .sep {
+  color: #999;
+}
+
+.site-footer img {
+  flex: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 0;
+}
+
+.site-footer a {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
 .active-page {
-	font-weight: bolder;
-	font-style: italic;
+	font-weight: bold;
 	text-decoration: underline;
+	text-underline-offset: 4px;
 }
 
 .container {
@@ -150,7 +176,7 @@ address {
 .table>tbody>tr>td, .table>tbody>tr>th, .table>tfoot>tr>td, .table>tfoot>tr>th, .table>thead>tr>td, .table>thead>tr>th {
     padding: 8px;
     line-height: 1.42857143;
-    vertical-align: middle;
+    vertical-align: top;
     border-bottom: 1px solid #ddd;
     border-top: 1px solid #ddd;
 }
@@ -190,6 +216,20 @@ address {
 
 .navbar-collapse {
   border-top: 0;
+}
+
+.navbar-default .navbar-brand,
+.navbar-default .navbar-nav > li > a {
+  color: #555;
+}
+
+.navbar-nav > li > a {
+  font-size: 16px;
+}
+
+.navbar-default .navbar-nav > li > a:hover,
+.navbar-default .navbar-nav > li > a:focus {
+  color: #23527c;
 }
 
 /* Mobile: static navbar so the hamburger menu pushes content down */
@@ -251,8 +291,304 @@ counter-increment: linenumber;
 
 .line-numbers-rows > span:before {
     content: counter(linenumber);
-    color: #bfc0c0;
+    color: #666;
     display: block;
     padding-right: 0.8rem;
     text-align: right;
+}
+
+/* Shared type scale and keyboard navigation. */
+.page__title {
+  margin: 0 0 16px;
+  font-size: 36px;
+  line-height: 1.2;
+  font-weight: normal;
+}
+
+.contentbox h2 {
+  margin: 32px 0 12px;
+  font-size: 26px;
+  line-height: 1.3;
+}
+
+.contentbox h3 {
+  margin: 24px 0 10px;
+  font-size: 22px;
+  line-height: 1.3;
+}
+
+.contentbox p {
+  margin-bottom: 16px;
+}
+
+.contentbox a {
+  overflow-wrap: anywhere;
+}
+
+a:focus-visible,
+button:focus-visible,
+summary:focus-visible {
+  outline: 2px solid #23527c;
+  outline-offset: 4px;
+}
+
+.skip-link {
+  position: fixed;
+  top: 8px;
+  left: 12px;
+  z-index: 1100;
+  padding: 8px 14px;
+  color: #fff;
+  background: #23527c;
+  transform: translateY(-160%);
+}
+
+.skip-link:focus {
+  transform: translateY(0);
+  color: #fff;
+}
+
+/* Profile and dated news. */
+.contentbox .profile-role {
+  margin-top: -6px;
+  margin-bottom: 8px;
+  color: #555;
+  font-size: 20px;
+}
+
+.news-table > tbody > tr > th,
+.news-table > tbody > tr > td {
+  padding: 14px 0;
+  line-height: 1.5;
+  border-color: #e5e5e5;
+}
+
+.news-table > tbody > tr > th {
+  width: 130px;
+  padding-right: 20px;
+  color: #555;
+  font-weight: normal;
+  white-space: nowrap;
+}
+
+.bio-list {
+  padding-left: 0;
+  list-style: none;
+}
+
+.bio-list li {
+  margin-bottom: 12px;
+}
+
+.bio-date {
+  display: block;
+  color: #555;
+  font-size: 16px;
+}
+
+/* Bibliographic entries share a clear title, metadata, and resource row. */
+.publication-list,
+.talk-list {
+  padding-left: 26px;
+}
+
+.publication-list > li,
+.talk-list > li,
+.teaching-list > li {
+  margin-bottom: 24px;
+  padding-left: 4px;
+}
+
+.publication-list > li::marker,
+.talk-list > li::marker {
+  color: #666;
+}
+
+.publication-list .publication-title {
+  margin-bottom: 5px;
+  font-size: 20px;
+  line-height: 1.4;
+}
+
+.publication-list .publication-meta {
+  margin-bottom: 6px;
+  color: #555;
+  font-size: 17px;
+}
+
+.publication-list .publication-summary {
+  margin-bottom: 8px;
+}
+
+.talk-list strong {
+  display: block;
+  margin-bottom: 5px;
+}
+
+.contentbox .resource-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  align-items: center;
+  margin: 8px 0 0;
+}
+
+.contentbox .label {
+  display: inline-block;
+  padding: 4px 8px;
+  border: 1px solid transparent;
+  border-radius: 3px;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 13px;
+  font-weight: normal;
+  line-height: 1.3;
+  vertical-align: baseline;
+}
+
+.codebtn {
+  background-color: #424b57;
+  color: #fff;
+}
+
+.contentbox .blogbtn {
+  border-color: #b5c8d8;
+  background: #fff;
+  color: #23527c;
+}
+
+.contentbox .label:hover,
+.contentbox .label:focus {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.contentbox .blogbtn:hover,
+.contentbox .blogbtn:focus {
+  color: #173953;
+  border-color: #23527c;
+}
+
+/* A shared date column keeps every archive year aligned. */
+.archive-table {
+  width: 100%;
+  table-layout: fixed;
+}
+
+.archive-table td {
+  padding: 7px 0;
+  vertical-align: top;
+}
+
+.archive-table .archive-date {
+  width: 140px;
+  padding-right: 20px;
+  color: #555;
+  white-space: nowrap;
+}
+
+/* Article navigation is available without JavaScript. */
+.post-contents {
+  margin: 20px 0 28px;
+  padding: 12px 16px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.post-contents summary {
+  display: list-item;
+  list-style: disclosure-closed inside;
+  cursor: pointer;
+  color: #23527c;
+}
+
+.post-contents[open] summary {
+  list-style-type: disclosure-open;
+}
+
+.post-contents ol {
+  margin: 12px 0 0;
+  padding-left: 24px;
+}
+
+.post-contents li {
+  margin: 4px 0;
+}
+
+.related-posts {
+  margin-top: 36px;
+  border-top: 1px solid #eee;
+}
+
+.related-posts li {
+  margin: 6px 0;
+}
+
+.post-meta,
+.post-update {
+  color: #555;
+  font-size: 16px;
+}
+
+.post .figure-wide {
+  width: 100%;
+}
+
+/* MathJax's scroll overflow mode keeps wide displays inside the article. */
+.contentbox mjx-container[display="true"] {
+  max-width: 100%;
+}
+
+@media (max-width: 767px) {
+  .page__title {
+    font-size: 30px;
+  }
+
+  .contentbox h2 {
+    font-size: 23px;
+    margin-top: 28px;
+  }
+
+  .contentbox h3 {
+    font-size: 21px;
+  }
+
+  .contentbox .profile-role {
+    font-size: 18px;
+  }
+}
+
+@media (max-width: 479px) {
+  .news-table,
+  .news-table tbody,
+  .news-table tr,
+  .archive-table,
+  .archive-table tbody,
+  .archive-table tr {
+    display: block;
+    width: 100%;
+  }
+
+  .news-table > tbody > tr {
+    padding: 14px 0;
+    border-top: 1px solid #e5e5e5;
+  }
+
+  .news-table > tbody > tr > th,
+  .news-table > tbody > tr > td,
+  .archive-table td {
+    display: block;
+    width: auto;
+    padding: 0;
+    border: 0;
+  }
+
+  .news-table > tbody > tr > th,
+  .archive-table .archive-date {
+    margin-bottom: 4px;
+    font-size: 16px;
+  }
+
+  .archive-table tr {
+    padding: 9px 0;
+  }
 }

@@ -5,7 +5,21 @@
     <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Computing accurate eigenvalues using a mixed-precision Jacobi algorithm</title>
+    <link rel="canonical" href="https://zbzhou.com/posts/2025-08-24-Post4.html">
+    <meta property="og:type" content="article">
+    <meta property="og:site_name" content="Zhengbo Zhou">
+    <meta property="og:title" content="Computing accurate eigenvalues using a mixed-precision Jacobi algorithm">
+    <meta property="og:description" content="Mixed-precision preconditioning of the Jacobi algorithm for accurate eigenvalues of symmetric positive definite matrices.">
+    <meta property="og:url" content="https://zbzhou.com/posts/2025-08-24-Post4.html">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta property="og:image" content="https://zbzhou.com/media/og-card.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="Zhengbo Zhou, Research Associate at the University of Leicester">
+    <meta property="article:published_time" content="2025-08-24">
+    <link rel="alternate" type="application/atom+xml" title="Zhengbo Zhou: blog posts" href="../feed.xml">
     <meta name="author" content="Zhengbo Zhou" />
+    <meta name="description" content="Mixed-precision preconditioning of the Jacobi algorithm for accurate eigenvalues of symmetric positive definite matrices.">
     <link rel="icon" href="../favicon.svg" type="image/svg+xml">
 
     <!-- Bootstrap core CSS -->
@@ -22,7 +36,8 @@
         window.MathJax = {
             tex: {
                 inlineMath: { '[+]': [['$', '$']] }
-            }
+            },
+            output: { displayOverflow: 'scroll' }
         };
     </script>
     <script defer src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
@@ -30,30 +45,33 @@
 
 <body>
 
+    <a class="skip-link" href="#main-content">Skip to main content</a>
+
     <!-- Fixed navbar -->
-    <nav class="navbar navbar-default navbar-fixed-top">
+    <nav aria-label="Main navigation" class="navbar navbar-default navbar-fixed-top">
         <div class="container">
             <div class="navbar-header">
               <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#site-nav" aria-expanded="false" aria-controls="site-nav"><span class="sr-only">Toggle navigation</span><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></button>
-              <a class="navbar-brand active" href="../index.html">Zhengbo Zhou</a>
+              <a class="navbar-brand active" href="../">Zhengbo Zhou</a>
             </div>
             <div class="collapse navbar-collapse" id="site-nav">
               <ul class="nav navbar-nav">
-                <li role="presentation"><a href="../pages/pubs.html">Publications</a></li>
-                <li role="presentation"><a href="../pages/talks.html">Talks</a></li>
-                <li role="presentation"><a href="../pages/blog-archive.html" class="active-page">Blog Posts</a></li>
-                <li role="presentation"><a href="../pages/teaching.html">Teaching</a></li>
+                <li><a href="../pages/pubs.html">Publications</a></li>
+                <li><a href="../pages/talks.html">Talks</a></li>
+                <li><a href="../pages/blog-archive.html" class="active-page" aria-current="true">Blog Posts</a></li>
+                <li><a href="../pages/teaching.html">Teaching</a></li>
               </ul>
             </div>
         </div>
     </nav>
 
     <div class="container">
-        <div class="contentbox" style="margin-top: 20px; margin-bottom: 20px;">
-            <h1><a id="computing-accurate-eigenvalues-using-a-mixed-precision-jacobi-algorithm" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Computing accurate eigenvalues using a mixed-precision Jacobi algorithm</h1>
-<p>Posted <strong>August 24, 2025</strong></p>
-<hr />
+        <main id="main-content" tabindex="-1" class="contentbox post" style="margin-top: 20px; margin-bottom: 20px;">
+            <h1 class="page__title" id="computing-accurate-eigenvalues-using-a-mixed-precision-jacobi-algorithm">Computing accurate eigenvalues using a mixed-precision Jacobi algorithm</h1>
+<p class="post-meta">Posted <time datetime="2025-08-24">August 24, 2025</time></p>
+<hr>
 <p><a href="https://nhigham.com/">Nicholas J. Higham</a>, <a href="https://scholar.google.com/citations?user=iA1h0jgAAAAJ&amp;hl=en">Françoise Tisseur</a>, <a href="https://personalpages.manchester.ac.uk/staff/marcus.webb/">Marcus Webb</a>, and I have uploaded to the arXiv our paper &quot;<a href="https://arxiv.org/abs/2501.03742">Computing accurate eigenvalues using a mixed-precision Jacobi algorithm</a>&quot;.</p>
+<p class="resource-links"><a class="label arXivbtn" href="https://arxiv.org/abs/2501.03742">arXiv</a> <a class="label doibtn" href="https://doi.org/10.1137/25M1723748">DOI</a> <a class="label codebtn" href="https://github.com/zhengbo0503/Code_htwz25">MATLAB and Julia code</a> <a class="label codebtn" href="https://github.com/zhengbo0503/JacobiEigen.jl">Julia package</a></p>
 <p>This paper builds on the famous result by <a href="https://epubs.siam.org/doi/10.1137/0613074">Demmel and Veselić on the high accuracy of the Jacobi algorithm</a>, in which they proved that for \(A \in \mathbb{R}^{n\times n}\), if \(\lambda_{k}(A)\) denotes the \(k\)-th largest exact eigenvalue of \(A\) and \(\widehat{\lambda}_{k}(A)\) is the \(k\)-th largest eigenvalue computed by the Jacobi algorithm with a suitable stopping criterion, then</p>
 \[\left|  
 \frac{\widehat{\lambda}_{k}(A) - \lambda_{k}(A)}{\lambda_{k}(A)}
@@ -61,11 +79,11 @@
 \le p(n)\,u\,\kappa_{2}^{S}(A),
 \]
 <p>where \(p(n)\) is a low-degree polynomial, \(u\) is the unit roundoff of the working precision, and \(\kappa_{2}^{S}(A) = \sigma_{\max}(DAD)/\sigma_{\min}(DAD)\) with \(D = \mathrm{diag}(a_{ii}^{-1/2})\).</p>
-<h2><a id="our-algorithm" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Our algorithm</h2>
+<h2 id="our-algorithm">Our algorithm</h2>
 <p>We first construct a preconditioner \(\widetilde{Q}\) using either a spectral decomposition or a tridiagonal reduction computed at <strong>low precision</strong>. This preconditioner satisfies:</p>
 <ol>
 <li>\(\widetilde{Q}^{T}A\widetilde{Q}\) has small off-diagonal entries, and</li>
-<li>$||\widetilde{Q}^{T}\widetilde{Q} - I||_{2}$ is of order \(u\).</li>
+<li>\(\|\widetilde{Q}^{T}\widetilde{Q} - I\|_{2}\) is of order \(u\).</li>
 </ol>
 <p>We then apply the Jacobi algorithm at <strong>working precision</strong> to \(\widetilde{Q}^{T}A\widetilde{Q}\), which is evaluated at <strong>high precision</strong>. We refer to this approach as the <strong>mixed-precision preconditioned Jacobi algorithm</strong>.</p>
 <p>Let \(\widetilde{A} = \widetilde{Q}^{T}A\widetilde{Q}\). The eigenvalues computed by applying our algorithm to \(\widetilde{A}\) satisfy</p>
@@ -74,10 +92,10 @@
 \right|
 \le p(n)\,u\,\kappa_{2}^{S}(\widetilde{A}).
 \]
-<p>Through this procedure, \(\kappa_{2}^{S}(A)\) is effectively replaced by \(\kappa_{2}^{S}(\widetilde{A})\), which is often much smaller. For example, if $||A - \mathrm{diag}(A)||_F/\min_i(\widetilde{a}_{ii}) &lt; 1/2$, then \(\kappa_{2}^{S}(\widetilde{A}) &lt; 3\).</p>
-<h2><a id="why-high-precision" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Why high precision?</h2>
+<p>Through this procedure, \(\kappa_{2}^{S}(A)\) is effectively replaced by \(\kappa_{2}^{S}(\widetilde{A})\), which is often much smaller. For example, if \(\|A - \mathrm{diag}(A)\|_F/\min_i(\widetilde{a}_{ii}) &lt; 1/2\), then \(\kappa_{2}^{S}(\widetilde{A}) &lt; 3\).</p>
+<h2 id="why-high-precision">Why high precision?</h2>
 <p>A key feature of our algorithm is the use of <strong>high-precision matrix–matrix multiplication</strong>. With sufficiently high precision, we can overcome the large componentwise forward errors that would otherwise arise when forming \(\widetilde{Q}^{T}A\widetilde{Q}\).</p>
-<h2><a id="numerical-experiment" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Numerical Experiment</h2>
+<h2 id="numerical-experiment">Numerical experiment</h2>
 <p>We compare four algorithms:<br />
 (a) <strong>MP2Jacobi</strong> -- our algorithm but with the matrix product \(\widetilde{Q}^{T}A\widetilde{Q}\) evaluated at working precision,<br />
 (b) <strong>MP3Jacobi</strong> -- our proposed algorithm (matrix product evaluated at high precision),<br />
@@ -87,10 +105,22 @@
 <pre class="line-numbers"><code class="language-matlab">gallery('randsvd', 100, -kappa, 5);
 </code></pre>
 <p>with condition numbers \(\kappa\) varying from \(10\) to \(10^{16}\).<br />
-<img src="../media/20250824T1523_pic1.png" alt="" style="max-width: 100%; height: auto;"></p>
+<img src="../media/20250824T1523_pic1.png" alt="Maximum relative eigenvalue error versus matrix condition number for MP2Jacobi, MP3Jacobi, Jacobi, and MATLAB eig. MP3Jacobi retains substantially more accuracy for ill-conditioned matrices." width="3336" height="1338" loading="lazy"></p>
 <p>The results clearly show that our algorithm performs especially well for highly ill-conditioned matrices. For matrices with condition number \(10^{16}\), MP3Jacobi achieves <strong>7 correct digits of accuracy</strong>, whereas the other algorithms fail to reach <strong>3 correct digits</strong>.</p>
+<aside class="related-posts" aria-labelledby="related-posts">
+  <h2 id="related-posts">Related posts</h2>
+  <ul>
+    <li><a href="2023-12-08-Post2.html">The Jacobi algorithm for eigenvalues</a></li>
+    <li><a href="2026-02-21-Post1.html">Computing accurate singular values using a mixed-precision one-sided Jacobi algorithm</a></li>
+  </ul>
+</aside>
+<p class="post-meta"><a href="../pages/blog-archive.html">All blog posts</a></p>
 
-        </div>
+        </main>
+
+        <footer class="site-footer" id="site-credits" aria-label="Site credits">
+          <p><span>Powered by</span> <img src="../media/openai-blossom.svg" alt="" width="18" height="18"> <span><a href="https://developers.openai.com/api/docs/models/gpt-6-astra">GPT-6 Astra</a></span> <span class="sep">&#183;</span> <img src="../media/claude-burst.png" alt="" width="18" height="18"> <span><a href="https://platform.claude.com/docs/en/models/overview">Claude Opus 5</a></span></p>
+        </footer>
     </div>
     <script src="../styfiles/jquery.min.js"></script>
     <script src="../styfiles/bootstrap.min.js"></script>

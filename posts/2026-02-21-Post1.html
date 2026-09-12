@@ -5,7 +5,21 @@
     <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Computing accurate singular values using a mixed-precision one-sided Jacobi algorithm</title>
+    <link rel="canonical" href="https://zbzhou.com/posts/2026-02-21-Post1.html">
+    <meta property="og:type" content="article">
+    <meta property="og:site_name" content="Zhengbo Zhou">
+    <meta property="og:title" content="Computing accurate singular values using a mixed-precision one-sided Jacobi algorithm">
+    <meta property="og:description" content="How a mixed-precision one-sided Jacobi algorithm improves singular value accuracy, with error analysis, code, and experiments.">
+    <meta property="og:url" content="https://zbzhou.com/posts/2026-02-21-Post1.html">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta property="og:image" content="https://zbzhou.com/media/og-card.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="Zhengbo Zhou, Research Associate at the University of Leicester">
+    <meta property="article:published_time" content="2026-02-21">
+    <link rel="alternate" type="application/atom+xml" title="Zhengbo Zhou: blog posts" href="../feed.xml">
     <meta name="author" content="Zhengbo Zhou" />
+    <meta name="description" content="How a mixed-precision one-sided Jacobi algorithm improves singular value accuracy, with error analysis, code, and experiments.">
     <link rel="icon" href="../favicon.svg" type="image/svg+xml">
 
     <!-- Bootstrap core CSS -->
@@ -22,7 +36,8 @@
         window.MathJax = {
             tex: {
                 inlineMath: { '[+]': [['$', '$']] }
-            }
+            },
+            output: { displayOverflow: 'scroll' }
         };
     </script>
     <script defer src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
@@ -30,33 +45,52 @@
 
 <body>
 
+    <a class="skip-link" href="#main-content">Skip to main content</a>
+
     <!-- Fixed navbar -->
-    <nav class="navbar navbar-default navbar-fixed-top">
+    <nav aria-label="Main navigation" class="navbar navbar-default navbar-fixed-top">
         <div class="container">
             <div class="navbar-header">
               <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#site-nav" aria-expanded="false" aria-controls="site-nav"><span class="sr-only">Toggle navigation</span><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></button>
-              <a class="navbar-brand active" href="../index.html">Zhengbo Zhou</a>
+              <a class="navbar-brand active" href="../">Zhengbo Zhou</a>
             </div>
             <div class="collapse navbar-collapse" id="site-nav">
               <ul class="nav navbar-nav">
-                <li role="presentation"><a href="../pages/pubs.html">Publications</a></li>
-                <li role="presentation"><a href="../pages/talks.html">Talks</a></li>
-                <li role="presentation"><a href="../pages/blog-archive.html" class="active-page">Blog Posts</a></li>
-                <li role="presentation"><a href="../pages/teaching.html">Teaching</a></li>
+                <li><a href="../pages/pubs.html">Publications</a></li>
+                <li><a href="../pages/talks.html">Talks</a></li>
+                <li><a href="../pages/blog-archive.html" class="active-page" aria-current="true">Blog Posts</a></li>
+                <li><a href="../pages/teaching.html">Teaching</a></li>
               </ul>
             </div>
         </div>
     </nav>
 
     <div class="container">
-        <div class="contentbox" style="margin-top: 20px; margin-bottom: 20px;">
-            <h1><a id="computing-accurate-singular-values-using-a-mixed-precision-one-sided-jacobi-algorithm" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Computing accurate singular values using a mixed-precision one-sided Jacobi algorithm</h1>
-<p>Posted <strong>February 21, 2026</strong></p>
-<hr />
+        <main id="main-content" tabindex="-1" class="contentbox post" style="margin-top: 20px; margin-bottom: 20px;">
+            <h1 class="page__title" id="computing-accurate-singular-values-using-a-mixed-precision-one-sided-jacobi-algorithm">Computing accurate singular values using a mixed-precision one-sided Jacobi algorithm</h1>
+<p class="post-meta">Posted <time datetime="2026-02-21">February 21, 2026</time></p>
+<hr>
 
 <p><a href="https://personal.maths.manchester.ac.uk/tisseur/">Françoise Tisseur</a>, <a href="https://personalpages.manchester.ac.uk/staff/marcus.webb/">Marcus Webb</a>, and I have uploaded to the arXiv our paper &quot;<a href="https://arxiv.org/abs/2602.18134">Computing accurate singular values using a mixed-precision one-sided Jacobi algorithm</a>&quot;. It extends the mixed-precision preconditioning of our earlier work on <a href="2025-08-24-Post4.html">computing accurate eigenvalues</a> to the SVD of a general matrix. MATLAB code is <a href="https://github.com/zhengbo0503/Code_twz26a">on GitHub</a>.</p>
 
-<h2><a id="the-one-sided-jacobi-algorithm" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>The one-sided Jacobi algorithm</h2>
+<p class="resource-links"><a class="label arXivbtn" href="https://arxiv.org/abs/2602.18134">arXiv</a> <a class="label codebtn" href="https://github.com/zhengbo0503/Code_twz26a">MATLAB code</a></p>
+
+<details class="post-contents">
+  <summary>On this page</summary>
+  <nav aria-label="On this page">
+    <ol>
+      <li><a href="#the-one-sided-jacobi-algorithm">The one-sided Jacobi algorithm</a></li>
+      <li><a href="#the-algorithm">The algorithm and its error bound</a></li>
+      <li><a href="#obliquity">Obliquity</a></li>
+      <li><a href="#constructing-the-preconditioner">Constructing the preconditioner</a></li>
+      <li><a href="#where-the-qr-factorization-goes">Where the QR factorization goes</a></li>
+      <li><a href="#numerical-experiments">Numerical experiments</a></li>
+      <li><a href="#performance-tests-and-discussion">Performance tests and discussion</a></li>
+    </ol>
+  </nav>
+</details>
+
+<h2 id="the-one-sided-jacobi-algorithm">The one-sided Jacobi algorithm</h2>
 
 <p>The <a href="2025-03-07-Post1.html">one-sided Jacobi algorithm</a> applied to \(A\) is mathematically equivalent to the Jacobi eigenvalue algorithm applied to \(A^{T}A\), which we describe as two-sided. Throughout, \(A \in \mathbb{R}^{m\times n}\) is a full-rank matrix with \(m \ge n\). Define the one-sided scaled condition number</p>
 
@@ -74,7 +108,7 @@
 
 <p>Preconditioning replaces \(\kappa_{2}^{D}(A)\) here by \(\kappa_{2}^{D}(\widetilde{A})\), where \(\widetilde{A} = A\widetilde{V}\), and \(\kappa_{2}^{D}(\widetilde{A})\) can be far smaller. It also reduces \(\mathrm{off}(\widetilde{A}^{T}\widetilde{A})\), where \(\mathrm{off}(A) = \|A - \mathrm{diag}(A)\|_{F}\); it is known that if \(\mathrm{off}(A^{T}A)\) is sufficiently small then the convergence of the algorithm is <a href="https://doi.org/10.1007/BF01385728">quadratic</a>, so preconditioning improves the accuracy and the speed of convergence at the same time.</p>
 
-<h2><a id="the-algorithm" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>The algorithm and its error bound</h2>
+<h2 id="the-algorithm">The algorithm and its error bound</h2>
 
 <p>Given \(\widetilde{V} \in \mathbb{R}^{n\times n}\) numerically orthogonal at working precision, \(\|\widetilde{V}^{T}\widetilde{V} - I\|_{2} \le p_{1}u < 1\), the algorithm, which we call MP3JacobiSVD, has three steps and three precisions \(u_{h} < u < u_{\ell}\):</p>
 
@@ -100,7 +134,7 @@
 
 <p>Compared with Demmel&ndash;Veselić, \(\kappa_{2}^{D}(A)\) is replaced by \(\kappa_{2}^{D}(\widetilde{A})\). This helps only if \(\kappa_{2}^{D}(\widetilde{A})\) can be guaranteed small.</p>
 
-<h2><a id="obliquity" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Obliquity</h2>
+<h2 id="obliquity">Obliquity</h2>
 
 <p>That guarantee is what does not carry over from the symmetric case. There we controlled the scaled condition number through the \(\mathrm{off}\) quantity, and the same route exists here: \(\mathrm{off}(\widetilde{A}^{T}\widetilde{A})/\min_{j}\|\widetilde{a}_{j}\|_{2}^{2} \le \theta < 1\) gives \(\kappa_{2}^{D}(\widetilde{A}) \le ((1+\theta)/(1-\theta))^{1/2}\).</p>
 
@@ -118,7 +152,7 @@
 
 <p>so \(\mathrm{obliq}(\widetilde{A}) \le 1/2\) gives \(\kappa_{2}^{D}(\widetilde{A}) \le 3\), whatever \(\kappa_{2}^{D}(A)\) was. It is also the weaker hypothesis, since \(\mathrm{obliq}(A) \le \mathrm{off}(A^{T}A)/\min_{j}\|a_{j}\|_{2}^{2}\). We expect the obliquity to be useful elsewhere in SVD analysis.</p>
 
-<h2><a id="constructing-the-preconditioner" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Constructing the preconditioner</h2>
+<h2 id="constructing-the-preconditioner">Constructing the preconditioner</h2>
 
 <p>We need a \(\widetilde{V}\) that is numerically orthogonal at working precision and orthonormalizes the columns of \(\widetilde{A} = A\widetilde{V}\) enough that \(\mathrm{off}(\widetilde{A}^{T}\widetilde{A}) \le p_{5}u_{\ell}\|A^{T}A\|_{F}\), computed by exploiting the low precision \(u_{\ell}\). Two constructions, both adapted from the symmetric case:</p>
 
@@ -129,13 +163,13 @@
 
 <p>Only the right singular vectors are needed, so the left transformations are never accumulated.</p>
 
-<h2><a id="where-the-qr-factorization-goes" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Where the QR factorization goes</h2>
+<h2 id="where-the-qr-factorization-goes">Where the QR factorization goes</h2>
 
 <p>A QR factorization is sometimes used before applying an SVD algorithm when \(m \gg n\), for dimension reduction, and the one-sided Jacobi algorithm can be accelerated on trapezoidal matrices by exploiting their structure. The obvious order is doing the QR before preconditioning.</p>
 
 <p>That order behaves differently here. Applied before preconditioning, the QR factorization returns the forward error to \(\kappa_{2}^{D}(A)\) scaling rather than \(\kappa_{2}^{D}(\widetilde{A})\), the quantity we have just reduced; we confirmed this numerically and theoretically. While computing the QR factorization in higher precision would compensate, it could be prohibitively expensive. We therefore perform the QR factorization at working precision after applying the preconditioner. Accuracy is preserved and the Jacobi iterations run on a smaller matrix.</p>
 
-<h2><a id="numerical-experiments" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Numerical experiments</h2>
+<h2 id="numerical-experiments">Numerical experiments</h2>
 
 <p>We compared our algorithm with the LAPACK routines <code>DGESVJ</code> and <code>DGEJSV</code> and with MATLAB's <code>svd</code>, on matrices from</p>
 
@@ -144,11 +178,11 @@
 
 <p>for all five distributions, with \(A \in \mathbb{R}^{1000\times 800}\) and \(\kappa_{2}(A)\) from \(10^{3}\) to \(10^{15}\). Reference values were computed in octuple precision.</p>
 
-<p><img src="../media/20260221T1455_fwderr_mode3.svg" alt="Maximum relative forward error against condition number for MP3JacobiSVD, DGESVJ, DGEJSV and MATLAB svd, on 1000-by-800 matrices with geometrically distributed singular values" style="width: 100%; height: auto;" /></p>
+<p><img src="../media/20260221T1455_fwderr_mode3.svg" alt="Maximum relative forward error against condition number for MP3JacobiSVD, DGESVJ, DGEJSV and MATLAB svd, on 1000-by-800 matrices with geometrically distributed singular values" class="figure-wide" /></p>
 
 <p>The plot is \(\texttt{MODE} = 3\), geometrically distributed singular values; the dotted line is \((mn)^{1/2}u\,\kappa_{2}^{D}(\widetilde{A})\). The three competitors degrade together with \(\kappa_{2}(A)\) and lose all accuracy by \(10^{15}\). MP3JacobiSVD stays near \(10^{-13}\) until \(\kappa_{2}(A) \approx 10^{9}\) and is still near \(10^{-6}\) at the right-hand edge, some eight orders of magnitude better. The other four distributions are similar. Accuracy is retained even on a numerically rank-deficient matrix, where our assumptions do not hold.</p>
 
-<h2><a id="performance-tests-and-discussion" class="anchor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Performance tests and discussion</h2>
+<h2 id="performance-tests-and-discussion">Performance tests and discussion</h2>
 
 <p>Preconditioning does speed up the iteration: the one-sided Jacobi step inside MP3JacobiSVD is markedly faster than <code>DGESVJ</code> alone. But in total runtime MP3JacobiSVD comes in last. Profiling shows \(66\%\) of the time in a single quadruple-precision matrix&ndash;matrix product, against \(24\%\) in the Jacobi step.</p>
 
@@ -156,20 +190,33 @@
 
 <p>Whether the bottleneck really is the simulated arithmetic rather than the algorithm can be tested directly. We use <b>MPJacobiSVD_SSD</b>, which is MP3JacobiSVD with single, single and double precision as the low, working and high precision, respectively, so that it uses only precisions available natively on our hardware. The bottleneck disappears:</p>
 
-<p><img src="../media/20260221T1510_timing_ssd.svg" alt="Left: maximum relative forward error against n for MPJacobiSVD_SSD, SGESVJ and SGEJSV. Right: total runtime against n for the same three algorithms." style="width: 100%; height: auto;" /></p>
+<p><img src="../media/20260221T1510_timing_ssd.svg" alt="Left: maximum relative forward error against n for MPJacobiSVD_SSD, SGESVJ and SGEJSV. Right: total runtime against n for the same three algorithms." class="figure-wide" /></p>
 
 <p>Here \(m = 3000\), \(n\) from \(100\) to \(3000\), \(\kappa_{2}(A) = 10^{6}\), geometrically distributed singular values. On the left MPJacobiSVD_SSD is two to three orders of magnitude more accurate than both LAPACK routines. On the right it follows <code>SGEJSV</code> almost exactly and is significantly faster than plain <code>SGESVJ</code>. The accuracy is therefore not being paid for in speed. What is expensive in the <a href="#quad-timing">timing test above</a> is the simulated quadruple precision, not the algorithm.</p>
 
 <p>The analysis also indicates how to choose the precisions: \(u_{h} = c_{1}u\kappa_{2}(A)^{-1}\) and \(u_{\ell} = c_{2}\kappa_{2}(A)^{-1}\). An estimate of \(\kappa_{2}(A)\) is therefore enough to choose them.</p>
 
 <p>A forthcoming paper analyses the accuracy of the computed vectors, eigenvectors and singular vectors, for this algorithm and its two-sided predecessor.</p>
+<p class="post-update"><strong>Update, <time datetime="2026-09-05">September 5, 2026</time>.</strong> The <a href="https://arxiv.org/abs/2606.28069">follow-up paper on singular vectors and eigenvectors</a> is now available on arXiv.</p>
 
 <div class="ai-disclosure">
-  <img src="../media/claude-icon.png" alt="Claude" />
+  <img src="../media/claude-icon.png" alt="" width="28" height="28" loading="lazy">
   <div><strong>Generative AI disclosure.</strong> The prose of this post was drafted by <a href="https://claude.ai">Claude</a> from our paper. I have reviewed it in full, and I am responsible for its content.</div>
 </div>
+<aside class="related-posts" aria-labelledby="related-posts">
+  <h2 id="related-posts">Related posts</h2>
+  <ul>
+    <li><a href="2025-03-07-Post1.html">One-sided Jacobi algorithm</a></li>
+    <li><a href="2025-08-24-Post4.html">Computing accurate eigenvalues using a mixed-precision Jacobi algorithm</a></li>
+  </ul>
+</aside>
+<p class="post-meta"><a href="../pages/blog-archive.html">All blog posts</a></p>
 
-        </div>
+        </main>
+
+        <footer class="site-footer" id="site-credits" aria-label="Site credits">
+          <p><span>Powered by</span> <img src="../media/openai-blossom.svg" alt="" width="18" height="18"> <span><a href="https://developers.openai.com/api/docs/models/gpt-6-astra">GPT-6 Astra</a></span> <span class="sep">&#183;</span> <img src="../media/claude-burst.png" alt="" width="18" height="18"> <span><a href="https://platform.claude.com/docs/en/models/overview">Claude Opus 5</a></span></p>
+        </footer>
     </div>
     <script src="../styfiles/jquery.min.js"></script>
     <script src="../styfiles/bootstrap.min.js"></script>

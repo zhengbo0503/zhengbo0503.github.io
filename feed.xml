@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>Zhengbo Zhou</title>
+  <subtitle>Research announcements and notes on numerical linear algebra, matrix computations, and MATLAB.</subtitle>
+  <link href="https://zbzhou.com/feed.xml" rel="self"/>
+  <link href="https://zbzhou.com/pages/blog-archive.html"/>
+  <id>https://zbzhou.com/</id>
+  <updated>2026-09-05T00:00:00Z</updated>
+  <author><name>Zhengbo Zhou</name></author>
+  <entry>
+    <title>Computing accurate singular values using a mixed-precision one-sided Jacobi algorithm</title>
+    <link href="https://zbzhou.com/posts/2026-02-21-Post1.html"/>
+    <id>https://zbzhou.com/posts/2026-02-21-Post1.html</id>
+    <published>2026-02-21T00:00:00Z</published>
+    <updated>2026-09-05T00:00:00Z</updated>
+    <summary>How a mixed-precision one-sided Jacobi algorithm improves singular value accuracy, with error analysis, code, and experiments.</summary>
+  </entry>
+  <entry>
+    <title>Computing accurate eigenvalues using a mixed-precision Jacobi algorithm</title>
+    <link href="https://zbzhou.com/posts/2025-08-24-Post4.html"/>
+    <id>https://zbzhou.com/posts/2025-08-24-Post4.html</id>
+    <published>2025-08-24T00:00:00Z</published>
+    <updated>2025-08-24T00:00:00Z</updated>
+    <summary>Mixed-precision preconditioning of the Jacobi algorithm for accurate eigenvalues of symmetric positive definite matrices.</summary>
+  </entry>
+  <entry>
+    <title>What's new in MATLAB R2025a</title>
+    <link href="https://zbzhou.com/posts/2025-05-29-Post3.html"/>
+    <id>https://zbzhou.com/posts/2025-05-29-Post3.html</id>
+    <published>2025-05-29T00:00:00Z</published>
+    <updated>2025-05-29T00:00:00Z</updated>
+    <summary>Selected MATLAB R2025a updates, including the desktop, editor, sparse matrices, and Copilot.</summary>
+  </entry>
+  <entry>
+    <title>Randomized algorithm for trace estimation</title>
+    <link href="https://zbzhou.com/posts/2025-03-08-Post2.html"/>
+    <id>https://zbzhou.com/posts/2025-03-08-Post2.html</id>
+    <published>2025-03-08T00:00:00Z</published>
+    <updated>2025-03-08T00:00:00Z</updated>
+    <summary>Randomized trace estimation: the Girard-Hutchinson estimator, Monte Carlo sampling, and newer algorithms.</summary>
+  </entry>
+  <entry>
+    <title>One-sided Jacobi algorithm</title>
+    <link href="https://zbzhou.com/posts/2025-03-07-Post1.html"/>
+    <id>https://zbzhou.com/posts/2025-03-07-Post1.html</id>
+    <published>2025-03-07T00:00:00Z</published>
+    <updated>2025-03-07T00:00:00Z</updated>
+    <summary>The one-sided Jacobi algorithm for singular values, including preconditioning, accuracy, and LAPACK implementations.</summary>
+  </entry>
+  <entry>
+    <title>What's new in MATLAB R2024b</title>
+    <link href="https://zbzhou.com/posts/2024-09-27-Post2.html"/>
+    <id>https://zbzhou.com/posts/2024-09-27-Post2.html</id>
+    <published>2024-09-27T00:00:00Z</published>
+    <updated>2024-09-27T00:00:00Z</updated>
+    <summary>Selected MATLAB R2024b features for numerical computing, including approximate equality and regularization.</summary>
+  </entry>
+  <entry>
+    <title>Cholesky QR Algorithm</title>
+    <link href="https://zbzhou.com/posts/2024-06-21-Post1.html"/>
+    <id>https://zbzhou.com/posts/2024-06-21-Post1.html</id>
+    <published>2024-06-21T00:00:00Z</published>
+    <updated>2024-06-21T00:00:00Z</updated>
+    <summary>How Cholesky QR computes a QR factorization, why it can lose stability, and how to improve it.</summary>
+  </entry>
+  <entry>
+    <title>The Jacobi algorithm for eigenvalues</title>
+    <link href="https://zbzhou.com/posts/2023-12-08-Post2.html"/>
+    <id>https://zbzhou.com/posts/2023-12-08-Post2.html</id>
+    <published>2023-12-08T00:00:00Z</published>
+    <updated>2023-12-08T00:00:00Z</updated>
+    <summary>An introduction to the Jacobi eigenvalue algorithm, its rotations, convergence, and pivot strategies.</summary>
+  </entry>
+  <entry>
+    <title>A MATLAB function to generate random symmetric matrix</title>
+    <link href="https://zbzhou.com/posts/2023-12-06-Post1.html"/>
+    <id>https://zbzhou.com/posts/2023-12-06-Post1.html</id>
+    <published>2023-12-06T00:00:00Z</published>
+    <updated>2023-12-06T00:00:00Z</updated>
+    <summary>A MATLAB function for generating random symmetric matrices with prescribed singular values and condition numbers.</summary>
+  </entry>
+</feed>
