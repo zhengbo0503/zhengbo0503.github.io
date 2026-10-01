@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Computing accurate singular vectors and eigenvectors using mixed-precision Jacobi algorithms</title>
+    <link rel="canonical" href="https://zbzhou.com/posts/2026-09-15-Post2.html">
+    <meta property="og:type" content="article">
+    <meta property="og:site_name" content="Zhengbo Zhou">
+    <meta property="og:title" content="Computing accurate singular vectors and eigenvectors using mixed-precision Jacobi algorithms">
+    <meta property="og:description" content="An overview of how mixed-precision preconditioning improves the accuracy of singular vectors and eigenvectors computed by Jacobi algorithms.">
+    <meta property="og:url" content="https://zbzhou.com/posts/2026-09-15-Post2.html">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta property="og:image" content="https://zbzhou.com/media/og-card.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="Zhengbo Zhou, Research Associate at the University of Leicester">
+    <meta property="article:published_time" content="2026-09-15">
+    <link rel="alternate" type="application/atom+xml" title="Zhengbo Zhou: blog posts" href="../feed.xml">
+    <meta name="author" content="Zhengbo Zhou" />
+    <meta name="description" content="An overview of how mixed-precision preconditioning improves the accuracy of singular vectors and eigenvectors computed by Jacobi algorithms.">
+    <link rel="icon" href="../favicon.svg" type="image/svg+xml">
+
+    <!-- Bootstrap core CSS -->
+    <link href="../styfiles/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Prism syntax highlighting -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="../styfiles/style.css" rel="stylesheet">
+
+    <!-- MathJax -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: { '[+]': [['$', '$']] }
+            },
+            output: { displayOverflow: 'scroll' }
+        };
+    </script>
+    <script defer src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+</head>
+
+<body>
+
+    <a class="skip-link" href="#main-content">Skip to main content</a>
+
+    <!-- Fixed navbar -->
+    <nav aria-label="Main navigation" class="navbar navbar-default navbar-fixed-top">
+        <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#site-nav" aria-expanded="false" aria-controls="site-nav"><span class="sr-only">Toggle navigation</span><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></button>
+              <a class="navbar-brand active" href="../">Zhengbo Zhou</a>
+            </div>
+            <div class="collapse navbar-collapse" id="site-nav">
+              <ul class="nav navbar-nav">
+                <li><a href="../pages/pubs.html">Publications</a></li>
+                <li><a href="../pages/talks.html">Talks &amp; Posters</a></li>
+                <li><a href="../pages/blog-archive.html" class="active-page" aria-current="true">Blog Posts</a></li>
+                <li><a href="../pages/teaching.html">Teaching</a></li>
+              </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <main id="main-content" tabindex="-1" class="contentbox post" style="margin-top: 20px; margin-bottom: 20px;">
+            <h1 class="page__title" id="computing-accurate-singular-vectors-and-eigenvectors-using-mixed-precision-jacobi-algorithms">Computing accurate singular vectors and eigenvectors using mixed-precision Jacobi algorithms</h1>
+<p class="post-meta">Posted <time datetime="2026-09-15">September 15, 2026</time></p>
+<hr>
+
+<p><a href="https://personal.maths.manchester.ac.uk/tisseur/">Françoise Tisseur</a>, <a href="https://personalpages.manchester.ac.uk/staff/marcus.webb/">Marcus Webb</a>, and I have uploaded to the arXiv our paper &quot;<a href="https://arxiv.org/abs/2606.28069">Computing accurate singular vectors and eigenvectors using mixed-precision Jacobi algorithms</a>&quot;. It extends our earlier work on computing accurate <a href="2025-08-24-Post4.html">eigenvalues</a> and <a href="2026-02-21-Post1.html">singular values</a> to the corresponding vectors. MATLAB code is <a href="https://github.com/zhengbo0503/Code_twz26b">on GitHub</a>.</p>
+
+<p>In this post, we focus on the singular vector results, since the eigenvector counterpart for symmetric positive definite matrices is similar.</p>
+
+<p class="resource-links"><a class="label arXivbtn" href="https://arxiv.org/abs/2606.28069">arXiv</a> <a class="label codebtn" href="https://github.com/zhengbo0503/Code_twz26b">MATLAB code</a></p>
+
+<details class="post-contents">
+  <summary>On this page</summary>
+  <nav aria-label="On this page">
+    <ol>
+      <li><a href="#accuracy-of-computed-vectors">Accuracy of the computed vectors</a></li>
+      <li><a href="#our-algorithm">Our algorithm</a></li>
+      <li><a href="#why-high-precision">Why high precision?</a></li>
+      <li><a href="#numerical-experiment">Numerical experiment</a></li>
+    </ol>
+  </nav>
+</details>
+
+<h2 id="accuracy-of-computed-vectors">Accuracy of the computed vectors</h2>
+
+<p>This paper builds on the result of <a href="https://doi.org/10.1137/0613074">Demmel and Veselić on the high accuracy of the Jacobi algorithm</a>. For a full-rank matrix \(A\in\mathbb{R}^{m\times n}\), with \(m\ge n\) and distinct singular values, let \(v_k(A)\) denote the right singular vector associated with the \(k\)-th largest singular value, and \(\widehat v_k(A)\) its computed counterpart. The one-sided Jacobi algorithm admits a bound of the form</p>
+
+\[\sin\angle\big(v_k(A),\widehat v_k(A)\big)
+\le p(m,n)\,u\,\frac{\kappa_2^D(A)}{\mathrm{svrg}(A,k)},\]
+
+<p>where \(p(m,n)\) is a low-degree polynomial, \(u\) is the unit roundoff of the working precision, and \(\kappa_2^D(A)\) is the condition number after scaling the columns of \(A\) to unit norm. The angle is between the one-dimensional subspaces spanned by the two vectors, so the error does not depend on their signs. The quantity \(\mathrm{svrg}(A,k)\) is the relative gap between the \(k\)-th singular value and the other singular values.</p>
+
+<p>For algorithms based on bidiagonalization, the corresponding error bounds involve absolute gaps. Relative gaps can be much larger near the small singular values. For example, if the singular values are \(1,10^{-1},\ldots,10^{-9}\), the absolute gap between \(10^{-8}\) and \(10^{-9}\) is \(9\times10^{-9}\), while the relative gap for \(10^{-8}\) is \(0.9\).</p>
+
+<p>The factor \(\kappa_2^D(A)\) can nevertheless be large. Our earlier work replaced it by the scaled condition number of a preconditioned matrix in the bounds for singular values. In this paper, we show that the same improvement holds for singular vectors.</p>
+
+<h2 id="our-algorithm">Our algorithm</h2>
+
+<p>We first construct a preconditioner \(\widetilde V\) from right singular vectors computed at <strong>low precision</strong>, then orthogonalize it at working precision. We form \(\widetilde A=A\widetilde V\) at <strong>high precision</strong>, round it to working precision, and apply the one-sided Jacobi algorithm at <strong>working precision</strong>. The right singular vectors are then obtained by transforming the computed vectors back using \(\widetilde V\).</p>
+
+<p>Compared with our previous algorithm, the Jacobi step is applied to the transpose of the preconditioned matrix. This modification simplifies the analysis. Under the assumptions in the paper, the computed singular vectors satisfy</p>
+
+\[\sin\angle\big(v_k(A),\widehat v_k(A)\big)
+\le p_4\,u\left(1+\frac{\kappa_2^D(\widetilde A)}{\mathrm{svrg}(A,k)}\right),\]
+
+<p>where \(p_4\) is a dimension-dependent constant defined in the paper. The same bound holds for the left singular vectors.</p>
+
+<p>Through this procedure, \(\kappa_2^D(A)\) is replaced by \(\kappa_2^D(\widetilde A)\), which is often much smaller. If \(\widetilde V\) were the exact right singular vector matrix, the columns of \(\widetilde A\) would be orthogonal and its scaled condition number would be one. The relative gap in the bound remains that of \(A\), so the separation of the singular values still determines the sensitivity of the vectors.</p>
+
+<p>For symmetric positive definite matrices, we apply the two-sided Jacobi algorithm to \(\widetilde A=\widetilde Q^T A\widetilde Q\). We obtain an analogous eigenvector bound involving the scaled condition number of \(\widetilde A\) and the relative eigenvalue gaps of \(A\).</p>
+
+<h2 id="why-high-precision">Why high precision?</h2>
+
+<p>A key feature of our algorithms is the use of <strong>high-precision matrix&ndash;matrix multiplication</strong>. With sufficiently high precision, we can control the componentwise forward errors that arise when forming the preconditioned matrix. Forming it at working precision alone may lose the accuracy gained from preconditioning. The Jacobi iterations and the final transformation of the vectors are carried out at working precision.</p>
+
+<h2 id="numerical-experiment">Numerical experiment</h2>
+
+<p>We compare MP3JacobiSVD with the LAPACK routines <code>DGESVJ</code> and <code>DGEJSV</code> and with MATLAB <code>svd</code>. The test matrices are generated by</p>
+
+<pre class="line-numbers"><code class="language-matlab">gallery('randsvd', [m,n], kappa, 3);
+</code></pre>
+
+<p>with \(m=1000\), \(n=800\), and condition numbers from \(10^3\) to \(10^{15}\). The singular values are geometrically distributed. We use single, double, and simulated quadruple precision as the low, working, and high precision, respectively.</p>
+
+<p><img src="../media/20260915T2320_svec_mode3.svg" alt="Largest right singular vector error versus condition number for MP3JacobiSVD, two LAPACK Jacobi routines, and MATLAB svd, on matrices with geometrically distributed singular values" class="figure-wide" /></p>
+
+<p>The results show that our algorithm performs especially well for these ill-conditioned matrices. At \(\kappa_2(A)=10^9\), its largest vector error is below \(10^{-12}\), while the other methods have errors of order \(10^{-7}\). At \(\kappa_2(A)=10^{15}\), its largest error is about \(2\times10^{-7}\), whereas the worst vector computed by MATLAB <code>svd</code> is almost orthogonal to the exact one.</p>
+
+<p>The eigenvector results are similar. For \(\kappa_2(A)=10^{15}\), MP3Jacobi gives a largest error of about \(5\times10^{-8}\), compared with \(6\times10^{-2}\) for MP2Jacobi, which forms the preconditioned matrix at working precision.</p>
+
+<p>Each curve reports the largest vector error for the corresponding method. The dotted line evaluates our bound expression with an empirically chosen constant. Some of the most ill-conditioned matrices do not satisfy the assumptions of the theorem; these tests show the behaviour of the algorithm outside our theory.</p>
+
+<p>For arithmetically distributed singular values or eigenvalues, MATLAB <code>svd</code> and <code>eig</code> give smaller errors in our tests. Our algorithms are most effective for ill-conditioned matrices with small absolute gaps but moderate relative gaps.</p>
+
+<p>In this work, we consider only distinct eigenvalues and singular values. Extending the analysis to repeated values requires comparing subspaces, which we leave for future work. The full assumptions and further experiments are in the <a href="https://arxiv.org/abs/2606.28069">paper</a>.</p>
+
+<div class="ai-disclosure">
+  <img src="../media/claude-icon.png" alt="" width="28" height="28" loading="lazy">
+  <div><strong>Generative AI disclosure.</strong> This post was drafted with assistance from <a href="https://claude.ai">Claude</a> and <a href="https://openai.com/codex/">Codex</a>, based on our paper.</div>
+</div>
+<aside class="related-posts" aria-labelledby="related-posts">
+  <h2 id="related-posts">Related posts</h2>
+  <ul>
+    <li><a href="2026-02-21-Post1.html">Computing accurate singular values using a mixed-precision one-sided Jacobi algorithm</a></li>
+    <li><a href="2025-08-24-Post4.html">Computing accurate eigenvalues using a mixed-precision Jacobi algorithm</a></li>
+    <li><a href="2025-03-07-Post1.html">One-sided Jacobi algorithm</a></li>
+  </ul>
+</aside>
+<p class="post-meta"><a href="../pages/blog-archive.html">All blog posts</a></p>
+
+        </main>
+
+        <footer class="site-footer" id="site-credits" aria-label="Site credits">
+          <p><span>Powered by</span> <img src="../media/openai-blossom.svg" alt="" width="18" height="18"> <span><a href="https://developers.openai.com/api/docs/models/gpt-6-astra">GPT-6 Astra</a></span> <span class="sep">&#183;</span> <img src="../media/claude-burst.png" alt="" width="18" height="18"> <span><a href="https://platform.claude.com/docs/en/models/overview">Claude Opus 5</a></span></p>
+        </footer>
+    </div>
+    <script src="../styfiles/jquery.min.js"></script>
+    <script src="../styfiles/bootstrap.min.js"></script>
+    <!-- Prism syntax highlighting -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-matlab.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.js"></script>
+    <script src="../styfiles/ie10-viewport-bug-workaround.js"></script>
+
+</body>
+
+</html>

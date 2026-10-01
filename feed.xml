@@ -5,8 +5,16 @@
   <link href="https://zbzhou.com/feed.xml" rel="self"/>
   <link href="https://zbzhou.com/pages/blog-archive.html"/>
   <id>https://zbzhou.com/</id>
-  <updated>2026-09-05T00:00:00Z</updated>
+  <updated>2026-09-15T00:00:00Z</updated>
   <author><name>Zhengbo Zhou</name></author>
+  <entry>
+    <title>Computing accurate singular vectors and eigenvectors using mixed-precision Jacobi algorithms</title>
+    <link href="https://zbzhou.com/posts/2026-09-15-Post2.html"/>
+    <id>https://zbzhou.com/posts/2026-09-15-Post2.html</id>
+    <published>2026-09-15T00:00:00Z</published>
+    <updated>2026-09-15T00:00:00Z</updated>
+    <summary>An overview of how mixed-precision preconditioning improves the accuracy of singular vectors and eigenvectors computed by Jacobi algorithms.</summary>
+  </entry>
   <entry>
     <title>Computing accurate singular values using a mixed-precision one-sided Jacobi algorithm</title>
     <link href="https://zbzhou.com/posts/2026-02-21-Post1.html"/>
